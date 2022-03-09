@@ -1,0 +1,656 @@
+
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="format-detection" content="telephone=no" /> <!-- disable auto telephone linking in iOS -->
+		
+	
+		<!--
+			Outlook Conditional CSS
+			These two style blocks target Outlook 2007 & 2010 specifically, forcing
+			columns into a single vertical stack as on mobile clients. This is
+			primarily done to avoid the 'page break bug' and is optional.
+			More information here:
+			http://templates.mailchimp.com/development/css/outlook-conditional-css
+		-->
+		<!--[if mso 12]>
+			<style type="text/css">
+				.flexibleContainer{display:block !important; width:100% !important;}
+			</style>
+		<![endif]-->
+		<!--[if mso 14]>
+			<style type="text/css">
+				.flexibleContainer{display:block !important; width:100% !important;}
+			</style>
+		<![endif]-->
+
+    <?!= include("SoukWebAppMain-css"); ?>
+    <?!= include("popup-css"); ?>
+
+         <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!-- Compiled and minified CSS -->
+
+      <!-- Icons -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	</head>
+	<body bgcolor="#FFFFFF" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0">
+
+		<!-- CENTER // -->
+		<!--
+		1.  The center tag should normally put all the
+			content in the middle of the page.
+			I added "table-layout: fixed;" style to force
+			yahoomail which by default put the content left.
+		2.  For hotmail and yahoomail, the contents of
+			the email starts from this center, so we try to
+			apply necessary styling e.g. background-color.
+		-->
+		<center style="background-color:#E1E1E1;">
+      <!-- START MAIN. -->
+			<table border="0"  cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="table-layout: fixed;max-width:100% !important;width: 100% !important;min-width: 100% !important;"> 
+        <!-- =================================== MAIN ROW 1 START =================================== -->
+				<tr>
+          <!-- =================================== MAIN ROW 1 - CELL 1 START =================================== -->
+					<td align="center" valign="top" id="bodyCell">
+              <!-- BLANK LINE -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="emailButton" style="background-color: #FFFFFF;">
+                <tr>
+                  <td align="center" valign="middle" class="buttonContent" 
+                      style="padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;">
+                  </td>
+                </tr>
+              </table>
+
+						  <!---- HEADER START ---->
+              <table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                <!-- MODULE ROW // TITLE -->
+                <tr>
+                  <td align="center" valign="top">
+                    <!-- CENTERING TABLE // -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="80%" style="color:#FFFFFF; background-color:#ffebcd">
+                      <tr>
+                        <td align="center" valign="top">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td align="center" valign="top" width="100%" class="flexibleContainerCell">
+
+                                <!-- CONTENT TABLE // -->
+                                <!--
+                                The content table is the first element
+                                  that's entirely separate from the structural
+                                  framework 
+                                -->
+                                <table border="0" cellpadding="20" cellspacing="0"  style="width:100%; " >
+                                
+                                  <div id="activeEmailId" hidden><?= activeEmail ?></div>
+                                  <tr>
+                                      <td align="center" valign="bottom" class="textContent" colspan="2">
+                                        <h3 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:35px;font-weight:normal;   margin-bottom:1px;text-align:center;">
+                                    Bonjour&nbsp;<?= activeFirstName ?>
+                                      </h3>
+                                    </td>
+                                  </tr>
+                                  <!--
+                                  <tr>
+                                      <td align="center" valign="top" class="textContent" colspan="2">
+                                        <h6 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:25px;font-weight:normal;margin-bottom:5px;text-align:center;">
+                                    Je suis Souklight, pour vous servir maître...
+                                    </h6>
+                                    </td>
+                                  </tr>
+                                  -->
+                                  <tr id="dateMAJId">
+                                      <td align="left" valign="top" class="textContent">
+                                        <h6 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:normal;margin-bottom:5px;text-align:right;">Dernière mise à jour </td>
+                                      <td align="left" valign="top" class="textContent">
+                                        <h6 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:normal;margin-bottom:5px;text-align:left;"><?= dateMiseAJourDonnees ?>                                      
+                                    </h6>
+                                    </td>
+                                  </tr>
+
+                                  <tr id="beneficesDuMoisId">
+                                      <td align="left" valign="top" class="textContent">
+                                        <h6 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:normal;margin-bottom:5px;text-align:right;">Bénéfice du mois en cours</td>
+                                      <td align="left" valign="top" class="textContent">
+                                        <h6 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:normal;margin-bottom:5px;text-align:left;"><?= beneficeNetMois ?>&nbsp;&euro;                                      
+                                    </h6>
+                                    </td>
+                                  </tr>
+
+                            
+                                </table>
+                                <!-- // CONTENT TABLE -->
+                              </td>
+                            </tr>
+                          </table>
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- // CENTERING TABLE -->
+                  </td>
+                </tr>
+              </table>
+              <!---- HEADER END ---->
+
+              <!-- BLANK LINE -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="emailButton" style="background-color: #FFFFFF;">
+                <tr>
+                  <td align="center" valign="middle" class="buttonContent" 
+                      style="padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;">
+                  </td>
+                </tr>
+              </table>
+
+              <!-- FRAIS START -->
+              <table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                <tr>
+                  <td align="center" valign="top">
+                    <!-- CENTERING TABLE // -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr style="padding-top:0;">
+                        <td align="center" valign="top">
+                          <!-- FLEXIBLE CONTAINER // -->
+                          <table border="0" cellpadding="10" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                <!-- SAISIR FRAIS // -->
+                                <table id="saisirFrais"  border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                  <tr>
+                                    <td align="left" valign="middle" class="buttonContent" style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;">
+                                      <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:20px;line-height:135%;" 
+                                      href="https://docs.google.com/forms/d/e/1FAIpQLSeA7uaguxC00IaclUQhWHbS_DW-8mBGOTT8n-2q8bfzFfjz5Q/viewform" target="_blank"><i class="material-icons">library_add</i> &nbsp;
+                                      Saisir des frais</a>
+
+                                    </td>
+                                  </tr>
+                                </table>  
+                              </td>
+                            </tr>
+                          </table>
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- // CENTERING TABLE -->
+                  </td>
+                </tr>
+                <hr class="dashed"/>
+              </table>
+              <!-- FRAIS START -->
+              
+ 							<!-- TÂCHES START -->
+              <table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                <tr>
+                  <td align="center" valign="top">
+                    <!-- CENTERING TABLE // -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr style="padding-top:0;">
+                        <td align="center" valign="top">
+                          <!-- FLEXIBLE CONTAINER // -->
+                          <table border="0" cellpadding="10" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                <!-- CONTENT TABLE // -->
+                                <table id="saisirTachesViewId"  
+                                      border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                  <tr>
+                                    <td align="center" valign="middle" class="buttonContent" style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;">
+                                      <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:20px;line-height:135%;" href="https://docs.google.com/forms/d/e/1FAIpQLSfEy359R6wpSFgSm-CAWWRppoAXdZKnvYsiNIcI7Sd4o2b2Bg/viewform" target="_blank"><i class="material-icons">alarm</i>&nbsp;Saisir des tâches</a>
+
+                                    </td>
+                                  </tr>
+                                </table>
+                                 <hr class="dashed"/>
+                                <!-- VOIR TOUTES LES TACHES START -->
+                                <table id="globalViewId_1"  border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                  
+                                  <tr>
+                                    <td align="center" valign="middle" class="buttonContent" style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;">
+                                      <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:20px;line-height:135%;" href="#"   onclick="tachesTableFetch('All',false)" ><i class="material-icons">format_list_numbered</i> &nbsp;Voir toutes les tâches</a>
+
+                                    </td>
+                                  </tr>
+                                </table>
+                                <!-- VOIR TOUTES LES TACHES END -->
+                              
+                                <!-- VOIR PAR COLLAB GLOBAL START -->
+                                <table id="globalViewId_2"  border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+
+                                  
+                                      <!-- LIGNE 1 Global View-->
+                                      <tr>    
+                                        <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            &nbsp;</td>                                     
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Céline',false)">Céline</a>
+                                          </td>
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="text-align:center; color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Céline&',false)">Céline & Co</a>
+                                          </td>
+
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Simon',false)">Simon</a>
+                                          </td>
+
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="text-align:center; padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Simon&',false)">Simon & Co</a>
+                                          </td>
+
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Said',false)">Said</a>
+                                          </td>
+  
+
+                                          <td  align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="text-align:center; padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Said&',false)">Said & Co</a>
+                                            
+                                          </td>
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('IT',false)">IT</a></td>   
+                                      </tr>  
+                                </table>
+                                <!-- VOIR PAR COLLAB GLOBAL END -->
+
+                                <!-- VOIR PAR COLLAB REDUCED START -->
+                                <table  id = "reducedViewId" border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                  <tr  >
+                                    <td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                      <table border="0" cellpadding="0" cellspacing="0" width="100%" class="emailButton" style="background-color: #ECDBC8;width=100%;">
+                                        <tr>
+                                          <td colspan="2" 
+                                              align="left" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Said',false)">Tâches pour Said uniquement</a>
+                                          </td>
+                                          <td  colspan="2" 
+                                            align="left" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="text-align:center; padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="tachesTableFetch('Said&',false)">Tâche pour Said & Collaborateurs</a>
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <!-- VOIR PAR COLLAB REDUCED END -->
+
+                                <!-- FORM -->
+                                <table border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                    <!-- ROW FOR FORM START -->
+                                    <tr>
+                                              <td id="formTdId" align="center" valign="middle" >
+                                                <form id="myForm" onsubmit="handleFormSubmit(this)" style="background-color:#ffebcd">
+                                                  <input  id="assigneeScopeId" name="assigneeScopeName" hidden></input>
+                                                  <input  id="task2Delete"  hidden></input>
+                                                  <div style="margin: auto;width: 80%;border: 0px solid #73AD21;padding: 10px;">
+                                                    <table style="width:100%;background-color:#ffebcd;align:center;">                                                
+                                                        <tr>
+                                                          <td>
+                                                            <table class='soukTable2' style="width='100%'; ;" >
+                                                                <tr><td colspan="7">&nbsp;</td></tr>
+                                                                <tr><td id="showTid" colspan="6" style="text-align:center"></td></tr>
+                                                                <tr><td colspan="7"><hr class="dotted"></td></tr>
+                                                                <tr><th>Modif. par</th><th>Attribué à</th><th>Urgence</th>
+                                                                    <th>Status</th><th>Fin</th><th>Deadline</th><th>Catégorie</th> <th>action</th></tr>
+                                                                <tr><td colspan="7" style="align:center"><hr class="rounded"></td></tr>
+                                                                <tr>
+                                                                    <td><select id="taskupdBy" name="updatedBy" style="width:100%;border:0px" required></select></td>
+                                                                    <td><select id="taskAttrib" name="attribue" style="width:100%;border:0px" required></select></td>
+                                                                    <td><select id="taskUrgency" name="urgency" style="width:100%;border:0px"></select></td>         
+                                                                    <td><select id="taskStatuses" name="status" style="width:100%;border:0px"></select></td>
+                                                                    <td><input type="date" id="bestFinId" name="bestFin" style="width:100%;border:0px"></td>
+                                                                    <td><input type="date" id="deadlineId" name="deadline" style="width:100%;border:0px"></td>
+                                                                    <td><select id="categories" name="categories" style="width:100%;border:0px"></select></td>
+                                                                    <td><button class="btnListTasks" type="submit"><i class="material-icons">done_all</i></button>
+                                                                    <input  id="taskId" name="taskNo" hidden></td>
+                                                                </tr>
+                                                                <tr><td colspan="8">&nbsp;</td></tr>
+                                                                <tr>
+                                                                  <td>Pourcentage d'accomplissement</td>
+                                                                  <td colspan="8">
+                                                                    <input type="number" min="0" max="100"  id="percentId" name="percent" style="width:100%;">
+                                                                  </td>                                                             
+                                                                </tr>  
+                                                                <tr><td colspan="8">&nbsp;</td></tr>
+                                                                <tr>
+                                                                  <td>Titre</td>
+                                                                  <td colspan="8" >
+                                                                    <textarea rows="1" cols="50" id="titleId" name="titleTask" style="width:100%;border:0px">
+                                                                    </textarea>
+                                                                  </td>                                                             
+                                                                </tr>
+                                                                <tr><td colspan="8">&nbsp;</td></tr>
+                                                                <tr>
+                                                                  <td>Description</td>
+                                                                  <td colspan="8">
+                                                                    <textarea rows="4" cols="50" id="descriptionId" name="descTask" style="width:100%;border:0px">
+                                                                    </textarea>
+                                                                  </td>                                                             
+                                                                </tr>
+                                                                <tr><td colspan="8">&nbsp;</td></tr>
+                                                                <tr>
+                                                                    <td>Note au destinataire(s)</td>
+                                                                    <td colspan="8">
+                                                                        <input type="text" id="nodeId" name="noteDest" style="width:100%;border:0px">
+                                                                      </input>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr><td colspan="8">&nbsp;</td></tr>
+                                                                
+                                                            </table>
+                                                          </td>
+                                                        </tr>
+                                                    </table>
+                                                  </div>
+                                                </form>
+                                              </td>
+                                    </tr>
+                                    <!-- ROW FOR FORM END -->
+                                    <tr>
+                                          <td id="msgRunningTaches" align="center" valign="middle" class="buttonContent" 
+                                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px; background-color:Orange;" 
+                                                                    hidden><h2>Work in progress, patientez...</h2>
+                                          </td>
+                                    </tr>
+                                    <tr>
+                                          <td id="tachesTableId" align="center" valign="middle" >
+                                                <!-- ICI VIENT LA TABLE DES TACHES -->
+                                          </td>
+                                    </tr>
+                                </table >
+                              </td>
+                            </tr>
+                          </table>
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- // CENTERING TABLE -->
+                  </td>
+                </tr>
+              </table>
+              <!-- TÂCHES END -->
+
+              <table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                <input  id="ganttScopeId" name="ganttScopeName" hidden></input>
+                
+                <tr>
+                  <td align="center" valign="top">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr style="padding-top:0;">
+                        <td align="center" valign="top">
+
+                          <table border="0" cellpadding="10" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                <table id="globalViewGanttsId_1"  border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">                                                                     
+                                    <tr>
+                                        <td align="left" valign="middle" class="buttonContent" 
+                                                style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:20px;line-height:135%;text-align:left" href="#"   
+                                            onclick="ganttsTableFetch('All',false)" ><i class="material-icons">sort</i> &nbsp;Voir tous les Gantts charts</a>
+                                        </td>
+                                    </tr>
+                               </table>
+
+                                <table id="globalViewGanttsId_2"  border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">                             
+                                      <tr>    
+                                        <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            &nbsp;</td>                                     
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="ganttsTableFetch('Céline',false)">Céline</a>
+                                          </td>
+                                        
+
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="ganttsTableFetch('Simon',false)">Simon</a>
+                                          </td>
+
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="ganttsTableFetch('Said',false)">Said</a>
+                                          </td>
+  
+                                          <td align="center" 
+                                            valign="middle" 
+                                            class="buttonContent" 
+                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:10px;">
+                                            <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:135%;"   href="#" onclick="ganttsTableFetch('IT',false)">IT</a></td>   
+                                      </tr>  
+                                </table>
+                                <!-- VOIR PAR COLLAB GLOBAL END -->
+
+
+<!-- ================================================================================== -->
+
+                                <!-- GANTTS DISPLAY START 
+                                <table border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">  
+                                      <tr>
+                                          <td id="ganttsRunningTaches" align="center" valign="middle" class="buttonContent" 
+                                                            style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px; background-color:Orange;" 
+                                                    hidden><h2>Work in progress, patientez...</h2>
+                                          </td>
+                                      </tr>
+                           
+                                </table>
+                                <!-- GANTTS DISPLAY END -->
+                              </td>
+                            </tr>
+                          </table>
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <table id="ganttsTableId" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr style="padding-top:0;">
+                        <td align="center" valign="top">
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+
+              <!-- SALAIRES START -->
+              <table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                <tr>
+                  <td align="center" valign="top">
+                    <!-- CENTERING TABLE // -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr style="padding-top:0;">
+                        <td align="center" valign="top">
+                          <!-- FLEXIBLE CONTAINER // -->
+                          <table border="0" cellpadding="10" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                <!-- TITRE SALAIRES -->
+                                <table id="tableViewSalairesId" border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">          
+                                    <tr>
+                                          <td align="left" valign="middle" class="buttonContent" style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;">
+                                      
+  <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:20px;line-height:135%;" href="#" onclick="salairesTableFetch()"><i class="material-icons">monetization_on</i> &nbsp;Salaires du mois</a>                           
+                                          </td>
+                                    </tr>                      
+                                </table>
+                                  <!-- WORK IN PROGRESS SALAIRES -->
+                                  <table border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                      <tr>
+                                            <td id="msgRunning" align="center" valign="middle" class="buttonContent" 
+                                                              style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px; background-color:Orange;" 
+                                                                      hidden><h2>Work in progress, patientez...</h2>
+                                            </td>
+                                      </tr>
+                                      <tr>
+                                            <td id="salairesTableId" align="center" valign="middle" >
+                                                  <!-- ICI VIENT LA TABLE DES SALAIRES -->
+                                            </td>
+                                      </tr>
+                                  </table>
+                                  <table id="tableViewSalairesId" border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">                                         
+                                    <tr>
+                                      <td>
+                                          <!-- // IMAGE LOGIQUE SALAIRES-->
+                                          <table id="logiqueSalaires" style="display:none">
+                                              <tr>
+                                                <td>
+                                                  <img width="1000" height="1000"src="https://drive.google.com/uc?export=view&id=13QYqX0tiR3KNu171M9SprRF2ak2J7MVY">
+                                                </td>
+                                              </tr>
+                                          </table>
+                                      </td>
+                                    </tr>
+                                  </table>
+                              </td>
+                            </tr>                          
+                          </table>                       
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- // CENTERING TABLE -->
+                  </td>
+                </tr>
+              </table>
+              <!-- SALAIRES END -->
+
+              <!-- PILOTAGE START-->
+              <table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                <tr>
+                  <td align="center" valign="top">
+                    <!-- CENTERING TABLE // -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr style="padding-top:0;">
+                        <td align="center" valign="top">
+                          <!-- FLEXIBLE CONTAINER // -->
+                          <table border="0" cellpadding="10" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                <!-- CONTENT TABLE // -->
+                                <table id="tableauPilotageViewId" border="0" cellpadding="0" cellspacing="0" width="80%" class="emailButton" style="background-color: #ECDBC8;">
+                                  <tr>
+                                    <td align="left" valign="middle" class="buttonContent" style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;">
+                                      <a style="color:#565149;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-size:20px;line-height:135%;" href="https://docs.google.com/spreadsheets/d/14R6wJO2t38yXUfHGRXjIm06NgQvHt-J8pLknq021Fb0/edit?usp=sharing" target="_blank"><i class="material-icons">flight</i> &nbsp;Tableau de pilotage</a>
+                                    </td>
+                                  </tr>
+                                </table>                              
+                                <!-- // CONTENT TABLE -->
+                              </td>
+                            </tr>
+                          </table>
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- // CENTERING TABLE -->
+                  </td>
+                </tr>
+						  </table>
+						  <!-- PILOTAGE END-->
+
+              <!-- BLANK LINE -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="emailButton" style="background-color: #FFFFFF;">
+                <tr>
+                  <td align="center" valign="middle" class="buttonContent" 
+                      style="padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;">
+                  </td>
+                </tr>
+              </table>
+
+              <!-- FOOTER START -->
+              <table bgcolor="#E1E1E1" border="0" cellpadding="0" cellspacing="0" width="100%" id="emailFooter">
+                <!-- FOOTER ROW // -->
+                <tr>
+                  <td align="center" valign="top">
+                    <!-- CENTERING TABLE // -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" valign="top">
+                          <!-- FLEXIBLE CONTAINER // -->
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="flexibleContainer">
+                            <tr>
+                              <td align="center" valign="top" width="100%" class="flexibleContainerCell">
+                                <table border="0" cellpadding="30" cellspacing="0" width="100%">
+                                  <tr>
+                                    <td valign="top" bgcolor="#E1E1E1">
+
+                                      <div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#828282;text-align:center;line-height:120%;">
+                                        <div>Soukcircus<a href="http://www.soukcircus.com" target="_blank" style="text-decoration:none;color:#828282;"><span style="color:#828282;"></span></a>. All&nbsp;rights&nbsp;reserved.</div>
+                                      </div>
+
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                          <!-- // FLEXIBLE CONTAINER -->
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- // CENTERING TABLE -->
+                  </td>
+                </tr>
+              </table>
+              <!-- FOOTER END -->
+					</td>
+          <!-- =================================== MAIN ROW 1 - CELL 1 END =================================== -->
+				</tr>
+        <!-- =================================== MAIN ROW 1 END =================================== -->
+			</table>
+      <!-- END MAIN. -->
+		</center>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <?!= include("SoukWebAppMain-js"); ?>
+    <?!= include("popup-js"); ?>
+	</body>
+</html>

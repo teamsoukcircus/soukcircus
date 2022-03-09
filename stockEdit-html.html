@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("souk-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+    
+  <style>
+
+/* The expanding image container */
+.containerImg {
+  position: relative;
+  width:400px;
+  height:400px;
+  display: none;
+}
+
+/* Expanding image text */
+#imgtext {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  color: white;
+  font-size: 20px;
+}
+</style>
+
+  </head>
+  <body>
+      <div id="stockId" style="display:none"><?= stockIdValue ?></div>
+      <textarea rows="1" cols="80" id="etsyUrl" name="etsyUrl" style="display:none"></textarea>
+      <input type="number"  id="noCommandeId" name="noCommandeId" style="display:none">
+      <input type="text"  id="imageId" name="imageIdName" style="display:none">
+      <input type="number"  id="newProduct" name="newProduct" style="display:none"> <!-- 0/1 indivcator -->
+      <input type="text"  id="selectedImageId" name="selectedImage" style="display:none"> 
+      <input type="text"  id="etsyUrlId" name="etsyUrlId" style="display:none">
+      <input type="text"  id="noCommande" name="noCommande" style="display:none">
+
+  
+
+      <section  class="navbar">
+            <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+            <a  href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+            <a type="button"   class="button button3" onclick="saveStockItem()">Enregistrer</a>
+
+            <div style="width:20%;text-align:right;color:white;display:inline;"><h1 style="color:white;padding-left:400px">Edition du stock</h1></div>
+      </section>
+
+      <section id="msgRunning" class="soukRunning" style="display:none">
+      </section>
+      <section id="msgError" class="soukError" style="display:none">
+      </section>
+      <section id="msgMessage" class="soukMessage" style="display:none">
+      </section>
+
+
+      <div class="formContainer">
+        <div class="formRow">
+          <div class="formCol-75">
+            <label class="labelTop"for="fournisseur">Fournisseur</label>
+          </div>
+          <div class="formCol-75">
+            <select id="fournisseur" name="fournisseur" ></select>
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-75">
+            <label class="labelTop" for="title">Titre</label>
+          </div>
+          <div class="formCol-75">
+            <textarea rows="1" cols="80" rows="1" id="title" placeholder="Description courte de l'artcicle.." name="title" ></textarea>
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-75">
+            <label class="labelTop" for="title">Description</label>
+          </div>
+          <div class="formCol-75">
+            <textarea rows="1" cols="80" rows="4" id="description" placeholder="Description longue de l'artcicle.." name="description" ></textarea>
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-75">
+            <hr class="dashed">
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-15">
+            <label for="sku">SKU</label>
+            <input type="text" minlength="4" maxlength="8" id="sku" name="sku" placeholder="MB.....">
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-80">
+            <label for="quantity">Quantité en stock</label>
+            <input type="number" id="quantity" name="quantity" placeholder="...">
+
+            <label class="labelRight" for="unitBuyPriceMAD">Prix unitaire fournisseur&nbsp;[MAD]</label>
+            <input type="number" id="unitBuyPriceMAD" name="unitBuyPriceMAD" placeholder="...">
+
+            <label class="labelRight" for="weightKg">Poids unitaire&nbsp;[kg]</label>
+            <input type="number" id="weightKg" name="weightKg" placeholder="...">
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-80">
+            <label  for="cm_length">Longueur&nbsp;[cm]</label>
+            <input type="number" id="cm_length" name="cm_length" placeholder="...">
+
+            <label class="labelRight" for="cm_width">Largeur&nbsp;[cm]</label>
+            <input type="number" id="cm_width" name="cm_width" placeholder="...">
+
+            <label class="labelRight" for="cm_height">Hauteur&nbsp;[cm]</label>
+            <input type="number" id="cm_height" name="cm_height" placeholder="...">
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-80">
+            <label  for="cm_diamTop">Diamètre haut&nbsp;[cm]</label>
+            <input type="number" id="cm_diamTop" name="cm_diamTop" placeholder="...">&nbsp&nbsp;
+            <label class="labelRight" for="cm_diamMiddle">Diamètre médian&nbsp;[cm]</label>
+            <input type="number" id="cm_diamMiddle" name="cm_diamMiddle" placeholder="...">&nbsp&nbsp;
+            <label class="labelRight" for="cm_diamBottom">Diamètre bas&nbsp;[cm]</label>
+            <input type="number" id="cm_diamBottom" name="cm_diamBottom" placeholder="...">&nbsp&nbsp;
+          </div>
+        </div>
+
+         <div class="formRow">
+          <div class="formCol-75">
+            <hr class="dashed">
+          </div>
+        </div>
+          </div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-80" style="align:left">
+            <label class="labelTop" for="imagePourCommande">Image pour le stock</label>
+            <img id="imagePourCommande" name="imagePourCommande" src="" width="30%", height="30%">
+          </div>
+        </div>
+
+
+        <div class="formRow">
+            <table>
+              <tr>
+                <td id="imagesDisponiblesId">
+                </td> 
+              </tr>
+            </table> 
+        </div> 
+    </div>
+
+</body>
+  
+    <?!= include("utils-js"); ?>
+    <?!= include("popup-js"); ?>
+    <?!= include("souk-js"); ?>
+    <?!= include("stockEdit-js"); ?>
+</html>

@@ -1,0 +1,69 @@
+<script>
+    
+    function requestAllStock()
+    {
+      hideAllAlerts();
+      if ( $('#stockTableId').css('display') == 'block' )
+      {
+          $('#stockTableId').hide()
+          return true;
+      }
+
+      showProgress("");
+      $('#stockTableId').hide()
+      
+      //Request data to server for this new scope
+      //==========================================
+      
+      google.script.run.withSuccessHandler(fluxStockHandler).stock_getActiveStock();
+      return true;
+    }
+
+    function fluxStockHandler(allStock)
+    {
+        hideAllAlerts();
+        let data = JSON.parse(allStock);
+
+        if (data["err"] == "ok")
+        {
+          $('#stockTableId').show()
+
+          $('#stockTableId').DataTable({
+            "order": [[ 1, "asc" ]],
+            "pageLength": 100,
+            data: data["data"],
+            columns: [
+              {"title":"Id",          "width": "5%" },
+              {"title":"SKU",         "width": "5%" },
+              {"title":"Titre",       "width": "20%" },
+              {"title":"URL",         "width": "10%" },
+              {"title":"Img",         "width": "10%" },
+              {"title":"Restes",      "width": "5%" },
+              {"title":"Prix de vente (EUR)",  "width": "5%" },
+              {"title":"Prix d'achat (MAD)",  "width": "5%" },
+              {"title":"Produit par",  "width": "10%" },
+              {"title":"Soldout forcast", "width": "10%" },
+              {"title":"Limit min",       "width": "10%" },
+              {"title":"Jours à produire", "width": "10%" },
+              {"title":"Commander", "width": "5%" },
+              {"title":"MàJ", "width": "5%" }
+            ]
+          });
+
+          return true;
+        }
+        else
+        {
+            showError("<h2>Une erreur est survenue: " + data["msg"] + "</h2>");
+            return false;
+        }
+    }
+
+    function closeMe(data)
+    {
+      if ( data["err"] != "ok" )
+      { 
+          showError("<h2>Une erreur est survenue: " + data["msg"] + "</h2>");
+      }
+    }
+  </script>

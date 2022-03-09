@@ -1,0 +1,238 @@
+<script>
+
+
+function soukjs_createTable(tableId,header,headClass, headColor,rows, width, tblClass,collapsExpand) 
+{
+  let mainDiv = document.createElement("div");
+  mainDiv.setAttribute("id","maindiv"+tableId);
+
+  let collapseExpandDiv = document.createElement("div"); 
+  collapseExpandDiv.setAttribute("id","cediv"+tableId);
+
+  let myTable = document.createElement("table");
+  myTable.setAttribute("id",tableId)
+  myTable.setAttribute("class",tblClass);
+
+  if ( width != "" )
+  {
+    myTable.setAttribute("style","width:" + width + ";margin-top:50px");
+    mainDiv.setAttribute("style","width:" + width + "");
+    collapseExpandDiv.setAttribute("style","width:" + width + ";margin-top:-50px");
+  }
+  else
+  {
+    myTable.setAttribute("style","width:1200px;margin-top:50px");
+    mainDiv.setAttribute("style","width:1200px;");
+    collapseExpandDiv.setAttribute("style","width:1200px;margin-top:-50px");
+  }
+
+  if ( collapsExpand )
+  { 
+    myTable.style.display="none";
+
+    mainDiv.appendChild(collapseExpandDiv);
+
+    collapseExpandDiv.innerHTML = "<i class='fa fa-plus-square fa-2x' aria-hidden='true'></i>";
+    collapseExpandDiv.setAttribute("style","text-align:left;margin-top:-50px;");
+    collapseExpandDiv.setAttribute("id","collapseExpandDiv"+tableId)
+    collapseExpandDiv.addEventListener("click",function(id1, id2,e){
+
+      if(document.getElementById(id2).style.display=="block")
+      {
+        document.getElementById(id1).innerHTML = "<i class='fa fa-plus-square fa-2x' aria-hidden='true'></i>";
+        document.getElementById(id2).style.display="none";
+      }
+      else
+      {
+        document.getElementById(id1).innerHTML = "<i class='fa fa-minus-square fa-2x' aria-hidden='true'></i>";
+        document.getElementById(id2).style.display="block";
+      }
+    }.bind(collapseExpandDiv,collapseExpandDiv.getAttribute("id"),tableId));
+
+    collapseExpandDiv.appendChild(myTable);
+  }
+
+  var trow = document.createElement('tr'); // Header row
+  trow.setAttribute("class", headClass)
+  trow.setAttribute("style", "background-color:"+ headColor);
+  
+
+  for (var j = 0; j < header.length; j++)
+  {
+    var th = document.createElement('th'); //column
+    var text = document.createTextNode(header[j]); //cell
+    th.appendChild(text);
+    trow.appendChild(th);
+  } 
+  myTable.appendChild(trow);
+
+  //D'abord les champs
+  for (let key in rows) 
+  {
+    let aRow  = rows[key];
+
+    let aTableRow = document.createElement('tr');
+
+    for ( let key2 in aRow)
+    {
+      let aCell = aRow[key2];
+      
+      var cell = document.createElement("td");
+      if (aCell.style != null)
+        cell.setAttribute("style",aCell.style);
+
+      if ( aCell.colspan != null)
+        cell.setAttribute("colspan",aCell.colspan);
+
+      if ( aCell.type=="I")
+      {
+        var cellInput = document.createElement('input');
+        cellInput.setAttribute("value",aCell.val);
+        if ( aCell.id != null )
+          cellInput.setAttribute("id",aCell.id);
+        if ( cellInput.name != null )
+          cellInput.setAttribute("name",aCell.name);
+
+        if (aCell.style != null)
+          cellInput.setAttribute("style",aCell.style);
+
+        cell.appendChild(cellInput);
+      } 
+      else if ( aCell.type=="CB")
+      {
+        var cellCheckbox = document.createElement('input');
+        cellCheckbox.type = 'checkbox';
+        //cellCheckbox.setAttribute ("value",aCell.val); //Pourquoi ceci ne focntionne-t-il pas?
+
+        if ( aCell.val == true )
+          cellCheckbox.setAttribute( "checked", true);
+
+        //if ( aCell.val )
+        //  cell.html('<input type="checkbox"  class="btnCHK" checked>');
+
+        if ( aCell.id != null )
+          cellCheckbox.setAttribute("id",aCell.id);
+
+        if ( aCell.name != null )
+          cellCheckbox.setAttribute("name",aCell.name);
+
+        if (aCell.onclick != null)
+          cellCheckbox.addEventListener('click', aCell.onclick);
+
+        cell.appendChild(cellCheckbox);
+      } 
+      else if ( aCell.type=="RB")
+      {
+        var cellRadio = document.createElement('input');
+        cellRadio.type = 'radio';
+        cellRadio.setAttribute("value",aCell.val);
+        if ( aCell.grpName != null)
+          cellRadio.setAttribute('groupname',aCell.grpName);
+          
+        $(this).attr('groupname');
+        if ( aCell.id != null )
+          cellRadio.setAttribute("id",aCell.id);
+        if ( aCell.name != null )
+          cellRadio.setAttribute("name",aCell.name);
+
+        if (aCell.onclick != null)
+        {
+          cellRadio.addEventListener('click', aCell.onclick);
+        }
+        cell.appendChild(cellRadio);
+      } 
+      else if ( aCell.type=="TA")
+      {
+        var cellTextArea = document.createElement("textarea");
+        cellTextArea.appendChild(document.createTextNode(aCell.val));
+        cellTextArea.setAttribute("rows",aCell.rows);
+        cellTextArea.setAttribute("cols",aCell.cols);
+
+        if ( aCell.id != null )
+          cellTextArea.setAttribute("id",aCell.id);
+        if ( aCell.name != null )
+          cellTextArea.setAttribute("name",aCell.name);
+
+        if (aCell.style != null)
+          cellTextArea.setAttribute("style",aCell.style);
+
+        cell.appendChild(cellTextArea);
+      } 
+      else if ( aCell.type=="IMG")
+      {
+          $('<img />')
+          .attr('src', "" + aCell.val + "")         // ADD IMAGE PROPERTIES.
+          .attr('title', 'soukcircus titre')
+          .width('100%').height('100%')
+          .attr('id',aCell.id)
+          .attr('name',aCell.name)
+          .appendTo(cell); 
+      } 
+      else if ( aCell.type=="A")
+      {
+        let link = $("<a>")
+        .attr('id',aCell.id)
+        .attr("href", aCell.val)
+        .attr("title", "Etsy.com")
+        .attr("target","_blank")
+        .text("Etsy")
+        .addClass("link")
+        .appendTo(cell);
+
+      }
+      else
+      {
+        cellText = document.createTextNode(aCell.val);
+        if ( aCell.id != null )
+          cell.setAttribute("id",aCell.id);
+        if ( aCell.name != null )
+          cell.setAttribute("name",aCell.name);
+        cell.appendChild(cellText);
+      }
+
+      cell.setAttribute("style",aCell.style);
+      aTableRow.appendChild(cell);
+
+      if (aCell.show != null && aCell.show==false)
+        cell.style.display="none";
+    }
+
+    myTable.appendChild(aTableRow);
+  }
+
+  mainDiv.appendChild(myTable);
+
+  if ( collapsExpand )
+    $("#"+tableId).hide();
+
+  return mainDiv;
+}
+
+
+function soukjs_createTableWithNInput(nInput,fctOnKeyUp) 
+{
+
+  var th = document.querySelectorAll('#table th');//To check whether `TD` is appended in table or not!
+  if (!th.length) 
+  {
+    //If not appended, then append TD in table
+    var rows = "<th>Item Name</th><th>Quantity</th><th>QuantityType</th><th>Amount</th>";
+    var table = document.createElement('table');
+    table.innerHTML = rows;
+    document.getElementById("table").appendChild(table.firstChild);
+  }
+
+  for (var i = 0; i < nInput; i++) 
+  {
+    var elems = '';
+    elems += "<tr><td><input type='text' name='" + "name".concat(i + 1) + "'></td>"+
+              "<td><input type='text' name='" + "quantity".concat(i + 1) + "'></td>"+
+              "<td><input type='text' name='" + "qtype".concat(i + 1) + "'></td>"+
+              "<td id='amt'><input type='text' id='sum' onkeyup='"+ fctOnKeyUp +"(this.value);' name='" + "total".concat(i + 1) + "'></td></tr>";
+    var table = document.createElement('table');
+    table.innerHTML = elems;
+    document.getElementById("table").appendChild(table.firstChild);
+  }
+}
+
+</script>

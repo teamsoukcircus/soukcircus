@@ -1,0 +1,47 @@
+<script>
+    function hideAllAlerts()
+    {
+      showAlert("","") ;
+    }
+
+
+    function showError(text)
+    {
+        return showAlert(text,"#msgError");
+    }
+
+    function showInfo(text)
+    {
+        return showAlert(text,"#msgMessage");
+    }
+
+    function showProgress(text)
+    {
+        return showAlert(text,"#msgRunning");
+    }
+
+
+    function showAlert(text,id)
+    {      
+      $("#msgError").hide();
+      $("#msgRunning").hide();
+      $("#msgMessage").hide();
+      
+      if (id!="")
+      {
+          $(id).show();
+          if ( id == "#msgRunning")
+          {
+            if (text=="")
+              $(id).html("<h4>En cours de traitement...</h4>");
+            else
+              $(id).html("<h4>"+text+"</h4>");
+          }
+          else if (text != "")
+            $(id).html("<h4>"+text+"</h4>");
+          
+          //Auto hide text
+          //setInterval(showAlert, 15000, "","");
+      }
+    }
+</script>

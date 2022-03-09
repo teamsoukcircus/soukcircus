@@ -1,0 +1,576 @@
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no" /> <!-- disable auto telephone linking in iOS -->
+   <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("souk-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.js" integrity="sha512-Lii3WMtgA0C0qmmkdCpsG0Gjr6M0ajRyQRQSbTF6BsrVh/nhZdHpVZ76iMIPvQwz1eoXC3DmAg9K51qT5/dEVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <style>
+      .chartBox{
+        width:500px;
+        height:500px;
+      } 
+    </style>
+  </head>
+  <body  onload="getDataForTheMonth()" bgcolor="#FFFFFE" color="#000000" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0">
+
+    <!--  HIDDEN INDICATORS ======= -->
+    <div  id="assigneeScopeId" name="assigneeScopeName" hidden></div>
+    <input  id="task2Delete"  hidden></input>
+    <input  id="task2DeleteRowNum"  hidden></input>
+    <div  id="activeEmailId" hidden><?= activeEmail ?></div>
+    
+    <!-- NAVIGATION BAR ============================================ -->
+      <section  class="navbar">
+        <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+        <a href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+        
+        <a type="button" class="button button3"  href= <?= actionFinances ?> target="_blank"><i class="fa fa-fw fa-eur "></i>Finances</a> 
+
+        <a type="button" class="button button3"  id="saisirTachesId" href="https://www.appsheet.com/start/65ee093f-bbb8-4d21-95a1-9be5b5ba3917" 
+            target="_blank"><i class="fa fa-fw fa-plus"></i>Tâches</a> 
+      </section >
+        
+      <section id="msgRunning" class="soukRunning" style="display:none">
+      </section>
+      <section id="msgError" class="soukError" style="display:none">
+      </section>
+      <section id="msgMessage" class="soukMessage" style="display:none">
+      </section>
+
+      <table  style="margin-left: auto;margin-right: auto;margin-top:50px;">
+        <tr><td><h3><?= currentDay ?>&nbsp;<?= currentMonth ?>&nbsp;<?= currentYear ?></h3></td></tr>
+      </table>
+
+      <table  style="margin-left: auto;margin-right: auto;margin-top:50px;">
+       <tr>
+        <td>
+            <!-- JAN / FEV 7 MAR -->
+              <table>
+                <tr>
+                  <td id="mois0" style="text-align:left"></td>
+                  <td id="mois1" style="text-align:left"></td>
+                  <td id="mois2" style="text-align:left"></td>
+                </tr>
+                <tr>
+                  <td id="chiffres0">
+                      <table >
+                        <tr>
+                            <td style="text-align:left">Objectif du mois </td>
+                            <td id="om0"></td>
+                        </tr>
+                        <tr>
+                          <td style="text-align:left">Min Bonus</td>
+                          <td id="mb0" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Ventes et Credits Etsy</td>
+                            <td id="vc0"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship0"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Céline</td>
+                            <td id="sc0"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Simon</td>
+                            <td id="ss0"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Said</td>
+                            <td id="sd0"></td>
+                        </tr>
+                    </table>
+                  </td>
+                  <td id="chiffres1">
+                      <table>
+                        <tr>
+                            <td style="text-align:left">Objectif du mois </td>
+                            <td id="om1"></td>
+                        </tr>
+                        <tr>
+                          <td style="text-align:left">Min Bonus</td>
+                          <td id="mb1"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Ventes et Credits Etsy</td>
+                            <td id="vc1" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship1"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Céline</td>
+                            <td id="sc1" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Simon</td>
+                            <td id="ss1" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Said</td>
+                            <td id="sd1" ></td>
+                        </tr>
+                    </table>
+                  </td>
+                  <td id="chiffres2">
+                      <table>
+                        <tr>
+                            <td style="text-align:left">Objectif du mois </td>
+                            <td id="om2" ></td>
+                        </tr>
+                        <tr>
+                          <td style="text-align:left">Min Bonus</td>
+                          <td id="mb2" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Ventes et Credits Etsy</td>
+                            <td id="vc2" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship2"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Céline</td>
+                            <td id="sc2" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Simon</td>
+                            <td id="ss2" ></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Salaire Said</td>
+                            <td id="sd2" ></td>
+                        </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="graph0">
+                    <div class="chartBox">
+                      <canvas id="monthChart0"></canvas>
+                  </td>
+                  <td id="graph1">
+                    <div class="chartBox">
+                      <canvas id="monthChart1"></canvas>
+                  </td>
+                  <td id="graph2">
+                    <div class="chartBox">
+                      <canvas id="monthChart2"></canvas>
+                  </td>
+                </tr>
+              </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+            <!-- AVR / MAI / JUIN -->
+              <table>
+              <tr>
+                <td id="mois3" style="text-align:left"></td>
+                <td id="mois4" style="text-align:left"></td>
+                <td id="mois5" style="text-align:left"></td>
+              </tr>
+              <tr>
+                <td id="chiffres3">
+                    <table >
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om3" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb3" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="vc3" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship3">0</td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc3" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss3" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd3" ></td>
+                      </tr>
+                  </table>
+                </td>
+                <td id="chiffres4">
+                    <table>
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om4" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb4" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="vc4" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship4">0</td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc4" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss4" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd4" ></td>
+                      </tr>
+                  </table>
+                </td>
+                <td id="chiffres5">
+                    <table>
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om5" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb5" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="vc5" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship5"></td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc5" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss5" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd5" ></td>
+                      </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td id="graph3">
+                  <div class="chartBox">
+                    <canvas id="monthChart3"></canvas>
+                </td>
+                <td id="graph4">
+                  <div class="chartBox">
+                    <canvas id="monthChart4"></canvas>
+                </td>
+                <td id="graph5">
+                  <div class="chartBox">
+                    <canvas id="monthChart5"></canvas>
+                </td>
+              </tr>
+            </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+            <!-- JUL / AOU -- SEP -->
+            <table>
+              <tr>
+                <td id="mois6" style="text-align:left"></td>
+                <td id="mois7" style="text-align:left"></td>
+                <td id="mois8" style="text-align:left"></td>
+              </tr>
+              <tr>
+                <td id="chiffres6">
+                    <table>
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om6" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb6" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="vc6" ></td>
+                      </tr>
+                       <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship6"></td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc6" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss6" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd6" ></td>
+                      </tr>
+                  </table>
+                </td>
+                <td id="chiffres7">
+                    <table>
+                      <tr>
+                          <td>Objectif du mois </td>
+                          <td id="om7" ></td>
+                      </tr>
+                      <tr>
+                        <td>Min Bonus</td>
+                        <td id="mb7" ></td>
+                      </tr>
+                      <tr>
+                          <td>Ventes et Credits Etsy</td>
+                          <td id="vc7" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship7"></td>
+                        </tr>
+                      <tr>
+                          <td>Salaire Céline</td>
+                          <td id="sc7" ></td>
+                      </tr>
+                      <tr>
+                          <td>Salaire Simon</td>
+                          <td id="ss7" ></td>
+                      </tr>
+                      <tr>
+                          <td>Salaire Said</td>
+                          <td id="sd7" ></td>
+                      </tr>
+                  </table>
+                </td>
+                <td id="chiffres8">
+                    <table>
+                      <tr>
+                          <td>Objectif du mois </td>
+                          <td id="om8" ></td>
+                      </tr>
+                      <tr>
+                        <td>Min Bonus</td>
+                        <td id="mb8" ></td>
+                      </tr>
+                      <tr>
+                          <td>Ventes et Credits Etsy</td>
+                          <td id="vc8" ></td>
+                      </tr>
+                       <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship8"></td>
+                        </tr>
+                      <tr>
+                          <td>Salaire Céline</td>
+                          <td id="sc8" ></td>
+                      </tr>
+                      <tr>
+                          <td>Salaire Simon</td>
+                          <td id="ss8" ></td>
+                      </tr>
+                      <tr>
+                          <td>Salaire Said</td>
+                          <td id="sd8" ></td>
+                      </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td id="graph6">
+                  <div class="chartBox">
+                    <canvas id="monthChart6"></canvas>
+                </td>
+                <td id="graph7">
+                  <div class="chartBox">
+                    <canvas id="monthChart7"></canvas>
+                </td>
+                <td id="graph8">
+                  <div class="chartBox">
+                    <canvas id="monthChart8"></canvas>
+                </td>
+              </tr>
+            </table>  
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+            <!-- OCT / NOV / DEC -->
+          <table>
+              <tr>
+                <td id="mois9" style="text-align:left"></td>
+                <td id="mois10" style="text-align:left"></td>
+                <td id="mois11" style="text-align:left"></td>
+              </tr>
+              <tr>
+                <td id="chiffres9">
+                    <table>
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om9" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb9" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="vc9" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship9"></td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc9" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss9" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd9" ></td>
+                      </tr>
+                  </table>
+                </td>
+                <td id="chiffres10">
+                    <table>
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om10" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb10" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="v10" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship10"></td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc10" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss10" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd10" ></td>
+                      </tr>
+                  </table>
+                </td>
+                <td id="chiffres11">
+                    <table>
+                      <tr>
+                          <td style="text-align:left">Objectif du mois </td>
+                          <td id="om11" ></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:left">Min Bonus</td>
+                        <td id="mb11" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Ventes et Credits Etsy</td>
+                          <td id="vc11" ></td>
+                      </tr>
+                      <tr>
+                            <td style="text-align:left">Shipping supp</td>
+                            <td id="ship11"></td>
+                        </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Céline</td>
+                          <td id="sc11" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Simon</td>
+                          <td id="ss11" ></td>
+                      </tr>
+                      <tr>
+                          <td style="text-align:left">Salaire Said</td>
+                          <td id="sd11" ></td>
+                      </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td id="graph9">
+                  <div class="chartBox">
+                    <canvas id="monthChart9"></canvas>
+                </td>
+                <td id="graph10">
+                  <div class="chartBox">
+                    <canvas id="monthChart10"></canvas>
+                </td>
+                <td id="graph11">
+                  <div class="chartBox">
+                    <canvas id="monthChart11"></canvas>
+                </td>
+              </tr>
+            </table> 
+        </td>
+      </tr>
+
+      </table> 
+
+
+    <div class="homePage">
+        <div class="homePageLeft"></div>
+        <div  id="tachesTableId" class="homePageCenter">
+        </div>
+        <div class="homePageRight"></div>             
+    </div>
+
+    
+  </body>
+  <?!= include("SoukWebAppMain-js"); ?>
+    <?!= include("souk-js"); ?>
+    <?!= include("popup-js"); ?>
+</html>

@@ -1,0 +1,62 @@
+<script>
+    
+    function requestAllPendingOrders()
+    {
+      hideAllAlerts()
+      if ( $('#ordersTableId').css('display') == 'block' )
+      {
+          $('#ordersTableId').hide()
+          return true;
+      }
+
+      showProgress("");
+      $('#ordersTableId').hide()
+      
+      //Request data to server for this new scope
+      //==========================================
+      
+      google.script.run.withSuccessHandler(ordersHandler).orders_getAllPendingTransactionsForSoukLight();
+      return true;
+    }
+
+    function ordersHandler(allOrders)
+    {
+        let myData = JSON.parse(allOrders);
+
+        hideAllAlerts();
+        
+        $('#ordersTableId').DataTable(   
+                    {
+                      "pageLength": 100,
+                      data: myData,
+                      columns: [
+                        {"title":"Id Cmd"},
+                        {"title":"Date Cmd"},
+                        {"title":"Email client"},
+                        {"title":"Nom client"},
+                        {"title":"Article"},
+                        {"title":"Quantité"},
+                        {"title":"Prix"},
+                        {"title":"Status"}
+                      ],
+                      rowGroup: {myData: [0, 2]}
+                    });
+          
+          $('#ordersTableId').show();
+
+    }
+
+    function handleSubmit()
+    {
+      
+    }
+
+    function closeMe(data)
+    {
+
+      if ( data != "ok" )
+      { 
+        showError("<h2>Une erreur est survenue: " + data + "</h2>");
+      }
+    }
+  </script>

@@ -1,0 +1,503 @@
+ <script>
+
+      window.addEventListener('load', preventFormSubmit);
+      document.getElementById("formTdId").style.display="none";
+      document.getElementById("assigneeScopeId").value = 'All';
+
+      initInterface();
+
+      function initInterface()
+      {
+          document.getElementById("saisirFrais").style.display="block";
+          document.getElementById("dateMAJId").style.display="block";
+
+          if (isGranted("globalViewId_1"))
+          {
+            document.getElementById("globalViewId_1").style.display="block";
+            document.getElementById("globalViewGanttsId_1").style.display="block";
+          }
+          else
+          {
+            document.getElementById("globalViewId_1").style.display="none";
+            document.getElementById("globalViewGanttsId_1").style.display="none";
+          }
+
+          if (isGranted("globalViewId_2"))
+          {
+            document.getElementById("globalViewId_2").style.display="block";
+            document.getElementById("globalViewGanttsId_2").style.display="block";
+          }
+          else
+          {
+            document.getElementById("globalViewId_2").style.display="none";
+            document.getElementById("globalViewGanttsId_2").style.display="none";
+          }
+
+
+          if (isGranted("reducedViewId"))
+            document.getElementById("reducedViewId").style.display="block";
+          else
+            document.getElementById("reducedViewId").style.display="none";
+
+          if (isGranted("salaires") )
+            document.getElementById("tableViewSalairesId").style.display="block";
+          else
+            document.getElementById("tableViewSalairesId").style.display="none";
+          
+          if ( isGranted("benefices") )
+            document.getElementById("beneficesDuMoisId").style.display="block";
+          else
+            document.getElementById("beneficesDuMoisId").style.display="none";
+
+          if ( isGranted("pilotage"))
+            document.getElementById("tableauPilotageViewId").style.display="block";
+          else
+            document.getElementById("tableauPilotageViewId").style.display="none";
+
+          if ( isGranted("saisirTaches"))
+            document.getElementById("saisirTachesViewId").style.display="block";
+          else
+            document.getElementById("saisirTachesViewId").style.display="none";
+
+      }
+
+      function isGranted(zone)
+      {
+          if (zone=="globalViewId_1" || zone=="globalViewId_2" ||  
+              zone=="salaires" || zone=="benefices" || zone=="pilotage" || zone=="saisirTaches" || zone == "globalView")
+          {
+            let collab = document.getElementById("activeEmailId").innerHTML;
+
+            /*if (collab == "said182008@gmail.com" || collab.indexOf("said") != -1 || collab.indexOf("Said") != -1 )
+                return false;
+              else
+                return true;
+            */
+
+
+            if (collab == "gianfranco.oldani@gmail.com" || collab.indexOf("gianfranco") != -1 || collab.indexOf("Gianfranco") != -1 )
+                return false;
+            else
+                return true;
+          }
+
+          if (zone=="reducedViewId" ) 
+          {
+            let collab = document.getElementById("activeEmailId").innerHTML;
+
+            /*if (collab == "said182008@gmail.com" || collab.indexOf("said") != -1 || collab.indexOf("Said") != -1 )
+                return true;
+              else
+                return false;
+            */
+
+
+            if (collab == "gianfranco.oldani@gmail.com" || collab.indexOf("gianfranco") != -1 || collab.indexOf("Gianfranco") != -1 )
+                return true;
+            else
+                return false;
+          }
+
+
+
+      }
+
+
+      function salairesTableFetch()
+      {
+        if ( isGranted("salaires") )
+        {
+          if ( document.getElementById("salairesTableId").style.display=="block")
+          {
+            document.getElementById("msgRunning").style.display="none";
+            document.getElementById("salairesTableId").style.display="none";
+          }
+          else
+          {
+            document.getElementById("msgRunning").style.display="block";
+            document.getElementById("salairesTableId").style.display="none";
+            google.script.run.withSuccessHandler(salairesButtonHandler).getSalairesTable();
+          }
+        }
+        else{
+          document.getElementById("tableViewSalairesId").style.display="none";
+          
+        }
+      }
+
+      function salairesButtonHandler(data) {
+            var td = document.getElementById('salairesTableId');
+            td.innerHTML = data;
+
+            document.getElementById("msgRunning").style.display="none";
+            document.getElementById("salairesTableId").style.display="block";
+      }
+
+      function tachesTableFetch(assignee,force)
+      {
+        let actualAssignee = document.getElementById("assigneeScopeId").value;
+
+        if ( document.getElementById("tachesTableId").style.display=="block")
+        {
+          if ( assignee == actualAssignee &&!force)
+          {
+            document.getElementById("msgRunningTaches").style.display="none";
+            document.getElementById("tachesTableId").style.display="none";
+            document.getElementById("formTdId").style.display="none";
+            return true;
+          }
+        }
+
+        document.getElementById("msgRunningTaches").style.display="block";
+        document.getElementById("tachesTableId").style.display="none";
+        document.getElementById("formTdId").style.display="none";
+        
+        let scope = {};
+        scope.assignee = assignee;
+        document.getElementById("assigneeScopeId").value = assignee;
+
+        google.script.run.withSuccessHandler(tachesButtonHandler).getWebTasksTableData(scope);
+
+
+      }
+
+      function tachesButtonHandler(data) 
+      {
+            var td = document.getElementById('tachesTableId');
+            td.innerHTML = data;
+
+            document.getElementById("msgRunningTaches").style.display="none";
+            document.getElementById("tachesTableId").style.display="block";
+      }
+      
+
+      /* ===================== GANTTS START==========================================*/
+      function drawChart(tasksData) 
+      {
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('string', 'Resource');
+        data.addColumn('date', 'Start Date');
+        data.addColumn('date', 'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
+
+        data.addRows(tasksData);
+
+        var options = 
+        {
+          //height: 800,
+          //width: 2000,
+    gantt: {
+      criticalPathEnabled: false, // Critical path arrows will be the same as other arrows.
+      arrow: {
+        angle: 100,
+        width: 1,
+        color: '#1E90FF',
+        radius: 0
+      },
+      labelStyle: {
+        fontName: 'Roboto Mono',
+        fontSize: 12,
+        color: '#000000'
+      },
+      barCornerRadius: 2,
+      backgroundColor: {
+        fill: 'transparent',
+      },
+      innerGridHorizLine: {
+        stroke: '#ddd',
+        strokeWidth: 0,
+      },
+      innerGridTrack: {
+        fill: 'cccccc'
+      },
+      innerGridDarkTrack: {
+        fill: '#dddddd'
+      },
+      percentEnabled: true, 
+      // percentStyle: {
+      //   fill:  'black',
+      // },
+      shadowEnabled: false
+    }
+  };
+
+        var chart = new google.visualization.Gantt(document.getElementById("ganttsTableId"));
+
+        chart.draw(data, options);    
+      }
+
+      function ganttsTableFetch(assignee,force)
+      {
+        if ( document.getElementById("ganttsTableId").style.display=="block" )
+          document.getElementById("ganttsTableId").style.display="none";
+        else
+        {
+          
+          document.getElementById("ganttScopeId").value = assignee;
+
+          google.charts.load('current', {'packages':['gantt']});
+          google.charts.setOnLoadCallback(ganttsFetchData);
+        }
+      }
+
+      function ganttsFetchData()
+      {
+        let scope = {};
+        scope.assignee = document.getElementById("ganttScopeId").value;
+
+        document.getElementById("ganttsRunningTaches").style.display="block";
+        google.script.run.withSuccessHandler(ganttsDataHandler).getGantsCharts(scope);
+      }
+
+      function ganttsDataHandler(tasksData) 
+      {
+        //alert("TASK DATA: " + tasksData);
+        document.getElementById("ganttsRunningTaches").style.display="none";
+        document.getElementById("ganttsTableId").style.display="block";
+
+        let json = JSON.parse(tasksData);
+        
+        let allData = [];
+    
+        for(let i = 0 ; i< json.length; i++)
+        {
+          let vals = json[i];
+
+          let oneRow = [];
+          oneRow.push(vals[0]);
+          oneRow.push(vals[1]);
+          oneRow.push(vals[2]);
+         
+          oneRow.push(vals[3]);
+
+          oneRow.push(new Date(parseInt(vals[4][0]),parseInt(vals[4][1]),parseInt(vals[4][2]),0,0,0));
+          oneRow.push(Number(vals[5]));
+          oneRow.push(Number(vals[6]));
+          oneRow.push(vals[7]);
+
+          allData.push(oneRow);
+
+        }
+
+        
+        if ( allData.length  > 0 )
+          drawChart(allData);
+        else
+          document.getElementById("ganttsTableId").innerHTML = "<h3>Aucunes tâches assignées à cette ressource</h3>";
+      }
+      /* ===================== GANTTS END==========================================*/
+      
+
+      /*===================================================*/
+        // Prevent forms from submitting.
+      function preventFormSubmit() 
+      {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+      }
+      
+      
+
+      function handleFormSubmit(formObject) 
+      {
+        if ( validateForm() )
+        {
+          document.getElementById("msgRunningTaches").style.display="block";
+          google.script.run.withSuccessHandler(updateTasksList).processTaskForm(formObject);
+        }
+      }
+
+      function updateTasksList() 
+      {
+        tachesTableFetch(document.getElementById("assigneeScopeId").value, true);
+      }
+
+      
+      function setupTask(taskValues)
+      {
+        /*
+        {listAssignee=[Céline, Simon, Said, Céline, Simon, Céline,Said, Simon,Said, Céline,Simon,Said, IT], listUrgency=[Faible, Moyenne, Forte], listStatuses=[Créée, En cours, Terminée, Fermée, Abandonnée], Task={TaskNo=null, TaskRow=2.0, Status=En cours, Description=Ceci est la nouvellke descritption, Attrib=Simon, Title=Calendrier editorial reseaux sociaux, Updated=Mon Jan 17 2022 20:10:36 GMT+0000 (heure moyenne de Greenwich)$$Simon$$, Urgency=Faible, FinPire=Thu Mar 10 08:00:00 GMT+00:00 2022, AssigneeEmail=oldanisim@gmail.com, FinEspere=Mon Feb 28 08:00:00 GMT+00:00 2022, Created=Sun Jan 16 2022 21:45:23 GMT+0000 (Greenwich Mean Time)}}*/
+            //alert(taskData);
+
+            let taskData = JSON.parse(taskValues);
+            
+            document.getElementById("msgRunningTaches").style.display="none";
+            document.getElementById("formTdId").style.display="block";
+            document.getElementById("showTid").innerHTML = "Edition de la tâche no: " + taskData.Task.TaskNo ;
+            document.getElementById("taskId").value=taskData.Task.TaskNo;
+            document.getElementById("titleId").value=taskData.Task.Title;
+            document.getElementById("descriptionId").value=taskData.Task.Description;
+
+            document.getElementById("bestFinId").value= taskData.Task.FinEspere; 
+            document.getElementById("deadlineId").value= taskData.Task.FinPire;
+            document.getElementById("percentId").value= taskData.Task.Percent;
+            
+            let dropdownStatuses = document.getElementById("taskStatuses");
+            if (dropdownStatuses && dropdownStatuses.options.length==0) 
+            {
+                for (var i=0; i < taskData.listStatuses.length;i++)
+                {    
+                    var optn = document.createElement("OPTION");
+                    optn.text = taskData.listStatuses[i];
+                    optn.value = taskData.listStatuses[i];
+                    dropdownStatuses.options.add(optn); 
+                }
+            }
+            dropdownStatuses.value=taskData.Task.Status;
+
+            let urgences = taskData.listUrgency;
+            let dropdownUrgency = document.getElementById("taskUrgency");
+            if (dropdownUrgency && dropdownUrgency.options.length==0) 
+            {
+                //$("#taskUrgency").empty();
+                for (var i=0; i < taskData.listUrgency.length;i++)
+                {    
+                    var optn = document.createElement("OPTION");
+                    optn.text = taskData.listUrgency[i];
+                    optn.value = taskData.listUrgency[i];;
+                    dropdownUrgency.options.add(optn); 
+                }
+            }
+            dropdownUrgency.value = taskData.Task.Urgency;
+
+
+            let attrib = [""];
+            for (let i=0;i<taskData.listAssignee.length;i++)
+              attrib.push(taskData.listAssignee[i]);
+
+            let attribDropDown  = document.getElementById("taskAttrib");
+            let updatedByDrop   = document.getElementById("taskupdBy");
+      
+            if (attribDropDown && attribDropDown.options.length==0 ) 
+            {
+                for (let i=0; i < attrib.length;i++)
+                {    
+                    let optn1 = document.createElement("OPTION");
+                    optn1.text = attrib[i];
+                    optn1.value = attrib[i];
+                    attribDropDown.options.add(optn1); 
+
+                    optn3 = document.createElement("OPTION");
+                    optn3.text = attrib[i];
+                    optn3.value = attrib[i];
+                    updatedByDrop.options.add(optn3); 
+                }
+            }
+
+            //Categories
+            let categoryDropDown = document.getElementById("categories");
+
+            if (categoryDropDown && categoryDropDown.options.length==0 ) 
+            {
+                for (let i=0; i < taskData.listCategories.length;i++)
+                {    
+                    let optn = document.createElement("OPTION");
+                    optn.text = taskData.listCategories[i];
+                    optn.value = taskData.listCategories[i];
+                    categoryDropDown.options.add(optn); 
+
+                }
+            }        
+          return true;
+      }      
+
+
+      function populateTaskForm(taskId)
+      {
+        /*google.script.run.withSuccessHandler(onSuccess)
+          .getUnreadEmails();*/
+          window.scrollTo(0, 0);
+          document.getElementById("msgRunningTaches").style.display="block";
+          google.script.run.withSuccessHandler(setupTask).getTaskDetails(taskId);
+      }
+  
+      function deleteTask(taskId)
+      {
+        confirmDelete(taskId);
+        /*
+        if ( confirmAction()  )
+        {
+          document.getElementById("msgRunningTaches").style.display="block";
+          google.script.run.withSuccessHandler(updateTasksList).processDeleteTask(taskId);
+        }*/
+      }
+
+
+      /*======================= ACTION = DELETE TASK ==========================*/
+      function doDeleteTask()
+      {
+          let taskId = document.getElementById("task2Delete").value;
+          document.getElementById("task2Delete").value='';
+
+          janelaPopUp.fecha("soukAlert");
+          document.getElementById("msgRunningTaches").style.display="block";
+          google.script.run.withSuccessHandler(updateTasksList).processDeleteTask(taskId);
+          
+      }
+
+      function cancelDeleteTask()
+      {
+          let taskId = document.getElementById("task2Delete").value;
+          document.getElementById("task2Delete").value='';
+          janelaPopUp.fecha("soukAlert");
+      }
+
+      function confirmDelete(taskId) 
+      {
+        document.getElementById("task2Delete").value=taskId;
+        soukSimpleConfirmOkCancel("Information","Merci de confirmer l'effacement de la tâche...",cancelDeleteTask,doDeleteTask);
+      }
+
+      /* ================================================================================*/
+
+      function validateForm() 
+      {
+          let x = document.forms["myForm"]["updatedBy"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci de préciser votre identité dans le champs Modif par...");
+            return false;
+          }
+
+          x = document.forms["myForm"]["attribue"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci d'attribuer cette tâche...");
+            return false;
+          }
+
+          x = document.forms["myForm"]["urgency"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci de préciser un niveau d'urgence...");
+            return false;
+          }
+
+          x = document.forms["myForm"]["status"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci de préciser un status d'avancement...");
+            return false;
+          }
+          return true;
+        }
+
+        function showLogiqueSalaires()
+        {
+            if ( document.getElementById("logiqueSalaires").style.display=="none")
+              document.getElementById("logiqueSalaires").style.display="block";
+            else
+              document.getElementById("logiqueSalaires").style.display="none";
+        }
+
+        
+    </script>

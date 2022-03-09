@@ -1,0 +1,373 @@
+
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="format-detection" content="telephone=no" /> <!-- disable auto telephone linking in iOS -->
+		
+	
+		<!--
+			Outlook Conditional CSS
+			These two style blocks target Outlook 2007 & 2010 specifically, forcing
+			columns into a single vertical stack as on mobile clients. This is
+			primarily done to avoid the 'page break bug' and is optional.
+			More information here:
+			http://templates.mailchimp.com/development/css/outlook-conditional-css
+		-->
+		<!--[if mso 12]>
+			<style type="text/css">
+				.flexibleContainer{display:block !important; width:100% !important;}
+			</style>
+		<![endif]-->
+		<!--[if mso 14]>
+			<style type="text/css">
+				.flexibleContainer{display:block !important; width:100% !important;}
+			</style>
+		<![endif]-->
+    <?!= include("popup-css"); ?>
+    <?!= include("SoukWebAppMain-css"); ?>
+    
+
+         <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!-- Compiled and minified CSS -->
+
+      <!-- Icons -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+      
+	</head>
+	<body bgcolor="#FFFFFF" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0" onload="populateTaskForm();">
+		<!-- CENTER // -->
+		<!--
+		1.  The center tag should normally put all the
+			content in the middle of the page.
+			I added "table-layout: fixed;" style to force
+			yahoomail which by default put the content left.
+		2.  For hotmail and yahoomail, the contents of
+			the email starts from this center, so we try to
+			apply necessary styling e.g. background-color.
+		-->
+		<center style="background-color:#E1E1E1;">
+			<table border="0"  cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="table-layout: fixed;max-width:100% !important;width: 100% !important;min-width: 100% !important;">
+        
+				<tr>
+					<td align="center" valign="top" id="bodyCell">
+
+						<!---- HEADER ---->
+						<table bgcolor="#FFFFFF"  border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+
+							<!-- MODULE ROW // TITLE -->
+							<tr>
+								<td align="center" valign="top">
+									<!-- CENTERING TABLE // -->
+									<table border="0" cellpadding="0" cellspacing="0" width="60%" style="color:#FFFFFF;" bgcolor="#ECDBC8">
+										<tr>
+											<td align="center" valign="top">
+												<table border="0" cellpadding="0" cellspacing="0" width="100%" class="flexibleContainer">
+													<tr>
+														<td align="center" valign="top" width="100%" class="flexibleContainerCell">
+
+															<!-- CONTENT TABLE // -->
+															<!--
+															The content table is the first element
+																that's entirely separate from the structural
+																framework 
+															-->
+															<table border="0" cellpadding="20" cellspacing="0"  style="width:100%;" >
+                               
+                                <div id="activeEmailId" hidden><?= activeEmail ?></div>
+                                <tr>
+                                  	<td align="center" valign="bottom" class="textContent" colspan="2">
+                    <img src="https://drive.google.com/thumbnail?id=1ar18KpcFHiatKwoJ43SCM0foyXOCrfC9" width="400" height="200">
+                    </td>
+                                </tr>
+                                <tr>
+                                  	<td align="center" valign="bottom" class="textContent" colspan="2">
+                                      <h3 style="color:#565149;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:35px;font-weight:normal;   margin-bottom:1px;text-align:center;">
+                                  Tâche soukcircus no <?= taskNumberTitle ?>
+                                    </h3>
+                                  </td>
+                                </tr>
+                              
+															</table>
+															<!-- // CONTENT TABLE -->
+														</td>
+													</tr>
+												</table>
+												<!-- // FLEXIBLE CONTAINER -->
+											</td>
+										</tr>
+									</table>
+									<!-- // CENTERING TABLE -->
+								</td>
+							</tr>
+
+              <!-- BLANK LINE -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="emailButton" style="background-color: #FFFFFF;">
+                <tr>
+                  <td align="center" valign="middle" class="buttonContent" 
+                      style="padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;">
+                  </td>
+                </tr>
+              </table>
+              <!-- BLANK LINE -->
+
+
+ 							<!-- MODULE ROW //  TÂCHES -->
+							<tr>
+								<td align="center" valign="top">
+									<!-- CENTERING TABLE // -->
+									<table border="0" cellpadding="0" cellspacing="0" width="100%">
+										<tr style="padding-top:0;">
+											<td align="center" valign="top">
+												<!-- FLEXIBLE CONTAINER // -->
+												<table border="0" cellpadding="10" cellspacing="0" width="100%" class="flexibleContainer">
+													<tr>
+														<td style="padding-top:0;" align="center" valign="top" width="100%" class="flexibleContainerCell">
+                              <!-- BLANK LINE -->
+                              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="emailButton" style="background-color: #FFFFFF;">
+																<tr>
+																	<td align="center" valign="middle" class="buttonContent" 
+                                      style="padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;">
+																	</td>
+																</tr>
+                              </table>
+                              <!-- FORM LINE -->
+                              <table border="0" cellpadding="0" cellspacing="0" width="60%" class="emailButton" >
+                                <tr>
+                                  <td id="msgRunningTaches" align="center" valign="middle" class="buttonContent" 
+                                                    style="padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px; background-color:Orange;" 
+                                                            hidden><h2>Work in progress, patientez...</h2>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td id="formTdId" align="center" valign="middle" >
+                                    <form id="myForm" onsubmit="handleFormSubmit(this)" style="background-color:#9bd184">
+                                      <input  type="text" name="taskNo" id="taskId" hidden></input>
+                                      <input  type="text" name="threadRow" id="threadRowId" hidden></input>
+                                      <table style="width:100%;background-color:#ECDBC8">
+                                          <tr>
+                                            <td>
+                                              
+                                                <table  style="width='100%';align:center;background-color:#ffebcd;" >  
+                                                    <tr><td colsapn="6">&nbsp;</td></tr>                                                     
+                                                    
+                                                    <tr>
+                                                       
+                                                        <td><label for="taskupdBy">Mis à jour par</label>
+                                                            <select id="taskupdBy" name="updatedBy" required style="width:100%;border:0px"></select>
+                                                        </td>
+                                                      
+                                                        <td><label for="taskAttrib">Attribué à</label>
+                                                            <select id="taskAttrib" name="attribue" required style="width:100%;border:0px"></select>
+                                                        </td>
+                                                        
+                                                        <td><label for="categories">Catégorie</label>
+                                                            <select id="categories" name="category" style="width:100%;border:0px"></select></td>
+                                                       
+                                                    </tr>
+                                                    <tr><td colspan="6">&nbsp;</td></tr>
+                                                    <tr>
+                                                       
+                                                        <td><label for="taskUrgency">Importance</label>
+                                                             <select id="taskUrgency" name="urgency" style="width:100%;border:0px"></select>
+                                                            </td> 
+                                                              
+                                                        <td><label for="taskUrgency">Status d'avancement</label>
+                                                            <select id="taskStatuses" name="status" style="width:100%;border:0px"></select>
+                                                            </td>
+                                                        
+                                                        <td>
+                                                          <label for="percentId">% d'accomplissement</label>
+                                                          <input type="number" min="0" max="100"  id="percentId" name="percent" style="width:100%;">
+                                                        </td>  
+                                                         
+                                                    </tr>
+                                                    <tr><td colspan="7">&nbsp;</td></tr>
+                                                    <tr>
+                                                        <td><label for="dateDebutId">Date de début effective</label>
+                                                            <input type="date" id="dateDebutId" name="dateDebut" style="width:100%;border:0px" readonly></td>
+
+                                                        <td><label for="bestFinId">Date de fin attendue</label>
+                                                            <input type="date" id="bestFinId" name="bestFin" style="width:100%;border:0px"></td>
+                                                        
+                                                        <td><label for="deadlineId">Date de fin au pire</label>
+                                                             <input type="date" id="deadlineId" name="deadline" style="width:100%;border:0px"></td>
+                                                        
+                                                    </tr>
+                                                    <tr><td colspan="7">&nbsp;</td></tr>
+                                                    <tr>
+                                                        <td><label for="dateFinEffecId">Date de fin effective</label>
+                                                            <input type="date" id="dateFinEffecId" name="dateFinEffec" style="width:100%;border:0px" readonly></td>
+
+                                                        <td>&nbsp;</td>
+                                                        
+                                                        <td>&nbsp;</td>
+                                                        
+                                                    </tr>
+                                                    <tr><td colspan="6">&nbsp;</td></tr>
+                                                     
+                                                    <tr>
+                                                        <td colspan="6">
+                                                          <label for="titleId">Description courte</label>
+                                                          <textarea rows="1" cols="50" id="titleId" name="titleTask" style="width:100%;">
+                                                        </textarea>
+                                                      </td>                                                             
+                                                    </tr>  
+                                                                                                      
+                                                    <tr>
+                                                        <td colspan="6">
+                                                          <label for="descriptionId">Description détaillée</label>
+                                                          <textarea rows="4" cols="50" id="descriptionId" name="descTask" style="width:100%;">
+                                                        </textarea>
+                                                      </td>                                                             
+                                                    </tr>
+                                                        
+                                                    <tr>                                   
+                                                        <td style="width:40%;">&nbsp;</td>                 
+                                                          <td style="text-align:center;text-align:center;width:20%;border:2px">
+                                                            <button  type="submit"><i class="material-icons">done_all</i></button>
+                                                        </td>
+                                                        <td style="width:40%;">&nbsp;</td>
+                                                    </tr>
+
+                                                    <tr><td colspan="6"><hr class="dashed"></td></tr>
+
+                                                    <tr>
+                                                      <td style="width:40%;">&nbsp;</td>  
+                                                      <td style="text-align: center;valign:center; width:20%; font-size:25px">Fil de discussion</td> 
+                                                      <td style="width:40%;">&nbsp;</td>                                                      
+                                                    </tr>
+                                                    <tr>                                                
+                                                      <td style="align:center;width:25%;">
+                                                          <button type="button" onclick="addNewThread('DiscussionsTblId')">
+                                                          <i class='material-icons'>add_circle_outline</i> </button>
+                                                      </td>
+                                                      
+                                                      <td style="text-align:center;width:25%;">
+                                                          <button type="button" id="downId" onclick="toogleDiscussions()" style="display:block">
+                                                          <i class='material-icons'>arrow_downward</i> </button>
+                                    
+                                                          <button type="button" id="upId" onclick="toogleDiscussions()" style="display:none">
+                                                          <i class='material-icons'>arrow_upward</i> </button>
+                                                      </td>
+                                                      
+                                                      <td style="text-align:center;width:25%;">
+                                                          <button type="button" id="downId" onclick="refreshDiscussion()">
+                                                          <i class='material-icons'>refresh</i> </button>
+                                                      </td>
+                                                      
+                                                      <td id="threadFlagId" style="text-align:center;width:25%;" hidden>
+                                                          <i class='material-icons'>flag</i>
+                                                      </td>
+                                                    </tr>
+                                                </table>
+                                             
+                                            </td>
+                                          </tr> 
+                                      </table>
+                                      <table style="width:100%;background-color:#ECDBC8">
+                                        <tr><td>&nbsp;</td></tr> 
+                                      </table>
+                                      <!-- ===== DISCUSSIONS ========== -->
+                                      <input id="nThreadsId" hidden/>  
+                                      <table>
+                                         <tr id="noDiscussionsId" hidden><td>Aucun échanges pour l'instant...</td></tr>
+                                        
+                                        <tr>
+                                          <td>
+                                            <table id='DiscussionsTblId'  style="width='100%'; background-color:#ECDBC8; display:none" > 
+                                            <!-- ===== HERE ARE THE THREADS ========== -->
+                                                
+                                            </table> 
+                                          </td>
+                                        </tr>
+                                      </table> 
+                                      <!-- ===== DISCUSSIONS ========== -->
+                                    </form>
+                                  </td>
+                                </tr>
+														  </table>
+ 
+                             <!-- BLANK LINE -->
+                              <table border="0" cellpadding="0" cellspacing="0" width="60%" class="emailButton" style="background-color: #FFFFFF;">
+																<tr>
+																	<td align="center" valign="middle" class="buttonContent" 
+                                      style="padding-top:5px;padding-bottom:5px;padding-right:5px;padding-left:5px;">
+																	</td>
+																</tr>
+                              </table>
+														</td>
+													</tr>
+												</table>
+												<!-- // FLEXIBLE CONTAINER -->
+											</td>
+										</tr>
+									</table>
+									<!-- // CENTERING TABLE -->
+								</td>
+							</tr>
+
+					
+						<!-- // END -->
+
+
+
+						<!-- FOOTER // -->
+							<tr>
+								<td align="center" valign="top">
+									<!-- CENTERING TABLE // -->
+									<table border="0" cellpadding="0" cellspacing="0" width="60%" style="color:#FFFFFF;" bgcolor="#E1E1E1">
+										<tr>
+											<td align="center" valign="top">
+												<table border="0" cellpadding="0" cellspacing="0" width="100%" class="flexibleContainer">
+													<tr>
+														<td align="center" valign="top" width="100%" class="flexibleContainerCell">
+
+															<!-- CONTENT TABLE // -->
+															<!--
+															The content table is the first element
+																that's entirely separate from the structural
+																framework 
+															-->
+															<table border="0" cellpadding="20" cellspacing="0"  style="width:100%;" >
+                                
+                                <div id="activeEmailId" hidden><?= activeEmail ?></div>
+                                <tr>
+                                  	<td align="center" valign="bottom" class="textContent" colspan="2">
+                                      <div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#828282;text-align:center;line-height:120%;">
+																			<div>Soukcircus<a href="http://www.soukcircus.com" target="_blank" style="text-decoration:none;color:#828282;"><span style="color:#828282;"></span></a>. All&nbsp;rights&nbsp;reserved.</div>
+																		</div>
+
+                                  </td>
+                                </tr>
+                          
+															</table>
+															<!-- // CONTENT TABLE -->
+														</td>
+													</tr>
+												</table>
+												<!-- // FLEXIBLE CONTAINER -->
+											</td>
+										</tr>
+									</table>
+									<!-- // CENTERING TABLE -->
+								</td>
+							</tr>
+						<!-- // END -->
+            	</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+    <div class="taskId" hidden><?= taskNumber ?></div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  
+	</body>
+  <?!= include("SoukTask-js");?>
+  <?!= include("popup-js"); ?>
+</html>

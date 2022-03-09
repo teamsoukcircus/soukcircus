@@ -1,0 +1,759 @@
+<style>
+@import url('https://fonts.googleapis.com/css?family=Raleway:300,400,700,900');
+
+hr.dashed 
+{
+  border-top: 3px dashed;
+  color:gray;
+  width:1200px;
+}
+
+body {
+  //background: rgb(58,58,58);
+  background-color: #fffffe;
+  color: #565149;
+  font-family: Roboto, Helvetica-neue, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  padding: 20px;
+  color:#565149;
+}
+
+.topRow
+{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  vertical-align: middle
+}
+
+
+section-left 
+{
+  float: left;
+  color: #565149;
+  padding: 10px;
+  width:50%;
+}
+
+section-right 
+{
+  float: left;
+  color: #565149;
+  padding: 10px;
+  width:50%;
+}
+
+section-right-right 
+{
+  float: left;
+  color: #565149;
+  padding: 10px;
+  width:80%;
+}
+
+section-right-left 
+{
+  float: left;
+  color: #565149;
+  padding: 10px;
+  width:20%;
+}
+
+section-right div 
+{
+  float: left;
+  color: #565149;
+  padding: 10px;
+}
+
+section 
+{
+  color: #565149;
+  padding: 10px;
+}
+
+section .div {
+  padding: 5px;
+}
+
+section .article {
+  float: left;
+  padding: 5px;
+}
+
+section .article_row {
+  padding: 5px;
+  width: 150px;
+}
+
+section .article_color {
+  width: 200px;
+  height:100px;
+  padding: 5px;
+}
+
+
+article {
+  padding: 5px;
+}
+
+.orderTables{
+  width:80%;
+  margin:auto;
+}
+
+div {
+  color: #565149;
+  display:block;
+  margin: auto;
+}
+
+.soukError{
+  background-color: red;
+  color:white; 
+  display:block;
+  margin: auto;
+  height: 60px;
+  text-align: center;
+  padding-top: 10px;
+  font-size: 25px;
+}
+
+.soukRunning{
+  background-color: orange;
+  color:white; 
+  display:block;
+  margin: auto;
+  height: 60px;
+  text-align: center;
+  padding-top: 10px;
+  font-size: 25px;
+}
+
+.soukMessage{
+  background-color: green;
+  color:white; 
+  display:block;
+  margin: auto;
+  height: 60px;
+  text-align: center;
+  padding-top: 10px;
+  font-size: 25px;
+}
+
+
+footer {
+  background: #555;
+  padding: 10px 20px;
+}
+
+
+.navbar {
+  align-items: center;
+  position: relative;
+  padding: 0.5rem 1rem;
+  justify-content: left;
+  width: 100%;
+  background-color: #555;
+  overflow: auto;
+}
+
+.navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  position: -webkit-sticky; /* Safari */
+  top: 0;
+}
+
+.navbar img {
+  float: left;
+  text-decoration: none;
+  width:100px;
+  height:100px;
+}
+
+.navbar a {
+  float: left;
+  padding: 8px;
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.navbar a:hover {
+  background-color: #000;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+
+@media screen and (max-width: 500px) {
+  .navbar a {
+    float: none;
+    display: block;
+  }
+}
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border-width: 0px;
+  border: none;
+  color: white;
+  padding-top: 12px;
+  padding-right: 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 2px 2px;
+  cursor: pointer;
+  width: 220px;
+  height: 50px;
+}
+
+
+.button1 {border-radius: 2px;}
+.button2 {border-radius: 4px;}
+.button3 {border-radius: 8px;}
+.button4 {border-radius: 12px;}
+.button5 {border-radius: 50%;}
+
+
+
+
+* {
+	box-sizing: border-box;
+	transition: all ease-in-out 250ms;
+}
+
+body {
+	margin: 0;
+	font-family: 'Raleway', sans-serif;
+	text-align: center;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+.container {
+	width: 95%;
+	max-width: 70em;
+	margin: 0 auto;
+}
+
+.clearfix::after,
+section::after,
+footer::after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+
+/* Column system
+=================== */
+
+[class^=col-] {
+	width: 100%;
+	margin-top: 1em;
+}
+
+[class^=col-]:first-child {
+	margin-top: 0;
+}
+
+.col-1 {
+	width: 33.333334%;
+	float: left;
+}
+
+
+@media (min-width: 40rem) {
+
+	[class^=col-] {
+		float: left;
+		padding: 0 .5em;
+		margin-top: 0;
+	}
+
+	[class^=col-]:first-child {
+		padding-left: 0;
+	}
+
+	[class^=col-]:last-child {
+		padding-right: 0;
+	}
+
+	.col-3 {
+		width: 50%;
+	}
+
+	.col-1 {
+		width: 16.6666%;
+	}
+}
+
+
+
+
+
+/* typography
+=================== */
+
+h1 {
+	font-weight: 300;
+	font-size: 1.7rem;
+	margin-top: 0;
+}
+
+p {
+	margin-top: 0;
+	line-height: 1.5;
+}
+
+p:last-of-type {
+	margin-bottom: 0;
+}
+
+.title {
+	font-size: 2.5rem;
+	margin-bottom: 1.5em;
+	font-weight: 900;
+	margin-top: 1em;
+}
+
+.title span {
+	font-weight: 300;
+	display: block;
+	font-size: .9em;
+}
+
+.title-cta {
+	margin: 0 0 .5em;
+}
+
+.unstyled-list {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+@media (min-width:60rem) {
+
+	p {
+		font-size: 1.2rem;
+		line-height: 1.6;
+	}
+
+	.title {
+		font-size: 3.7rem;
+	}
+}
+
+/* buttons
+
+
+@media (min-width: 60rem) {
+	.button {
+		font-size: 1.5rem;
+	}
+}
+
+.button-small {
+	font-size: .7rem;
+	font-weight: 700;
+}
+
+.button-accent {
+	color: #00ff6c;
+	border-color: #00ff6c;
+}
+
+.button-accent:hover,
+.button-accent:focus {
+	background: #00ff6c;
+	color: #232323;
+}
+
+.button-dark {
+	color: #232323;
+	border-color: #232323;
+}
+
+.button-dark:hover,
+.button-dark:focus {
+	background: #232323;
+	color: #00ff6c;
+}
+
+*/
+/* Parallax
+=================== */
+
+.parallax--bg,
+.parallax--box {
+	transition: initial;
+}
+
+
+
+/* header
+=================== */
+
+header {
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: 1em;
+}
+
+nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+nav li {
+	display: inline-block;
+	margin: 1em;
+}
+
+nav a {
+	font-weight: 900;
+	text-decoration: none;
+	padding: .5em;
+	text-transform: uppercase;
+	color: white;
+	font-size: .8rem;
+}
+
+nav a:hover,
+nav a:focus {
+	color: #ddd;
+}
+
+@media (min-width:60rem) {
+	.logo {
+		float: left;
+	}
+
+	nav {
+		float: right;
+	}
+}
+
+
+/* hero-home
+=================== */
+
+.home-hero {
+	background-image: url(../img/hero-bg.jpg);
+	background-size: cover;
+	background-position: center;
+	padding: 10em 0;
+	color: #FFF;
+}
+
+@media (min-width: 60rem) {
+	.home-hero {
+		height: 100vh;
+		padding-top: 35vh;
+	}
+}
+
+
+/* hero-home
+=================== */
+
+.home-about-textbox {
+	background-color: #232323;
+	padding: 4em;
+	width: 100vw;
+	margin-left: -2.5%;
+	outline: 2px solid #00ff6c;
+	outline-offset: -2.5em;
+	color: #FFF;
+	position: relative;
+}
+
+.home-about-textbox h1 {
+	color: #00ff6c;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	top: .75em;
+	background: #232323;
+	padding: 0 .145em;
+}
+
+@media (min-width: 25rem) {
+	h1 {
+		font-size: 2rem;
+	}
+
+	.home-about-textbox {
+		padding: 5.5em;
+	}
+
+	.home-about-textbox h1 {
+		top: .6em;
+		padding: 0 .325em;
+	}
+}
+
+@media (min-width: 60rem) {
+	h1 {
+		font-size: 2.5rem;
+	}
+
+	.home-about {
+		background-image: url(../img/who-we-are.jpg);
+		background-repeat: no-repeat;
+		padding-bottom: 10em;
+	}
+
+	.home-about-textbox {
+		width: 50%;
+		padding: 7em;
+		outline-offset: -3.75em;
+		margin-left: -2.5%;
+		top: -5em;
+		text-align: left;
+		box-shadow: 0 0 4em 0 rgba(0,0,0,.3);
+	}
+
+	.home-about-textbox h1 {
+		top: .75em;
+		left: 6rem;
+		transform: translateX(0);
+	}
+
+
+}
+
+
+
+/* portfolio
+=================== */
+
+.portfolio {
+	margin: 3em 0 0;
+}
+
+.port-item {
+	margin: 0;
+	position: relative;
+}
+
+.port-item img {
+	display: block;
+}
+
+.port-desc {
+	position: absolute;
+	z-index: 100;
+	bottom: 0em;
+	left: 0em;
+	right: 0em;
+	color: white;
+	background: rgba(0,0,0,.6);
+	padding-bottom: 2em;
+}
+
+.port-desc p {
+	margin: 1em;
+}
+
+@media (min-width: 37rem) {
+	.port-item {
+		width: 50%;
+		float: left;
+	}
+}
+
+@media (min-width: 60rem) {
+	.port-item {
+		width: 33.3333334%;
+		overflow: hidden;
+	}
+
+	.port-desc {
+		transform: translateY(150%);
+	}
+
+	.port-item:hover .port-desc {
+		transform: translateY(0%);
+	}
+}
+
+
+/* CTA
+=================== */
+
+.cta {
+	background-color: #00ff6c;
+	padding: 5em 0;
+}
+
+
+/* Footer
+=================== */
+footer {
+	background: #232323;
+	color: #fff;
+	text-align: left;
+	padding: 5em 0;
+}
+
+// ====================== START FORMS ======================
+/* Style inputs, select elements and textareas */
+input[type=text], select, textarea{
+  color:#565149;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  float: left;
+}
+
+input[type=text]{
+  color:#565149;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: horizontal;
+  float: left;
+}
+
+input[type=number] {
+  color:#565149;
+  width: 5%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  float: left;
+}
+
+/* Style the label to display next to the inputs */
+label {
+  color:#565149;
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+  float: left;
+  width:10%;
+  text-align:left;
+}
+
+label .labelTop {
+  color:#565149;
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+  float: left;
+  width:10%;
+  text-align:left;
+}
+
+.labelRight {
+  color:#565149;
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+  float: left;
+  width:10%;
+  text-align:right;
+}
+
+
+
+/* Style the submit button */
+input[type=submit] {
+  background-color: #04AA6D;
+  color: #565149;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+
+/* Style the container */
+.formContainer {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  color:#565149;
+  padding: 15px;
+}
+
+/* Floating column for labels: 25% width */
+.formCol-05 {
+  float: left;
+  width: 5%;
+  margin-top: 6px;
+}
+
+/* Floating column for labels: 25% width */
+.formCol-10 {
+  float: left;
+  width: 10%;
+  margin-top: 6px;
+}
+
+.formCol-15 {
+  float: left;
+  width: 15%;
+  margin-top: 6px;
+}
+
+.formCol-20 {
+  float: left;
+  width: 20%;
+  margin-top: 6px;
+}
+
+
+/* Floating column for labels: 25% width */
+.formCol-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+/* Floating column for inputs: 75% width */
+.formCol-75 {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+/* Clear floats after the columns */
+.formRow:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .formCol-25, .formCol-75, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+// ====================== END FORMS ======================
+
+table.dataTable thead {background-color:#ffc955}
+
+</style>

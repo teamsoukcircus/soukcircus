@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>  
+  <head>
+  <!--Import Google Icon Font-->
+  <link  href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+.alert {
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+  opacity: 1;
+  transition: opacity 0.6s;
+  margin-bottom: 15px;
+}
+
+.alert.success {background-color: #04AA6D;}
+.alert.info {background-color: #2196F3;}
+.alert.warning {background-color: #ff9800;}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+</style>
+
+</head>
+
+<body>
+  <!--<input id="moisSelected" >-->
+
+  <div class="container">
+      <div id="msgAlertWarning" class="alert warning"  hidden> </div>
+      <div class="row s12">
+        <div class="input-field col s12">
+            <table>
+              <tr><th style="text-align:center;" colspan='4'>Montants actuels en &nbsp;&euro;</th></tr>
+              <tr><th style="text-align:center;">Shipping</th>
+                  <th style="text-align:center;">Rachat marchandises</th><th>Rachats prévisionnels</th><th>Remboursements</th><th>Divers</th></tr>
+                  <td style="text-align:center;" id="FraisLivraisonActuelsId"></td>
+                  <td style="text-align:center;" id="FraisRachatSuppActuelsId"></td>
+                  <td style="text-align:center;" id="FraisRachatPrevisionnelsActuelsId"></td>
+                  <td style="text-align:center;" id="FraisDeRemboursementActuelsId"></td>
+                  <td style="text-align:center;" id="FraisDiversActuelsId"></td>
+              </tr>
+            </table>
+        </div>
+      </div>
+      <form class="col s12"> 
+            <input id="moisSelected" type="number" class="validate"  hidden>
+            <div class="row s12">
+                <div class="input-field col s12">
+                  <select id="Mois" class="materialSelect">
+                  </select>
+                  <label for="Mois">Choisir le mois</label>
+                </div>
+            </div>
+
+            <div class="row s12">
+              <div class="input-field col s6">
+                <i class="material-icons prefix">add</i>
+                <input id="FraisLivraisonSuppAjoutes" type="number" class="validate">
+                <label for="FraisLivraisonSuppAjoutes">Spécifiez le montant <b>ADDITIONNEL</b> des frais de livraisons</h6></label>
+              </div>
+            </div>
+
+            <div class="row s12"> 
+              <div class="input-field col s12">
+                <i class="material-icons prefix">add</i>
+                <input id="FraisRachatSuppAjoutes" type="number" class="validate">
+                <label for="FraisRachatSuppAjoutes">Spécifiez le montant <b>ADDITIONNEL</b> des frais de rachat de marchandise</h6></label>
+              </div>  
+            </div>
+
+            <div class="row s12"> 
+              <div class="input-field col s12">
+                <i class="material-icons prefix">add</i>
+                <input id="FraisRachatPrevisionnels" type="number" class="validate">
+                <label for="FraisRachatPrevisionnels">Spécifiez le montant <b>ADDITIONNEL</b> des frais de rachat de marchandise prévisionnels</label>
+              </div>  
+            </div>
+
+
+            <div class="row s12"> 
+              <div class="input-field col s12">
+                <i class="material-icons prefix">add</i>
+                <input id="FraisDeRemboursements" type="number" class="validate">
+                <label for="FraisDeRemboursements">Spécifiez le montant <b>ADDITIONNEL</b> des remboursements</h6></label>
+              </div>  
+            </div>
+
+            
+            <div class="row s12"> 
+              <div class="input-field col s12">
+                <i class="material-icons prefix">add</i>
+                <input id="FraisDivers" type="number" class="validate">
+                <label for="FraisDivers">Spécifiez le montant <b>ADDITIONNEL</b> des frais divers (marketing,...)</h6></label>
+              </div>  
+            </div>
+
+            <div class="row s12"> 
+                <div class="input-field col s4">
+                  <button class="btn waves-effect waves-light" id="btnSubmitId" type="submit" name="action">Submit
+                  <i class="material-icons right">send</i>
+                  </button>
+                </div>
+            </div> 
+        </form>
+        
+  </div>  
+
+  <!-- JavaScript -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
+
+<script>
+      window.addEventListener('load', populateMonths);
+
+      function testMonth()
+      {
+          var moisSelected = document.getElementById("moisSelected");
+          
+          if ( moisSelected.value == null || moisSelected.value =='')
+          {
+              document.getElementById("msgAlertWarning").style.display="block";
+              $("#msgAlertWarning").html("<h5>Choisir un mois d'abord...</h5>");
+          }
+          else
+                document.getElementById("msgAlertWarning").style.display="none";
+          return false;
+      }
+
+      document.getElementById("btnSubmitId").addEventListener("click",addFraisSuppRecord);  
+      document.getElementById("FraisLivraisonSuppAjoutes").addEventListener("input",testMonth);
+      document.getElementById("FraisRachatSuppAjoutes").addEventListener("input",testMonth);
+      document.getElementById("FraisRachatPrevisionnels").addEventListener("input",testMonth);
+      document.getElementById("FraisDeRemboursements").addEventListener("input",testMonth);
+      document.getElementById("FraisDivers").addEventListener("input",testMonth);
+      
+      
+
+
+      function populateActualFraisValues(serverData)
+      {
+          document.getElementById("msgAlertWarning").style.display="none";
+          document.getElementById("msgAlertWarning").innerHTML="";
+
+          document.getElementById("FraisLivraisonActuelsId").innerHTML = serverData.livraison;
+          document.getElementById("FraisRachatSuppActuelsId").innerHTML = serverData.rachatSupp;
+          document.getElementById("FraisRachatPrevisionnelsActuelsId").innerHTML = serverData.rachatPrevisionnel;
+          document.getElementById("FraisDeRemboursementActuelsId").innerHTML = serverData.remboursements;
+          document.getElementById("FraisDiversActuelsId").innerHTML = serverData.divers;
+          
+          return true;
+      }
+
+    
+      $("#Mois").change(function() 
+      { 
+        let month = $(this).val();
+
+        document.getElementById("moisSelected").value = month;
+        
+        //On charge les frais pour le mois choisit
+
+        document.getElementById("msgAlertWarning").style.display="block";
+        document.getElementById("msgAlertWarning").innerHTML="Work in progress,...";
+
+        google.script.run.withSuccessHandler(populateActualFraisValues).getFraisSupplementairesData(month);
+
+      });
+
+
+      function addFraisSuppRecord()
+      {
+        var MoisSelected = document.getElementById("moisSelected");
+        var FraisLivraisonSuppAjoutes = document.getElementById("FraisLivraisonSuppAjoutes");
+        var FraisRachatSuppAjoutes    = document.getElementById("FraisRachatSuppAjoutes");
+        var FraisRachatPrevisionnels  = document.getElementById("FraisRachatPrevisionnels");
+        var FraisDeRemboursements     = document.getElementById("FraisDeRemboursements");
+        var FraisDivers               = document.getElementById("FraisDivers");
+
+        var data = {
+          "dbTarget"                :"adminFraisSupp",
+          "FraisLivraisonSuppAjoutes":    parseInt(document.getElementById("FraisLivraisonSuppAjoutes").value),
+          "FraisRachatSuppAjoutes"  :     parseInt(document.getElementById("FraisRachatSuppAjoutes").value),
+          "FraisRachatPrevisionnels":     parseInt(document.getElementById("FraisRachatPrevisionnels").value),
+          "FraisDeRemboursements"   :     parseInt(document.getElementById("FraisDeRemboursements").value),
+          "FraisDivers"   :               parseInt(document.getElementById("FraisDivers").value),
+          "Mois"                    :     MoisSelected.value
+        };
+        google.script.run.withSuccessHandler(closeDialog).updateFraisManager(data);
+
+        return true;
+      }
+
+      
+
+      window.closeDialog = function() 
+      {
+        google.script.host.close();
+      }
+
+      
+    function populateMonths()
+    {
+          let selectValues = getMonthsList('en') ;
+          var xx = $("<option>").attr("value","" + "disabled selected").text("Choisissez le mois");
+          $("#Mois").append(xx);
+          for (let i=0;i<12;i++)
+          {
+            var k = '"'+i+'"';
+            var newOpt = $("<option>").attr("value",i).text(selectValues[k])
+
+            $("#Mois").append(newOpt);
+          } 
+
+          $('.materialSelect').material_select();
+
+          //===========
+          document.getElementById("FraisLivraisonSuppAjoutes").value = 0;
+          document.getElementById("FraisRachatSuppAjoutes").value = 0;
+          document.getElementById("FraisRachatPrevisionnels").value = 0;
+          document.getElementById("FraisDeRemboursements").value = 0;
+          document.getElementById("FraisDivers").value = 0;
+
+
+          return true;
+    }
+
+  
+    
+    function  getMonthsList(locales) 
+    {
+      var year = new Date().getFullYear();
+      
+      let monthList= {};
+
+      for (let i =0;i<= 11;i++)
+      {
+        let k = '"'+i+'"';
+        monthList[k] = new Date(year,i,1).toLocaleDateString(locales, { month:"long"}) ;
+      }
+
+      return monthList;
+    }
+
+  
+  </script> 
+</body>  
+
+</html>
+        

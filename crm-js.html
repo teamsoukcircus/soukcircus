@@ -1,0 +1,41 @@
+<script>
+  /*========================== CRM ==================================*/
+
+        function requestCRMMainTable()
+        {
+          if ( $('#crmTableId').css('display') == 'block' )
+          {
+              $('#crmTableId').hide()
+              $('#msgRunning').hide()
+              return true;
+          }
+
+          $('#msgRunning').show()
+          $('#crmTableId').hide()
+          
+          //Request data to server for this new scope
+          //==========================================
+          
+          google.script.run.withSuccessHandler(crmHandler).crm_getTable();
+        }
+
+        function crmHandler(dataHtml)
+        {
+            let data = JSON.parse(dataHtml);
+
+            $('#msgRunning').hide()
+            $('#crmTableId').show();
+
+            $('#crmTableId').DataTable({
+              data: data,
+              columns: [
+                {"title":"Nom"},
+                {"title":"Email"},
+                {"title":"Langue"},
+                {"title":"Dernière Cmd."},
+                {"title":"Montant total"},
+                {"title":"Status"}
+              ]
+            });
+        }
+</script>

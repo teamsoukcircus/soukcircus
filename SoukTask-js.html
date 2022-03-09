@@ -1,0 +1,448 @@
+ <script>
+        //Variables
+        let threadsTimer;
+
+       /*======================================================*/
+        // Prevent forms from submitting.
+      function preventFormSubmit() 
+      {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+      }
+      window.addEventListener('load', preventFormSubmit);
+      /*======================================================*/     
+
+      document.getElementById("formTdId").style.display="none";
+
+      function populateTaskForm()
+      {   
+          var div = document.querySelector(".taskId")
+          if ( div != null )
+          {
+            var theTaskId = div.innerHTML;
+            document.getElementById("msgRunningTaches").style.display="block";
+            google.script.run.withSuccessHandler(setupTask).getTaskDetails(theTaskId);
+          }
+          else
+            soukSimpleAlert("Error","div null");
+      }
+      
+
+      function handleFormSubmit(formObject) 
+      {
+        if ( validateForm() )
+        {
+          document.getElementById("msgRunningTaches").style.display="block";
+          soukStopTimer() ;
+
+          google.script.run.withSuccessHandler(populateTaskForm).processTaskForm(formObject);
+        }
+      }
+
+      
+      function setupTask(taskValues)
+      {
+          
+            document.getElementById("msgRunningTaches").style.display="none";
+            
+            let taskData = JSON.parse(taskValues);
+       
+
+            document.getElementById("msgRunningTaches").style.display ="none";
+            document.getElementById("formTdId").style.display         ="block";
+
+            document.getElementById("taskId").value         = taskData.Task.TaskNo;
+            document.getElementById("titleId").value        = taskData.Task.Title;
+            document.getElementById("descriptionId").value  = taskData.Task.Description;
+            document.getElementById("bestFinId").value      = taskData.Task.FinEspere; 
+            document.getElementById("deadlineId").value     = taskData.Task.FinPire;
+            document.getElementById("percentId").value      = taskData.Task.Percent;
+            document.getElementById("dateDebutId").value       = taskData.Task.DateDebut;
+            document.getElementById("dateFinEffecId").value    = taskData.Task.DateFin;
+
+            //=============== Liste des status d'avancement ==========
+            let dropdownStatuses = document.getElementById("taskStatuses");
+            if (dropdownStatuses && dropdownStatuses.options.length==0) 
+            {
+                for (var i=0; i < taskData.listStatuses.length;i++)
+                {    
+                    var optn = document.createElement("OPTION");
+                    optn.text = taskData.listStatuses[i];
+                    optn.value = taskData.listStatuses[i];
+                    dropdownStatuses.options.add(optn); 
+                }
+            }
+            dropdownStatuses.value=taskData.Task.Status;
+
+            // ============== LISTE des niveaux d'urgence========
+            let urgences = taskData.listUrgency;
+            let dropdownUrgency = document.getElementById("taskUrgency");
+            if (dropdownUrgency && dropdownUrgency.options.length==0) 
+            {
+                //$("#taskUrgency").empty();
+                for (var i=0; i < taskData.listUrgency.length;i++)
+                {    
+                    var optn = document.createElement("OPTION");
+                    optn.text = taskData.listUrgency[i];
+                    optn.value = taskData.listUrgency[i];;
+                    dropdownUrgency.options.add(optn); 
+                }
+            }
+            dropdownUrgency.value = taskData.Task.Urgency;
+
+
+            //=========== Attributions et Mise à jour (rôles)======
+            let attrib = [""];
+            for (let i=0;i<taskData.listAssignee.length;i++)
+              attrib.push(taskData.listAssignee[i]);
+
+            
+            let attribDropDown  = document.getElementById("taskAttrib");
+            let updatedByDrop   = document.getElementById("taskupdBy");
+      
+            if (attribDropDown && attribDropDown.options.length==0 ) 
+            {
+                for (let i=0; i < taskData.listAssignee.length;i++)
+                {    
+                    let optn1 = document.createElement("OPTION");
+                    optn1.text = taskData.listAssignee[i];
+                    optn1.value = taskData.listAssignee[i];
+                    attribDropDown.options.add(optn1); 
+
+                    optn3 = document.createElement("OPTION");
+                    optn3.text = taskData.listAssignee[i];
+                    optn3.value = taskData.listAssignee[i];
+                    updatedByDrop.options.add(optn3); 
+                }
+            }
+
+            attribDropDown.value = taskData.Task.Attrib;
+            updatedByDrop.value = taskData.activeFirstName;
+
+            //=================Categories============================
+            let categoryDropDown = document.getElementById("categories");
+            if (categoryDropDown && categoryDropDown.options.length==0 ) 
+            {
+                for (let i=0; i < taskData.listCategories.length;i++)
+                {    
+                    let optn = document.createElement("OPTION");
+                    optn.text = taskData.listCategories[i];
+                    optn.value = taskData.listCategories[i];
+                    categoryDropDown.options.add(optn); 
+
+                }
+            }       
+            categoryDropDown.value = taskData.Task.Category;
+
+            //================== Format threads =========================//
+            setupDiscussions(taskData.threads);
+            document.getElementById("threadFlagId").style.display= "none";
+            //============================================================//
+
+            //Start a timer for discussions pooling
+            soukStartTimer();
+
+            return true;
+        }     
+
+
+        function addThread(tableID,tid,thread) 
+        {  
+            var threadsCount = $("#TDiscussionsTblId").length;
+            if ( threadsCount < 50 )
+            {
+              var table = document.getElementById(tableID);  
+              var rowCount = table.rows.length;  
+
+              //LA TEXTAREA
+              row = table.insertRow(0); 
+              rowCount++;
+
+               //Column 1  
+              var cell3 = row.insertCell(0);  
+              cell3.innerHTML = "<textarea type='text' name='oldThread' rows='8' cols='100' readonly>"+thread.text + "</textarea>" ; 
+              cell3.width="100%";
+
+              //LES CONTROLES
+              var row = table.insertRow(0);  
+              rowCount++;
+              //Column 1  
+              var cell1 = row.insertCell(0);  
+              cell1.innerHTML = "<h4>"+thread.date+"&nbsp;--&nbsp;" + thread.destinee ;
+              cell1.width="100%";
+            }
+            else
+              soukSimpleAlert("Information","Vous avez atteint le maximum de 25 échanges....");
+        }  
+          
+        function removeThread(tableID,btnName)
+        { 
+            try 
+            {  
+                var table = document.getElementById(tableID);  
+                var rowCount = table.rows.length;  
+                for (var i = 0; i < rowCount; i++) 
+                {  
+                    var row = table.rows[i];  
+                    var rowObj = row.cells[0].childNodes[0]; 
+                    if (rowObj.name == btnName) 
+                    {  
+                        table.deleteRow(i);    
+                        break;
+                    }  
+                }
+
+                for (var i = 0; i < rowCount; i++) 
+                {  
+                    var row = table.rows[i];   
+                    if( row.cells[0].name == "newThreadText")
+                    {
+                        table.deleteRow(i);    
+                        break;
+                    }
+                }  
+            } catch (e) {  
+                soukSimpleAlert("Exception",e.message);  
+            }  
+        } 
+
+        function addNewThread(tableID) 
+        {  
+            toogleDiscussionsDown();
+
+            if (document.getElementById('newThread') != null )
+              soukSimpleAlert("Information","Une seul nouveau message autorisé...");
+            else
+            {
+              var table = document.getElementById(tableID);  
+              var rowCount = table.rows.length;  
+              
+              //Row 1 : THE TEXT AREA 
+              let row1 = table.insertRow(0);
+              rowCount++;
+
+              //COlumn 1
+              let cell = row1.insertCell(0); 
+              cell.innerHTML = "<textarea type='text' name='newThread' id='newThread' rows='8' cols='100'/>" ;
+              cell.colspan="7";
+              cell.name="newThreadText";
+              
+
+              //THE CONTROLS
+              let row2 = table.insertRow(0);
+              rowCount++;
+
+              //Column 1  
+              //First element
+              let cell1 = row2.insertCell(0);  
+              cell1.colspan="2";
+              {
+                var element = document.createElement("button"); 
+                element.innerHTML="<i class='material-icons'>delete</i>"; 
+                element.type = "button";  
+                var btnName = "button" + (rowCount + 1);  
+                element.name = btnName;  
+                element.setAttribute('value', 'Delete'); // or element1.value = "button";  
+                element.onclick = function() {  removeThread(tableID,"button" + (rowCount + 1)); } 
+                cell1.appendChild(element);  
+              } 
+              
+
+              /*Column 1*/ 
+              //Second element 
+              let cell2 = row2.insertCell(1);
+              cell2.colspan="2";
+              cell2.width="100%";
+              {
+                  var values = ["", "Céline", "Simon", "Said", "IT"];
+                  var select = document.createElement("select");
+                  select.name = "destinee";
+                  select.id = "newDestinee"
+              
+                  for (const val of values)
+                  {
+                      var option = document.createElement("option");
+                      option.value = val;
+                      option.text = val.charAt(0).toUpperCase() + val.slice(1);
+                      select.appendChild(option);
+                  }
+          
+                  cell2.appendChild(select);  
+              } 
+
+              //Column 1
+              //Third element
+              let cell3 = row2.insertCell(2);
+              cell3.colspan="2"; 
+              {
+                  var element = document.createElement("button");  
+                  element.type = "button";  
+                  var btnName = "buttonSend" + (rowCount + 1);  
+                  element.name = btnName;  
+                  element.setAttribute('value', 'Send'); // or element1.value = "button";  
+                  element.onclick = function() {  sendDiscussion(); }
+                  element.innerHTML="<i class='material-icons'>email</i>";
+                  cell3.appendChild(element);
+
+              } 
+
+      
+             
+            
+         // append('<button type="button" id="senDiscussionId" onclick="sendDiscussion()"><i class="material-icons">email</i> </button>');  
+            }
+        }  
+
+        
+
+        /*================================== DISCUSSION MNGT =====================================*/
+        function setupDiscussions(threads)
+        {
+            document.getElementById("msgRunningTaches").style.display="none";
+            
+            let actualNThgreads = document.getElementById("nThreadsId").value;
+            //Format threads
+            document.getElementById("nThreadsId").value= threads.nThreads;
+
+            if ( threads.nThreads > actualNThgreads)
+              document.getElementById("threadFlagId").style.display= "block";
+            else
+              document.getElementById("threadFlagId").style.display= "none";
+
+            if ( threads.nThreads > 0)
+            {        
+                $("#DiscussionsTblId tr").remove(); 
+               document.getElementById("threadRowId").value=threads.threadRow;
+
+                for(let i=0;i < threads.nThreads; i++)
+                {
+                  let aThread =  threads.discussions[i];
+
+                  addThread('DiscussionsTblId',i,aThread) ;
+                }
+            }
+        }
+
+        function sendDiscussion()
+        {
+          x = document.forms["myForm"]["newDestinee"];
+          if (x!=null)
+          {
+            if ( x.value == ""  )
+            {
+              soukSimpleAlert("Information", "Vous devez choisir un destinataire de votre nouvel élément de conversation...");
+              return false;
+            }
+          }
+
+          var div = document.querySelector(".taskId")
+          if ( div != null )
+          {
+            var theTaskId = div.innerHTML;
+            document.getElementById("msgRunningTaches").style.display="block";
+            google.script.run.withSuccessHandler(setupDiscussions).processNewDiscussion(document.forms["myForm"]);
+          }
+          else
+            soukSimpleAlert("Error","div null");
+         
+        }
+
+        function refreshDiscussion()
+        {
+          var div = document.querySelector(".taskId")
+          if ( div != null )
+          {
+            //document.getElementById("msgRunningTaches").style.display="block";
+            var theTaskId = div.innerHTML;
+            google.script.run.withSuccessHandler(setupDiscussions).getTaskThreads(theTaskId);
+          }
+          else
+            soukSimpleAlert("Error","div null");
+         
+        }
+
+        /*================================== VALIDATION =====================================*/
+        function validateForm() 
+        {
+          let x = document.forms["myForm"]["destinee"];
+          if (x!=null)
+          {
+            if ( x.value == ""  )
+            {
+              soukSimpleAlert("Information", "Vous devez choisir un destinataire de votre nouvelle note...");
+              return false;
+            }
+          }
+
+          x = document.forms["myForm"]["newDestinee"];
+          if (x!=null)
+          {
+            if ( x.value == ""  )
+            {
+              soukSimpleAlert("Information", "Vous devez choisir un destinataire de votre nouvel élément de conversation...");
+              return false;
+            }
+          }
+          
+          return true;
+        }
+
+         function toogleDiscussionsUp()
+         {
+            document.getElementById("DiscussionsTblId").style.display= "none";
+            document.getElementById("downId").style.display= "block";
+            document.getElementById("upId").style.display= "none";
+         }
+
+         function toogleDiscussionsDown()
+         {
+            document.getElementById("DiscussionsTblId").style.display= "block";
+            document.getElementById("downId").style.display= "none";
+            document.getElementById("upId").style.display= "block";
+         }      
+
+        function toogleDiscussions()
+        {
+          let nThreads = document.getElementById("nThreadsId").value;
+
+          if(nThreads > 0)
+            document.getElementById("noDiscussionsId").style.display= "none";
+          else
+            document.getElementById("noDiscussionsId").style.display= "block";
+
+          if (document.getElementById("DiscussionsTblId").style.display=="block") 
+              toogleDiscussionsUp();
+          else
+            toogleDiscussionsDown();
+
+        }
+    
+        let timer_temps = 30;
+
+        function soukStartTimer()
+        {
+          threadsTimer = setInterval(() => 
+                          {
+                              if ( timer_temps <= 0 )
+                              {
+                                timer_temps = 30;
+                                refreshDiscussion();
+                              }
+                              else
+                                timer_temps--;
+                          },1000);
+
+        }
+
+        function soukStopTimer() 
+        {
+            if ( threadsTimer != null )
+                clearInterval(threadsTimer);
+
+            threadsTimer=null;
+      }
+      </script>

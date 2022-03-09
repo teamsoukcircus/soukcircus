@@ -1,0 +1,254 @@
+<script>
+    
+    //$(document).ready(requestDataCUrrentYear());
+
+    /*
+    function requestDataCUrrentYear()
+    {
+      showProgress("");
+      google.script.run.withSuccessHandler(yearlyDataHandler).frais_getFraisForCurrentYear();
+    }
+     */   
+
+    /*===========================================================================================
+                                       yearlyDataHandler(yearlyData)                         
+        fraisMonthlyTable:
+        1 rangée par type de frais et les 12 mois de l'années
+        1 rangée pour les sommes mensuells tous frais confondus et le grand total
+     ===========================================================================================*/
+    /*function yearlyDataHandler(yearlyData)
+    {
+        hideAllAlerts();
+        yearData = JSON.parse(yearlyData);
+        let sumMatrix = yearData["sumMatrix"];
+        //ret["year"]     = annee;
+  
+        if (yearData["err"]=="ok")
+        {   
+            $('#yearlyDataId').DataTable({
+              data: sumMatrix,
+              "pageLength": sumMatrix.length,
+              columns: [
+                {"title":""},
+                {"title":"Janvier"},
+                {"title":"Février"},
+                {"title":"Mars"},
+                {"title":"Avril"},
+                {"title":"Mai"},
+                {"title":"Juin"},
+                {"title":"Juillet"},
+                {"title":"Août"},
+                {"title":"Septembre"},
+                {"title":"Octobre"},
+                {"title":"Novembre"},
+                {"title":"Décembre"},
+                {"title":"<p style='color:green;'><b>Totaux par type</b></p>"}
+              ]
+            });
+        }
+        else
+          showError(yearData["msg"]);
+    }
+    */
+
+    function getMouvments(type)
+    {
+      showProgress("");
+      if ( type == 1 )
+      {
+        //Mouvements par compte
+        $("#divMouvmentsParCompteId").empty();
+        google.script.run.withSuccessHandler(handleCeditDebitParCompte).fin_getMouvments(type);
+      }
+      else
+      {
+        //Tous les comptes ensembles
+        $("#divMouvmentsGlobalId").empty();
+        google.script.run.withSuccessHandler(handleCeditDebitGlobal).fin_getMouvments(type);
+      }
+    }
+
+    /*===========================================================================================*/
+    /*                                    handleCeditDebitGlobal(serverData)                     */
+    /*===========================================================================================*/
+    function handleCeditDebitGlobal(serverData)
+    {   
+        let dataIn = JSON.parse(serverData);
+        let mouvements = dataIn.data.mouvements;
+        let bilans     = dataIn.data.bilans;
+        let bilansMensuels  = dataIn.data.bilansMensuels;
+
+        hideAllAlerts();
+
+        //============== BILANS ====================================
+        /*
+        if ( !$.fn.dataTable.isDataTable("#divBilansGlobalParCompteId") ) 
+        {
+            $("#divBilansGlobalParCompteId").DataTable({
+              columnDefs: [
+                            { className: "display dt-body-left", targets: "_all" },
+                            ],
+              responsive: false, //https://datatables.net/reference/option/responsive
+              dom: 'rtip',
+              "pageLength": 25,  // list more than the default 10
+              fixedHeader: true, 
+              data: bilans,
+              columns: [
+                {"title":"Compte"},
+                {"title":"<p style='color:red;'>Débits</p>"},
+                {"title":"<p style='color:green;'>Crédits</p>"},
+                {"title":"Bilan"}
+              ]
+            });
+        }
+        */
+        //============== BILANS MENSUELS PAR COMPTE====================================
+        
+        if ( !$.fn.dataTable.isDataTable("#divBilansGlobalMensuelParCompteId") ) 
+        {
+            $("#divBilansGlobalMensuelParCompteId").DataTable({
+              columnDefs: [
+                            { className: "display dt-body-right", targets: "_all" },
+                            ],
+              responsive: false, //https://datatables.net/reference/option/responsive
+              dom: 'rtip',
+              "pageLength": 25,  // list more than the default 10
+              data: bilansMensuels,
+              columns: [
+                {"title":"Compte"},
+                {"title":"Janvier"},
+                {"title":"Février"},
+                {"title":"Mars"},
+                {"title":"Avril"},
+                {"title":"Mai"},
+                {"title":"Juin"},
+                {"title":"Juillet"},
+                {"title":"Août"},
+                {"title":"Septembre"},
+                {"title":"Octobre"},
+                {"title":"Novembre"},
+                {"title":"Décembre"}
+              ]
+            });
+        }
+        //=============== MOUVEMENTS ===============================
+       
+        if ( !$.fn.dataTable.isDataTable("#divMouvmentsGlobalId") ) 
+        {
+            $("#divMouvmentsGlobalId").DataTable({
+              columnDefs: [{ className: "display  dt-body-left", targets: "_all" }],
+              responsive: false, //https://datatables.net/reference/option/responsive
+              dom: 'rtip',
+              "pageLength": 100,  // list more than the default 10
+              fixedHeader: true,
+              data: mouvements,
+              columns: [
+                {"title":"Date"},
+                {"title":"<p style='color:red;'>Compte débité</p>"},
+                {"title":"<p style='color:green;'>Compte crédité</p>"},
+                {"title":"Montant"},
+                {"title":"Description"},
+                {"title":"Raison"}
+              ]
+            });
+        }
+    }
+
+    /*===========================================================================================
+                             handleCeditDebitParCompte(serverData) 
+      ===========================================================================================*/
+    function handleCeditDebitParCompte(serverData)
+    {
+        let data = JSON.parse(serverData);
+
+        hideAllAlerts();
+        
+        let mouvmentsSection = document.getElementById("divMouvmentsParCompteId");
+
+        let tableIndex=-1;
+        let mainTableId;
+        let mainTable;
+        let titleRow;
+        let titleCell;
+        let dataTableId;
+        let sectionTable;
+        let headBackColor;
+        for(let key in data)
+        {
+            tableIndex++;
+            
+            mainTableId = "mainTable" + tableIndex;
+            mainTable = document.createElement('table');
+            mainTable.setAttribute("id",mainTableId);
+            mainTable.setAttribute("style","margin-left:auto;margin-right:auto;margin-top:50px;width:80%");
+            
+            titleRow = document.createElement('tr'); // Header row
+            titleRow.setAttribute("id","tr"+tableIndex);
+            mainTable.appendChild(titleRow);
+      
+            headBackColor= "#ffc955";
+            /*headBackColor="#fbe668";*/
+
+            titleCell = document.createElement("td");
+            titleCell.setAttribute("id","td"+tableIndex);
+            titleCell.setAttribute("style", "background-color:"+headBackColor); 
+            titleCell.innerHTML = "<h4>"+ key + "</h4>";
+            titleRow.appendChild(titleCell);
+            
+     
+            dataTableId   = "dataTable" + tableIndex;
+            sectionTable = document.createElement('table');
+            sectionTable.setAttribute("id",dataTableId);
+            sectionTable.setAttribute("class","display compact table table-striped table-bordered table-hover");
+            sectionTable.setAttribute("width","100%");
+
+            mainTable.appendChild(sectionTable);
+            mouvmentsSection.appendChild(mainTable);
+        }
+
+        tableIndex=-1;
+        for(key in data)
+        {
+            tableIndex++;
+           
+            let dataTableId   = "dataTable" + tableIndex;
+
+            if ( !$.fn.dataTable.isDataTable( '#'+dataTableId ) ) 
+            {
+                  $('#'+dataTableId).DataTable({
+                      columnDefs: [{ className: "display  dt-body-left", targets: "_all" }],
+                      responsive: false, //https://datatables.net/reference/option/responsive
+                      "pageLength": 25,  // list more than the default 10
+                      dom: 'rtip',
+                      fixedHeader: true, 
+                      data: data[key],
+                      columns: [
+                        {"title":"Date"},
+                        {"title":"Crédits"},
+                        {"title":"Débits"},
+                        {"title":"Description"},
+                        {"title":"Raison"}
+                      ]
+                    });
+            }
+        }
+    }
+
+    function handleSubmit()
+    {
+      
+    }
+
+    function closeMe(data)
+    {
+
+      if ( data == "ok" )
+      { 
+        document.getElementById("msgRunning").innerHTML = "<h2>Données sauvegardée, vous pouvez fermer cette fenêtre</h2>";
+      }
+      else
+      {
+          document.getElementById("msgRunning").innerHTML = "<h2>Une erreur est survenue: " + data + "</h2";
+      }
+    }
+  </script>

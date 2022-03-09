@@ -1,0 +1,814 @@
+  <script>
+    //===========================================================================================================
+
+    function searchTables()
+    {
+      let text2Search = $("#search").val().toUpperCase();
+
+      let nOrders = $("#nOrdersId").val();
+
+      for(let tt=0;tt<2;tt++)
+      {
+        let tableId="orderTable"
+        if ( tt==1)
+          tableId = "orderIndex";
+          
+        for(let orderIndex=0;orderIndex < nOrders; orderIndex++)
+        {
+          let founds = searchThisTable(text2Search, tableId+orderIndex) ;
+
+          if ( founds )
+          {
+              $("#maindivorderTable"+orderIndex).show();
+              $("#maindivorderItems"+orderIndex).show();
+          }
+          else
+          {
+              $("#maindivorderTable"+orderIndex).hide();
+              $("#maindivorderItems"+orderIndex).hide();            
+          }
+        }
+      }
+    }
+
+    function searchThisTable(searchText, tableId) 
+    {
+        // Declare variables
+        var table, tr, td, i, txtValue;
+
+        table = document.getElementById(tableId);
+        tr = table.getElementsByTagName("tr");
+        let founds=false;
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) 
+        {
+          td = tr[i].getElementsByTagName("td")[0];
+          if (td) 
+          {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(searchText) > -1) 
+            {
+              //tr[i].style.display = "";
+              //table.style.display="";
+              founds=true;
+            } 
+            else 
+            {
+              //tr[i].style.display = "none";
+            }
+          }
+        }
+
+        return founds;
+    }
+
+    function initPage()
+    {
+        $("#totalPricesId").hide();
+
+        $("#infoGeneralesId").hide();
+        $("#listePrepareShipping").hide();
+        $("#listeDesEnvois").hide();
+
+        $("#validerSessionId").hide();
+        $("#calculerPrixId").hide();
+        $("#selectionId").hide();
+
+        var $rows = $('section table tr');
+
+        $("#searchControl").hide();
+        $("#nombreDeCommandes").hide();
+
+        $("#filteringId").val(0);
+        $("#filterFormId").hide();
+
+        hideAllAlerts();
+    }
+
+    
+
+    //===========================================================================================================
+    function populateOrdersForm()
+    {
+        showProgress("");
+
+        removeAllOrders();
+
+        $("#listeDesEnvois").hide();
+        google.script.run.withSuccessHandler(setupOrders).db_getPendingShippingOrders();
+        return true;
+    }
+
+    //===========================================================================================================
+    function totalPrices(show,totalMad,totalEUR, totalFacture)
+    {
+        if (show)
+        {
+          $("#totalPricesId").show();
+          $("#totalPriceShippingMAD").html("Réel   : " + totalMad + "&nbsp;MAD");
+          $("#totalPriceShippingEUR").html("Réel   : " + totalEUR + "&nbsp;&euro;");
+          $("#totalFactureShippingEUR").html("Facturé: " + totalFacture + "&nbsp;&euro;");
+
+          setInterval(totalPrices, 30000, false, 0,0,0);
+        }
+        else
+          $("#totalPricesId").hide();
+    }
+
+
+    //===========================================================================================================
+    function computeShippingPrices()
+    {
+        let nOrders = $("#nOrdersId").val();
+        let data=[];
+
+        for(let orderIndex=0;orderIndex < nOrders; orderIndex++)
+        {
+            let oneOrder=[];
+
+            let postId = document.getElementById("postOfficeShipping"+orderIndex).value;
+            let email = document.getElementById("email"+orderIndex).innerHTML;
+            let weight =  parseFloat( $("#totalWeight"+orderIndex).val() );
+            if (weight > 0)   
+            {
+                oneOrder.push(postId);
+                oneOrder.push(weight);
+                oneOrder.push(email);              
+                oneOrder.push(0);
+                oneOrder.push("totalShipping"+orderIndex);
+                oneOrder.push(parseFloat(document.getElementById("shipFacture"+orderIndex).innerHTML));
+
+                data.push(oneOrder);
+            }
+        }   
+
+        if ( data.length > 0 )
+        { 
+            showProgress("Calcul en cours...");
+            google.script.run.withSuccessHandler(displayShippingPrices).amana_computePrices(data);
+            return true;
+        }
+    }
+
+
+    //===========================================================================================================
+    function displayShippingPrices(allPrices)
+    {
+      hideAllAlerts();
+
+      let data = JSON.parse(allPrices);
+      if (data["err"] == "ok")
+      {
+        let computed = data["data"];
+        for (let i=0;i<computed.length;i++)
+        {
+            let theId = "#"+computed[i][4];
+            $(theId).val(computed[i][3]);
+        }
+
+        let notFoundTarif=data["notFound"];
+        if ( notFoundTarif.length > 0 )
+        {
+          html = "Pour ces clients le tarifs n'a pas été trouvé:<br>"
+          html += "<ul>";
+          for(let i=0;i<notFoundTarif.length;i++)
+          {
+              html += "<li style='font-size:25px;'>"+ notFoundTarif[i] + "</li>";
+          }
+          html += "</ul>";
+          showInfo(html)
+        }
+
+        totalPrices(true,data["totalMAD"],data["totalEUR"],data["totalFacture"])
+      }
+      else
+        showError("<h2>Une erreur est survenue: " + data["msg"] + "</h2>");
+    }
+
+
+    //===========================================================================================================
+    function selectAllTransactions()
+    {   
+        let nOrders = $("#nOrdersId").val();
+
+        for(let orderIndex=0;orderIndex < nOrders; orderIndex++)
+        {
+            for (transIndex=0; transIndex<= 100; transIndex++)
+            {
+                let transactionMarker = $("#validated"+sId(orderIndex,transIndex));
+                
+                if ( transactionMarker.length )
+                  transactionMarker.checked = !transactionMarker.checked;
+                else
+                  break;
+            }
+        }
+    }
+
+    function removeAllOrders()
+    {   
+        $("section").remove(".soukOrder");
+    }
+    
+    //===========================================================================================================
+    function sId(x,y)
+    {
+        return "o"+x+"t"+y;
+    }
+
+
+    //===========================================================================================================
+    function setupOrders(allPendingOrders)
+    {
+        let dataIn = JSON.parse(allPendingOrders);
+
+        if ( dataIn["err"] == "nok")
+        {
+          showError(dataIn["msg"]);
+          return false;
+        }
+
+        let pendingOrders = dataIn["data"];
+        let nOrders       = pendingOrders["length"];
+        let orders        = pendingOrders["orders"];
+        $("#nOrdersId").val(nOrders);
+
+        $("#validerSessionId").show();
+        $("#calculerPrixId").show();
+        $("#selectionId").show();
+        $("#infoGeneralesId").show();
+        $("#listePrepareShipping").show();
+        $("#listeDesEnvois").hide();
+
+        $("#nombreDeCommandes").html("<h5>"+nOrders+" commandes en attente d'envoi</h5>");
+        $("#search").keyup(function(){searchTables();})
+        $("#nombreDeCommandes").show();
+
+        $("#filterFormId").show();
+
+
+        for ( let orderIndex=0;orderIndex < nOrders;orderIndex++)
+        {    
+            let order = orders[orderIndex];
+
+            //  La Commande principale
+            //=========================
+            let tableOrdeRows = {};
+            let aRow          = {};
+
+            aRow["receiptId"]    
+            = {"style": "width:5%;text-align:center", 
+               "name":"receiptId"+orderIndex,
+               "id":"receiptId"+orderIndex,
+                "val":  order["receiptId"],"type": "T"};
+
+            aRow["email"]     
+            = {"style": "width:10%;text-align:center", 
+                "name":"email"+orderIndex,
+                "id":"email"+orderIndex,
+                "val":  order["email"],"type": "T"};
+
+            aRow["totPrice"]      
+            = {"style": "width:5%;text-align:center", 
+                "name":"totPrice"+orderIndex,
+                "id":"totPrice"+orderIndex,
+                "val":   order["totPrice"] ,"type": "T"};
+
+            aRow["totalDiscount"]  
+            = {"style": "width:5%;text-align:center", 
+                "name":"totalDiscount"+orderIndex,
+                "id":"totalDiscount"+orderIndex,
+                "val":   order["totalDiscount"] ,"type": "T"};
+
+            aRow["totalTaxes"]      
+            = {"style": "width:5%;text-align:center", 
+               "name":"totalTaxes"+orderIndex,
+               "id":"totalTaxes"+orderIndex,
+               "val":   order["totalTaxes"] ,"type": "T"};
+            
+           
+            aRow["shipFacture"]      
+            = {"style": "width:5%;", "name":"shipFacture"+orderIndex,"id":"shipFacture"+orderIndex,
+                "val": order["shipFacture"],"type": "T"};
+
+
+            aRow["phone"]     
+            = {"style": "width:120px;text-align:center", 
+                "name":"phone"+orderIndex,
+                "id":"phone"+orderIndex,
+                "val":  order["phone"]!=null? order["phone"]:"","type": "I"};
+
+
+          let weightKg = order["weightKg"]!=null? order["weightKg"]:"";
+           aRow["totalWeight"]      
+            = {"style": "width:30px;", 
+                "name":"totalWeight"+orderIndex,
+                "id":"totalWeight"+orderIndex,
+                "val": weightKg,"type": "I"};
+
+            let totalShipCost = order["totalShipCost"] != null ? order["totalShipCost"]: 0;
+            aRow["totalShipping"]      
+            = {"style": "width:30px;", 
+               "name":"totalShipping"+orderIndex,
+               "id":"totalShipping"+orderIndex,
+               "val": totalShipCost,"type": "I"};
+
+
+            let postOfficeShipping = order["postOfficeShipping"] != null ? order["postOfficeShipping"] : "";
+            aRow["postOfficeShipping"]   
+            = {"style": "width:5px%;", 
+              "name":"postOfficeShipping"+orderIndex,
+                "id":"postOfficeShipping"+orderIndex,
+                "val":  postOfficeShipping,
+                "type": "I"};
+            
+            //On ajoute cette ligne de champs pour la commande globale
+            //========================================================
+            tableOrdeRows["order"+orderIndex] = aRow;
+
+            //Une nouvelle ligne pour l'adresse et le commentaire global
+            //===========================================================
+
+            //D'abord une ligne pour les header de champs
+            //=============================================
+            aRow={};
+            aRow["addressHeader"]  = 
+            {"style": "width:10%;text-align:left;font-weight: bold;", 
+             "name":"addressHeader"+orderIndex,
+             "id":"addressHeader"+orderIndex,
+             "val":  "Adresse client","type": "T", "colspan":2};
+
+            aRow["commentHeader"]  = 
+            {"style": "width:35%;text-align:left;font-weight: bold;", 
+              "name":"commentHeader"+orderIndex,
+              "id":"commentHeader"+orderIndex,
+              "val":  "Commentaire interne","type": "T", "colspan":4};
+            
+            aRow["custCommentHeader"]  = 
+            {"style": "width:35%;text-align:left;font-weight: bold;", 
+              "name":"custCommentHeader"+orderIndex,
+              "id":"custCommentHeader"+orderIndex,
+              "val":  "Commentaire client","type": "T", "colspan":4};
+
+            tableOrdeRows["AdressAndCommentSHeaders"+orderIndex] = aRow;
+
+            //Puis les données
+            //=============================================
+            aRow={};
+            aRow["address"] = 
+            {"style": "width:100%;text-align:left", 
+              "name":"address"+orderIndex,
+              "id":"address"+orderIndex,
+              "val":  order["address"],"type": "T", "colspan":2};
+
+            let orderComment = order["comment"] != null ? order["comment"]:"";
+            aRow["comment"]  = 
+            {"style": "width:100%;text-align:left", 
+             "name":"comment"+orderIndex,
+             "id":"comment"+orderIndex,
+             "val":  orderComment,"type": "TA", "colspan":4, "cols":40, "rows":4};
+          
+            let customerComment = order["customerComment"] != null ? order["customerComment"]:"";
+            aRow["customerComment"]  = 
+            {"style": "width:100%;text-align:left", 
+             "name":"customerComment"+orderIndex,
+             "id":"customerComment"+orderIndex,
+             "val":  customerComment,"type": "TA", "colspan":4, "cols":40, "rows":4};
+
+            tableOrdeRows["AdressAndCommentS"+orderIndex] = aRow;
+            
+            //On créé une section pour cette commande
+            //======================================================================
+            var aSection = document.createElement('section');
+            aSection.setAttribute("class","soukOrder");
+
+            document.getElementById("listePrepareShipping").appendChild(aSection);
+            //ON créé la table. avec les infos de la commande
+            //======================================================================
+            
+            let tableId   = "orderTable" + orderIndex;
+            let header = ["No commande" ,"Email","Valeur (EUR)", "Discount", "Taxes", 
+                                                       "Coût facturé (EUR)", "Phone", "Poids (Kg)", "Coût réel (MAD)", "No CP"];
+            let headClass="";
+            let headBackColor="";
+            //if ( orderIndex%2==0)
+                headBackColor= "#ffc955";
+            //else
+            //    headBackColor="#fbe668";
+
+            let tableSection = soukjs_createTable(tableId,header, headClass, headBackColor, tableOrdeRows,"90%","w3-table w3-striped w3-centered",false) ;
+            aSection.appendChild(tableSection);
+        
+            //=============================================================================================
+            //On rajoute maintenant tous les articles de la commande, dans une table, un article par ligne
+            //=============================================================================================
+            let tableItemsRows={};
+            tableRows={};
+            let rowIndex = -1;
+            for(key in order["items"])
+            {  
+              rowIndex++;
+              let aRow={};
+
+              //["No article", "preparer", "envoyer","emballé", "stock","titre", "etsy","variation","qty"]  
+
+              aRow["transId"]   = {"style": "width:5%;text-align:center", 
+                                    "name":"transId"+sId(orderIndex,rowIndex),
+                                    "id":"transId"  +sId(orderIndex,rowIndex),
+                                    "val":  order["items"][key]["transId"],
+                                    "type": "T"};
+
+              aRow["prepareOnly"] = {"style": "width:5%;text-align:center", 
+                                    "name":"prepareOnly"+sId(orderIndex,rowIndex),
+                                    "id": "prepareOnly"  +sId(orderIndex,rowIndex),
+                                    "val": order["items"][key]["prepareOnly"],
+                                    "type": "CB",
+                                    "onclick": function(e){registerChange(e.target.id)}};
+
+              aRow["validated"] = {"style": "width:5%;text-align:center", 
+                                    "name":"validated"+sId(orderIndex,rowIndex),
+                                    "id": "validated"  +sId(orderIndex,rowIndex),
+                                    "val": order["items"][key]["validated"],
+                                    "type": "CB",
+                                    "onclick": function(e){registerChange(e.target.id)}};
+
+              aRow["produitEmballe"] = {"style": "width:5%;text-align:center", 
+                                        "name":"produitEmballe"+sId(orderIndex,rowIndex),
+                                        "id": "produitEmballe"  +sId(orderIndex,rowIndex),
+                                        "val": order["items"][key]["produitEmballe"],
+                                        "type": "CB",
+                                        "onclick": function(e){registerChange(e.target.id)}};
+
+              //$("#produitEmballe"+sId(orderIndex,rowIndex)).prop("checked",true);
+              //alert($("#produitEmballe"+sId(orderIndex,rowIndex)).val());
+
+              aRow["resteStock"]     = {"style": "width:5%;text-align:left", 
+                                        "name":"resteStock"  +sId(orderIndex,rowIndex),
+                                        "id":  "resteStock" +sId(orderIndex,rowIndex),
+                                        "val" : order["items"][key]["resteStock"],"type":"T"};
+
+              let itemWeight = order["items"][key]["itemWeight"] != null ? order["items"][key]["itemWeight"]:"";
+              aRow["itemWeight"]     = {"style": "width:5%;text-align:left", 
+                                        "name":"itemWeight"  +sId(orderIndex,rowIndex),
+                                        "id":  "itemWeight" +sId(orderIndex,rowIndex),
+                                        "val" : itemWeight,"type":"T"};
+
+              aRow["listingId"]   = {"style": "width:5%;text-align:center", 
+                                    "name":"listingId"  +sId(orderIndex,rowIndex),
+                                    "id":"listingId"    +sId(orderIndex,rowIndex),
+                                    "val":  order["items"][key]["listingId"],
+                                    "type": "T",
+                                    "show": false};
+              
+              aRow["title"]     = {"style": "width:45%;text-align:left", 
+                                    "name":"title"  +sId(orderIndex,rowIndex),
+                                    "id":  "title" +sId(orderIndex,rowIndex),
+                                    "val" : order["items"][key]["title"],"type":"T"};
+
+              aRow["etsyUrl"]     = {"style": "width:5%;text-align:left", 
+                                    "name":"etsyUrl"  +sId(orderIndex,rowIndex),
+                                    "id":  "etsyUrl" +sId(orderIndex,rowIndex),
+                                    "val" : order["items"][key]["etsyUrl"],"type":"A"};
+              
+
+
+              let variation = order["items"][key]["variation"];
+              if ( variation.length > 0 )
+              {
+                  let theVariation ="";
+                  
+                  if (typeof variation === 'string')
+                    theVariation =  variation;
+                  else
+                    theVariation = variation[0].name + " : " + variation[0].value;
+                      
+
+                  aRow["variation"]     = {"style": "width:20%;text-align:left;", 
+                                        "name":"variation"  +sId(orderIndex,rowIndex),
+                                        "id":  "variation" +sId(orderIndex,rowIndex),
+                                        "val" : theVariation,"type":"T"};
+              }
+              else
+              {
+                  aRow["variation"]     = {"style": "width:20%;text-align:left;", 
+                                        "name":"variation"  +sId(orderIndex,rowIndex),
+                                        "id":  "variation" +sId(orderIndex,rowIndex),
+                                        "val" : "","type":"T"};
+              }
+
+              aRow["quantity"]  = {"style": "width:5%;text-align:center",  
+                                    "name":"quantity"+sId(orderIndex,rowIndex),
+                                    "id":"quantity"  +sId(orderIndex,rowIndex),
+                                    "val":order["items"][key]["quantity"],"type":"T"};
+
+              aRow["price"]       = {"style": "width:10%;text-align:center", 
+                                      "name":"price"+sId(orderIndex,rowIndex),
+                                      "id": "price" +sId(orderIndex,rowIndex),
+                                      "val":order["items"][key]["price"],
+                                      "type":"T",
+                                      "show": false};
+
+
+              let tableRowKey     = sId(orderIndex,rowIndex)
+              tableItemsRows[tableRowKey] = aRow;
+            }
+
+            //==========================================================================================================
+            //ON rajoute la table contenant tous ces articles
+            //==========================================================================================================
+            header    = ["No article", "preparer", "envoyer","emballé", "stock","Kg", "titre", "etsy","variation","qty"]          
+            tableId   = "orderItems" + orderIndex;
+  
+            tableSection = soukjs_createTable(tableId,header, headClass,"", tableItemsRows,"90%","w3-table w3-striped w3-centered",true) ;
+              
+            aSection.appendChild(tableSection);
+
+            //Une séparation
+            //==============
+            /*let hr = document.createElement('hr');
+            hr.setAttribute("class","dashed");
+            aSection.appendChild(hr);*/
+        }
+
+        hideAllAlerts();
+    }
+
+
+    //===========================================================================================================
+    function transactionSelected(orderId, transactionId)
+    {}
+
+    function postIdValidated(postId)
+    {
+      if ( postId == null || postId=="")
+      {
+        showInfo("Il manque des identifiants postaux CPxxxxMA");
+        return false;
+      }
+
+      let toup = postId.toUpperCase();
+      let cbIndex = toup.indexOf("CP");
+      let maIndex = toup.indexOf("MA")
+      if ( cbIndex < 0 ||  maIndex < cbIndex)
+      {
+        showInfo("Cet identifiant postal semble incorrect: " + postId + ", validation annulée...");
+        return false;
+      }
+
+      return true;
+    }
+
+    function registerChange(elementId)
+    {
+        let actualVal = $("#changedElements").val();
+
+        $("#changedElements").val(actualVal + "$$"+ elementId);
+        let splitted = $("#changedElements").val().split("$$");
+        const occurrences = splitted.reduce(function (acc, curr) 
+                                           {
+                                            return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+                                           }, {});
+        $("#changedElementAsObject").val(JSON.stringify(occurrences));
+    }
+
+    function returnChanged()
+    {
+        let retVal=[];
+        let actuallyClicked = JSON.parse($("#changedElementAsObject").val());
+        if (Object.keys(actuallyClicked).length > 0)
+        {
+          for (key in actuallyClicked)
+          {
+            if ( actuallyClicked[key]%2 != 0 )
+                retVal.push(key);
+          }
+        }
+
+        return retVal;
+    }
+    //================================================ VALIDATION ========================================================
+    function handleValider()
+    {
+        hideAllAlerts();
+        showProgress("Validation en cours...");
+
+        let nOrders = $("#nOrdersId").val();
+        let answers={};
+
+        answers["answers"]  = [];
+        answers["nAnswers"] = 0;
+
+        let changedCheckBoxes = returnChanged();
+        for(let orderIndex=0;orderIndex < nOrders; orderIndex++)
+        {
+            let anAnswer = {};
+
+            anAnswer["transactions"]  = [];
+    
+            for (transIndex=0; transIndex<= 100; transIndex++)
+            {
+                let transactionMarkerExist =  $("#validated"+sId(orderIndex,transIndex)).length;
+                if ( transactionMarkerExist > 0)
+                {
+                  let transactionValidated  = $("#validated"+sId(orderIndex,transIndex)).is(":checked");
+                  let transactionPrepared   = $("#prepareOnly" +sId(orderIndex,transIndex)).is(":checked");
+                  
+                  //if ( transactionValidated || transactionPrepared)
+                  {
+                    if ( transactionValidated && ! postIdValidated( $("#postOfficeShipping"+orderIndex).val() ) )
+                        return false;
+
+                    if ( transIndex == 0)
+                    {
+                        anAnswer["postOfficeShipping"]  = $("#postOfficeShipping"+orderIndex).val();   
+                        anAnswer["receiptId"]           = $("#receiptId"+orderIndex).html();    
+                        anAnswer["address"]             = $("#address"+orderIndex).html();
+                        anAnswer["email"]               = $("#email"+orderIndex).html();
+                        anAnswer["comment"]             = $("#comment"+orderIndex).val(); 
+                        anAnswer["customerComment"]     = $("#customerComment"+orderIndex).val(); 
+                        anAnswer["phone"]               = $("#phone"+orderIndex).val();                        
+                        anAnswer["totalShipping"]       = $("#totalShipping"+orderIndex).val();     
+                        anAnswer["totalWeight"]         = $("#totalWeight"+orderIndex).val();          
+                        anAnswer["totPrice"]            = $("#totPrice"+orderIndex).html();
+                        anAnswer["shipFacture"]         = parseFloat($("#shipFacture"+orderIndex).html()); 
+                        anAnswer["totalDiscount"]       = parseFloat($("#totalDiscount"+orderIndex).html());
+                        anAnswer["totalTaxes"]          = parseFloat($("#totalTaxes"+orderIndex).html());
+                    }
+
+                    let aTrans={};
+                    aTrans["validated"]       = transactionValidated;     
+                    aTrans["prepareOnly"]     = transactionPrepared && !transactionValidated;
+                    aTrans["produitEmballe"]  = $("#produitEmballe" +sId(orderIndex,transIndex)).is(":checked");             
+                    aTrans["transId"]         = $("#transId"   +sId(orderIndex,transIndex)).html();
+                    aTrans["listingId"]       = $("#listingId" +sId(orderIndex,transIndex)).html();
+                    aTrans["price"]           = $("#price"     +sId(orderIndex,transIndex)).html();                       
+                    aTrans["quantity"]        = $("#quantity"  +sId(orderIndex,transIndex)).html();
+                    aTrans["title"]           = $("#title"     +sId(orderIndex,transIndex)).html();
+                    aTrans["variation"]       = $("#variation" +sId(orderIndex,transIndex)).html();
+                    aTrans["etsyUrl"]         = $("#etsyUrl"   +sId(orderIndex,transIndex)).attr('href');
+
+                    //Check si on doit mettre cette transaction 
+                    let emballeId = "produitEmballe" +sId(orderIndex,transIndex);
+                    let envoyerId = "validated"+sId(orderIndex,transIndex);
+                    let preparerId = "prepareOnly" +sId(orderIndex,transIndex);
+                    
+                    if (changedCheckBoxes.indexOf(emballeId) >=0 || changedCheckBoxes.indexOf(envoyerId) >=0 || changedCheckBoxes.indexOf(preparerId) >=0)
+                    {
+                        anAnswer["transactions"].push(aTrans);
+                    }
+                  }
+                }
+                else
+                  break;
+            }
+
+            //Record an answer
+            if ( Object.keys(anAnswer["transactions"]).length > 0)
+              answers["answers"].push(anAnswer)
+        }
+
+        answers["nAnswers"] = answers["answers"].length;
+        
+        if ( answers["answers"].length > 0)
+          google.script.run.withSuccessHandler(closeShippingSession).db_updateShippingSession(answers);
+        else
+          showInfo("Vous n'avez rien proposé à la validation...");
+
+        return true;
+      }
+ 
+
+      function cancelValidation()
+      {
+          janelaPopUp.fecha("soukAlert");
+      }
+
+      function doValidation()
+      {
+          janelaPopUp.fecha("soukAlert");
+          handleValider();
+      }
+
+      function confirmValidation() 
+      {
+        soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer la validation...",cancelValidation,doValidation);
+      }
+
+
+  
+    //===========================================================================================================
+    function closeShippingSession(retVal)
+    {    
+      if ( retVal["err"] == "ok")
+      {
+        let transactionsShipped = retVal["transactionsShipped"];
+        if ( transactionsShipped > 0 )
+        {
+          showProgress("Edition des étiquettes en cours...");
+          google.script.run.withSuccessHandler(closeMe).db_validateShippingSession();    
+        }
+        else
+        {
+          hideAllAlerts();
+          showInfo("Validation effectuée...");
+        }
+        return true; 
+      }
+      else
+        showError(retVal["msg"]) ;
+    }
+
+    //===========================================================================================================
+    function handleListeEnvois()
+    {
+        $("#searchControl").hide();
+        $("#nombreDeCommandes").hide();
+        showProgress("Liste des envois en cours de récupération depuis la plateforme ETSY...");
+        google.script.run.withSuccessHandler(displayListEnvois).etsy_retroGetAllShippedOrdersSinceInception();
+    }
+
+
+    //===========================================================================================================
+    function displayListEnvois(envois)
+    {
+      $("#listePrepareShipping").hide();
+      $("#listeDesEnvois").show();
+
+      let tousLesEnvois = JSON.parse(envois);
+
+      $("#msgRunning").hide();
+      $("#msgError").hide();
+      if (tousLesEnvois["err"] == "ok")
+      {
+        $("#listeDesEnvois").show();
+        
+        $('#listeDesEnvoisTable').DataTable({
+          "order": [[ 1, "desc" ]],
+          "pageLength": 100,
+          data: tousLesEnvois["data"],       
+          columns: [
+            {"title":"Date"},
+            {"title":"No Cmd"},
+            {"title":"Id Client"},
+            {"title":"Client"},
+            {"title":"Adresse"},
+            {"title":"Email"},
+          ]
+        });
+        
+        return true;
+      }
+      else
+      {
+          Error("Une erreur c'est produite: " + tousLesEnvois["msg"]);
+          return false;
+      }
+
+    }
+
+    function handlePreparedOnly()
+    {
+        let filtering = 1-$("#filteringId").val();
+        $("#filteringId").val(filtering);
+
+        let nOrders = $("#nOrdersId").val();
+
+        for(let orderIndex=0;orderIndex < nOrders; orderIndex++)
+        {
+            let hasPreparedTransaction=false;
+            for (transIndex=0; transIndex<= 100; transIndex++)
+            {
+                let transaction = $("#prepareOnly"+sId(orderIndex,transIndex));
+                
+                hasPreparedTransaction = $("#prepareOnly" +sId(orderIndex,transIndex)).is(":checked");   
+
+               
+                if ( hasPreparedTransaction)
+                  break;
+            }
+
+            if ( !hasPreparedTransaction && (filtering==1))
+            {
+              $("#maindivorderTable"+orderIndex).hide();
+              $("#maindivorderItems"+orderIndex).hide();
+            }
+            else
+            {
+              $("#maindivorderTable"+orderIndex).show();
+              $("#maindivorderItems"+orderIndex).show();
+            }
+        }
+    }
+    //===========================================================================================================
+    function closeMe(data)
+    {
+      hideAllAlerts();
+      if ( data["err"] == "ok" )
+      { 
+        if ( data["msg"] != null && data["msg"] != "" )
+          showInfo(data["msg"]);
+      }
+      else
+          showError("<h2>Une erreur est survenue: " + data["msg"]);
+    }
+  </script>

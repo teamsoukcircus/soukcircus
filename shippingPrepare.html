@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no" /> <!-- disable auto telephone linking in iOS -->
+
+    <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("souk-css"); ?>
+    <?!= include("popup-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
+     
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js" 
+             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+             crossorigin="anonymous"></script>
+
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+    
+  </head>
+
+  <body onload="initPage();">
+      <div hidden> <input id="shippingActionId"><?= shippingAction ?></input></div>
+      <div hidden> <input type="number" id="nOrdersId"></input></div>
+      <div hidden> <input type="number" id="filteringId"></input></div>
+      <div hidden> <input type="text" id="changedElements"></input></div>
+      <div hidden> <input type="text" id="changedElementAsObject"></input></div>
+      <div class="navbar">
+              <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+              <a href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+              <a href="#" type="button" class="button button3". onclick="populateOrdersForm();"><i class="fa fa-fw  fa-dropbox"></i>Préparer</a> 
+
+              <!-- <a  id="selectionId" href="#" onclick="selectAllTransactions();"><i class="fa fa-fw  fa-check-square"></i> Tout sélectionner</a>  -->
+
+              <a  type="button" class="button button3" id="calculerPrixId" href="#" 
+                          onclick="computeShippingPrices();"><i class="fa fa-fw fa-calculator"></i>Evaluer le prix</a> 
+              <!-- <a href="#" onclick="handleGenerer(this)"><i class="fa fa-fw fa-cogs"></i>Générer</a>  -->
+
+              <a   type="button" class="button button3" id="validerSessionId" href="#" 
+                          onclick="confirmValidation()"><i class="fa fa-fw fa-thumbs-o-up"></i>Valider</a> 
+
+              <a type="button" class="button button3" href="#" onclick="handleListeEnvois(this)"><i class="fa fa-fw fa-plane"></i>Commandes envoyées</a> 
+            <div style="width:20%;text-align:right;color:white;display:inline;">
+                <h1>Shipping</h1>
+            </div>
+      </div>
+
+      <section id="msgRunning" class="soukRunning" style="display:none"></section>
+      <section id="msgError" class="soukError" style="display:none"></section>
+      <section id="msgMessage" class="soukMessage" style="display:none"></section>
+
+
+      <section id="totalPricesId" style="display:none;">
+            <ul>
+              <li style="font-size:25px;" id="totalPriceShippingMAD"></li> 
+              <li style="font-size:25px;" id="totalPriceShippingEUR"></li> 
+              <li style="font-size:25px;" id="totalFactureShippingEUR"></li> 
+            </ul>
+      </section>
+
+
+    
+
+    
+    <div class="formContainer" style="padding-left:10%;width:80%;margin-top:20px" id="filterFormId">
+      <div class="formRow">
+        <div class="formCol-25"id="nombreDeCommandes"></div>
+         <div class="formCol-05"></div>
+        <div class="formCol-20">
+          <input style="border:2px;" type="text" id="search">
+        </div>
+
+        <div class="formCol-20">
+          <a   type="button" class="button button3" id="validerSessionId" href="#" 
+                        onclick="handlePreparedOnly()"><i class="fa fa-filter" aria-hidden="true"></i>Préparés uniquement</a> 
+
+        </div>
+      </div>
+    </div>
+
+    <section id="listePrepareShipping" style="display:none;padding-left:10%">
+
+    </section>
+
+    <section id="listeDesEnvois" style="display:none;">
+          <table id = "listeDesEnvoisTable" width="80%"></table>  
+    </section>
+
+
+
+</body>
+     <?!= include("utils-js"); ?>
+    <?!= include("souk-js"); ?>
+    <?!= include("popup-js"); ?>
+    <?!= include("shippingPrepare-js"); ?> 
+</html>

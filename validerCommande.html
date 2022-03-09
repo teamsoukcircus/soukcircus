@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("souk-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+
+    <style>
+th, td {
+  padding: 5px;
+  text-align: left;
+}
+</style>
+  </head>
+  <body>
+      <div id="cmdId" style="display:none"><?= cmdId ?></div>
+      <input type="number"  id="newProduct" name="newProduct" style="display:none"></input>
+      <input type="number"  id="stockId" name="stockId" style="display:none"></input>
+      <input type="text"  id="imageId" name="imageIdName" style="display:none"></input>
+      
+      <section  class="navbar">
+            <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+            <a href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+            <button  id="buttonUpdateProduct" style="width:30%" class="button button3" onclick="mettreAJourLeStock()">Mettre le stock à jour</button>
+
+            <div style="width:20%;text-align:right;color:white;display:inline;"><h1 style="color:white;padding-left:200px">Validation commande</h1></div>
+      </section>
+
+      <section id="msgRunning" class="soukRunning" style="display:none">
+      </section>
+      <section id="msgError" class="soukError" style="display:none">
+      </section>
+      <section id="msgMessage" class="soukMessage" style="display:none">
+      </section>
+
+
+<table style="width:50%;margin-left:auto;margin-right:auto;margin-bottom:auto;margin-top:50px;color=#565149;">
+  <tr>
+    <th>SKU</th>
+    <td><input type="text"  id="sku" name="sku" /></td>
+  </tr>
+  <tr>
+    <th>Identifiant commande</th>
+    <td id="receivedCmdId"></td>
+  </tr>
+  <tr>
+    <th>Date de la commande</th>
+    <td id="dateId"></td>
+  </tr>
+  <tr>
+    <th>Quantité commandée</th>
+    <td id="quantityId"></td>
+  </tr>
+  <tr>
+    <th>Quantité à mettre en stock</th>
+    <td ><input type="number"  id="quantityInStockId" name="unitBuyPriceMAD" required/></td>
+  </tr>
+  <tr>
+    <th>Prix d'achat unitaire [MAD]</th>
+    <td ><input type="number"  id="unitBuyPriceMAD" name="unitBuyPriceMAD" required/></td>
+  </tr>
+  <tr>
+    <th>Poid unitaire [Kg]</th>
+    <td ><input type="number"  id="unitWeightKg" name="unitWeightKg" required/></td>
+  </tr>
+
+    <tr>
+    <th>Seuil minimum en stock déclenchant une alerte</th>
+    <td ><input type="number"  id="minThresholdDaysId" name="minThresholdDaysId" required/></td>
+  </tr>
+
+  <tr>
+    <th>Titre</th>
+    <td ><textarea rows="1" cols="80" id="titleId" name="titleId" ></textarea></td>
+  </tr>
+
+  <tr>
+    <th>Description</th>
+    <td><textarea rows="3" cols="80" id="descId" name="descId" ></textarea></td>
+  </tr>
+
+  <tr>
+    <th>Hauteur</th>
+    <td id="heightId"></td>
+  </tr>
+
+    <tr>
+    <th>Largeur</th>
+    <td id="widthId"></td>
+  </tr>
+
+  <tr>
+    <th>Longueur</th>
+    <td id="lengthId"></td>
+  </tr>
+
+  <tr>
+    <th>Diamètre haut</th>
+    <td id="diamTopId"></td>
+  </tr>
+
+    <tr>
+    <th>Diamètre médian</th>
+    <td id="diamMiddleId"></td>
+  </tr>
+
+  <tr>
+    <th>Diamètre bas</th>
+    <td id="diamBottomId"></td>
+  </tr>
+
+
+  <tr>
+    <th>Couleur</th>
+    <td id="colorId"></td>
+  </tr>
+
+
+  <tr>
+    <th>Echantillon couleur</th>
+    <td id="colorDisplayId"></td>
+  </tr>
+
+  <tr>
+    <th>URL Etsy</th>
+    <td><input type="text"  id="urlEtsyId" name="urlEtsyId" /></td>
+  </tr>
+
+  <tr>
+    <th>Fiche de la commande</th>
+    <td><a id="urlFicheId" href="" target="_blank">Voir la fiche</a></td>
+  </tr>
+
+</table>
+  </body>
+   
+    <?!= include("utils-js"); ?>
+    <?!= include("popup-js"); ?>
+    <?!= include("souk-js"); ?>
+    <?!= include("validerCommande-js"); ?>
+</html>

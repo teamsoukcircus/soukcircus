@@ -1,0 +1,17 @@
+<script>
+
+    //const clock_departMinutes = 5;
+    //let   clock_temps = clock_departMinutes * 60;
+
+    const timerElement = document.getElementById("clock");
+
+    setInterval(() => 
+    {
+        let today = new Date();
+        let dateStr = today.toLocaleString("fr-FR");
+        timerElement.innerHTML = '<h5 style="color:#000000;">'+dateStr+'</h5>';
+
+        //clock_temps = clock_temps <= 0 ? 0 : temps - 1
+    }, 1000);
+
+</script>

@@ -1,0 +1,77 @@
+<script>
+    
+    function requestAllSoukCommandes()
+    {
+      hideAllAlerts();
+      if ( $('#commandesTableId').css('display') == 'block' )
+      {
+          $('#commandesTableId').hide()
+          return true;
+      }
+
+      showProgress("");
+      $('#commandesTableId').hide();
+      
+      //Request data to server for this new scope
+      //==========================================
+      
+      google.script.run.withSuccessHandler(commandesHandler).com_getAllSoukCommandes();
+      return true;
+    }
+
+    function generateAllProvidersOrders()
+    {
+      hideAllAlerts();
+      showProgress("");
+      google.script.run.withSuccessHandler(allProvidersOrdersGeneated).com_generateAllProvidersOrders();
+      return true;
+    }
+
+    function allProvidersOrdersGeneated(ret)
+    {
+        hideAllAlerts();
+        showInfo(ret["msg"]);
+    }
+
+    function commandesHandler(allOrders)
+    {
+        let myData = JSON.parse(allOrders);
+
+        hideAllAlerts();
+
+        if ( myData["err"]=="ok")
+        {
+          $('#commandesTableId').show()			
+
+          $('#commandesTableId').DataTable(   
+          {
+            data: myData["data"],
+            columns: [
+              {"title":"Id Cmd"},
+              {"title":"Date Cmd"},
+              {"title":"Nouveau"},
+              {"title":"SKU"},
+              {"title":"Quantité"},
+              {"title":"Titre"},
+              {"title":"Fiche",
+              "render": function ( data, type, row, meta ) {
+                  return "<a href='"+data+"' target='_blank'>Voir la fiche</a>";
+                  }
+              },
+              {"title":"Valider",
+              "render": function ( data, type, row, meta ) 
+              {
+                  if ( data=="#")
+                    return "Validée";
+                  else
+                    return "<a href='"+data+"' target='_blank'>Valider la commande</a>";
+                  }
+              }
+            ]
+          });
+        }
+        else
+          showAlert(myData["msg"],"#msgError");
+    }
+
+  </script>

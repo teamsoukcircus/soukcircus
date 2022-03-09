@@ -1,0 +1,109 @@
+<script>
+
+    $( document ).ready(function() {
+        hideAllAlerts()
+        loadItemInfo();
+      });
+
+    function loadItemInfo()
+    {
+        let cmdId = parseInt($("#cmdId").html());
+        if ( cmdId >= 0 )
+        {
+          showProgress("");
+          google.script.run.withSuccessHandler(displayItem).com_getRecord(cmdId);
+        }
+        else
+        { 
+          showError("Commande introuvable");
+        }
+
+    }
+
+
+    function displayItem(data)
+    {
+        hideAllAlerts();
+
+        let retData = JSON.parse(data);
+        if(retData["err"]=="ok")
+        {
+              if ( retData["data"]["stockId"] ==null || retData["data"]["stockId"] == "")
+              {
+                $("#buttonUpdateStock").hide();
+                $("#stockId").val(-1);
+              }
+              else
+                $("#stockId").val(retData["data"]["stockId"]);
+
+
+              $("#sku").val(retData["data"]["sku"] );
+              $("#receivedCmdId").html(retData["data"]["cmdId"] );
+              $("#dateId").html(retData["data"]["date"] );
+              $("#quantityId").html(retData["data"]["quantity"] );
+              $("#urlFicheId").attr("href", retData["data"]["urlFiche"] );
+
+              $("#titleId").val(retData["data"]["title"]);
+              $("#descId").val(retData["data"]["desc"]);
+
+              if (retData["data"]["urlEtsy"] != null)
+              {
+                $("#urlEtsy").attr("href", retData["data"]["urlEtsy"] );
+              }
+
+              $("#heightId").html(retData["data"]["height"]);
+              $("#lengthId").html(retData["data"]["length"]);
+              $("#widthId").html(retData["data"]["width"]);
+              
+              $("#diamTopId").html(retData["data"]["diamTop"]);
+              $("#diamMiddleId").html(retData["data"]["diamMiddle"]);
+              $("#diamBottomId").html(retData["data"]["diamBottom"]);
+
+              $("#colorId").html(retData["data"]["color"]);
+              $("#colorDisplayId").css("background-color", retData["data"]["color"]);		
+        }
+        else
+        {
+          showError(retData["msg"]);
+          return false;
+        }
+    }
+     
+
+
+    function mettreAJourLeStock()
+    {
+        let ret={};
+        ret["cmdId"]              = $("#receivedCmdId").html();
+        let stockId = $("#stockId").val();
+        if ( stockId >= 0 )
+          ret["stockId"] = stockId;
+          
+        ret["sku"]                = $("#sku").val(); 
+        ret["unitBuyPriceMAD"]    = parseFloat( $("#unitBuyPriceMAD").val());
+        ret["unitWeightKg"]       = parseFloat($("#unitWeightKg").val());
+        ret["quantityInStock"]    = parseInt($("#quantityInStockId").val());
+        ret["minThresholdDays"]   = parseInt($("#minThresholdDaysId").val());
+        ret["urlEtsy"]            = parseFloat($("#urlEtsyId").val());
+        ret["newProduct"]         = parseInt($("#newProduct").val());
+
+        showProgress("");
+        google.script.run.withSuccessHandler(closeMe).com_validerLaCommande(ret); 
+    }
+
+     function closeMe(dataIn)
+    {
+      hideAllAlerts();
+      let data = JSON.parse(dataIn);
+      if ( data["err"] == "ok" )
+      { 
+        if ( data["msg"] != null && data["msg"] != "" )
+          showInfo("<h2>"+ data["msg"] + "</h2>");
+        else
+          showInfo("<h2>Données sauvegardées...");
+      }
+      else
+          showError("<h2>Une erreur est survenue: " + data["msg"] + "</h2>");
+    }
+
+    </script>

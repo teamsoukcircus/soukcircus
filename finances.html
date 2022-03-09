@@ -1,0 +1,114 @@
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no" /> <!-- disable auto telephone linking in iOS -->
+   <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("souk-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.js" integrity="sha512-Lii3WMtgA0C0qmmkdCpsG0Gjr6M0ajRyQRQSbTF6BsrVh/nhZdHpVZ76iMIPvQwz1eoXC3DmAg9K51qT5/dEVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!--
+    <style>
+      .chartBox{
+        width:800px;
+        height:800px;
+        margin-top:170px;
+      } 
+    </style>
+    -->
+<style>
+    
+  </style>
+  
+  </head>
+  <body   bgcolor="#FFFFFE" color="#000000" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0">
+
+      <section  class="navbar">
+        <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+        <a href= <?= utils_getHomeUrl(); ?> ><i class="fa fa-fw fa-home"></i>Home</a> 
+        <a type="button" class="button button3" href="https://www.appsheet.com/start/246b31b3-ec25-434c-b1fc-9ef02a7612f2" 
+           target="_blank">
+            <i class="fa fa-fw fa-eur"></i>&nbsp;App finance
+        </a> 
+<!--
+        <a type="button" class="button button3"  href= <?= actionFraisFixes ?> target="_blank">
+                                                                <i class="fa fa-fw fa-eur"></i>Frais fixes</a> 
+-->
+                                                                
+        <a type="button" class="button button3"  onclick="getMouvments(1)" >
+            <i class="fa fa-list-ul" aria-hidden="true"></i>&nbsp;Débits-Crédits/compte
+        </a> 
+
+        <a type="button" class="button button3"  onclick="getMouvments(0)" >
+            <i class="fa fa-list-alt" aria-hidden="true"></i>&nbsp;Débits-Crédits/global
+        </a> 
+
+        
+        <div style="width:20%;text-align:right;color:white;display:inline;"><h1>Finances</h1></div>
+      </section >
+        
+      <section id="msgRunning" class="soukRunning" style="display:none">
+      </section>
+      <section id="msgError" class="soukError" style="display:none">
+      </section>
+      <section id="msgMessage" class="soukMessage" style="display:none">
+      </section>
+
+<!--
+  <div class="chartBox">
+   <canvas id="monthChart"></canvas>
+  </div>
+-->           
+
+    <div class="w3-container">
+      <div class="w3-responsive" style="width:85%;margin-top:50px">
+          <table id = "yearlyDataId" class="display">
+         
+          </table>
+      </div>
+    </div>
+
+     <table id = "divBilansGlobalId" class="display compact dt-body-left" 
+              style="width:85%;margin-left:auto;margin-right:auto;">
+    
+    </table>
+
+
+    <table id = "divBilansGlobalMensuelParCompteId" class="display compact dt-body-left" 
+              style="width:85%;margin-left:auto;margin-right:auto;">
+    
+    </table>
+    <div id="divMouvmentsParCompteId" class="w3-responsive" 
+              style="width:85%;margin-left:auto;margin-right:auto">
+
+      </div>
+<!--
+    <table id = "divBilansGlobalParCompteId" class="display compact dt-body-left" 
+              style="width:85%;margin-left:auto;margin-right:auto;">
+    
+    </table>
+-->
+
+    <table id = "divMouvmentsGlobalId" class="display compact dt-body-left" 
+                    style="width:85%;margin-left:auto;margin-right:auto">
+    
+    </table>
+
+      
+  </body>
+      <?!= include("souk-js"); ?>
+      <?!= include("popup-js"); ?>
+      <?!= include("finances-js"); ?>
+</html>

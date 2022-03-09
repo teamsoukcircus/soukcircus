@@ -1,0 +1,249 @@
+<script>
+	$(document).ready(function() {
+		hideAllAlerts();
+		loadItemInfo();
+	});
+
+
+function loadItemInfo() {
+	let stockId = parseInt($("#stockId").html());
+	if (stockId >= 0) {
+		$("#newProduct").val(0);
+		showProgress("");
+		google.script.run.withSuccessHandler(displayItem).stock_getRecord(stockId);
+		return true;
+	} else {
+		showError("Elément de stock non identifiable...");
+		return false;
+	}
+}
+
+
+
+function insertImagesTable(idsArray) {
+	let nImages = idsArray.length;
+
+	if (nImages == 0)
+		return;
+
+	let remainder = nImages % 5;
+	let nImageRows = (nImages - remainder) / 10;
+
+	if (remainder > 0)
+		nImageRows++;
+
+	let theSectionParent = document.getElementById("imagesDisponiblesId");
+	for (let rowIndex = 0; rowIndex < nImageRows; rowIndex++) {
+		let aDiv = document.createElement("div");
+		aDiv.setAttribute("class", "row");
+		theSectionParent.appendChild(aDiv);
+
+		for (let j = 0; j < 10; j++) {
+			let refIndex = 10 * rowIndex + j;
+
+			if (refIndex < nImages) {
+				let subDiv = document.createElement("div");
+				subDiv.setAttribute("class", "column");
+
+				let img = document.createElement("img");
+				let imgUrl = "https://drive.google.com/uc?export=view&id=" + idsArray[refIndex];
+				img.setAttribute("src", imgUrl);
+				img.setAttribute("id", "imageId" + rowIndex);
+				img.setAttribute("width", "100px");
+				img.setAttribute("height", "100px");
+				img.setAttribute("onclick", "selectImage(this);");
+				subDiv.appendChild(img);
+				aDiv.appendChild(subDiv);
+			}
+		}
+	}
+
+	//On a besoin de gérer des événements 
+	//====================================
+	for (let rowIndex = 0; rowIndex < nImages; rowIndex++) {
+		let radioId = "image" + rowIndex;
+		$("#" + radioId).on('click', function() {
+			let imgIndex = parseInt($(this).attr('id'));
+			let theImageId = "#imageId" + imgIndex;
+
+			let imageUrl = $(theImageId).attr("src");
+			let imgName = $(theImageId).attr("name");
+
+			$("#imagePourCommande").attr("src", imageUrl);
+			$("#imageId").val(imgName);
+		});
+	}
+}
+
+
+function displayItem(data) {
+	hideAllAlerts();
+
+	let retData = JSON.parse(data);
+	if (retData.err == "ok") {
+		//=====================================================================
+		if (retData.data.imageUrl != null) {
+			$("#imagePourCommande").attr("src", retData.data.imageUrl);
+			$("#imageId").val(retData.data.imageUrl);
+		}
+
+		if (retData.data.dispoImageIds != null)
+			insertImagesTable(retData.data.dispoImageIds);
+
+		//==================================================================
+		if (retData.data.title != null)
+			$("#title").html(retData.data.title);
+
+		if (retData.data.etsyUrl != null) {
+			$("#etsyUrl").html("<a href='" + retData.data.etsyUrl + "' target='_blank'>Voir dans Etsy</a>");
+			$("#etsyUrlId").val(retData.data.etsyUrl);
+		}
+
+		if (retData.data.sku != null)
+			$("#sku").val(retData.data.sku);
+
+		let fournis = retData.data.fournisseur;
+		let fournisseursDropDown = document.getElementById("fournisseur");
+		if (fournisseursDropDown && fournisseursDropDown.options.length == 0) {
+			for (let i = 0; i < fournis.length; i++) {
+				let aFourni = fournis[i];
+
+				let text = aFourni[1] + "-" + aFourni[4];
+				
+				let optn = document.createElement("OPTION");
+				optn.text = text;
+				optn.value = aFourni[1]; //Le nom comme valeur
+				fournisseursDropDown.options.add(optn);
+			}
+      $("#fournisseur").val(retData.data.itemProvider)
+		}
+
+		$("#weightKg").val(retData.data.kg_weight);
+		$("#cm_length").val(retData.data.cm_length);
+		$("#cm_width").val(retData.data.cm_width);
+		$("#cm_height").val(retData.data.cm_height);
+		$("#cm_length").val(retData.data.cm_length);
+		$("#cm_width").val(retData.data.cm_width);
+		$("#cm_height").val(retData.data.cm_height);
+	} else {
+		showError(retData.msg);
+		return false;
+	}
+}
+
+//
+// =============== Pas utilisées pour l'instant =================
+//
+/*
+function createFiche()
+{
+    let stockId = $("#stockId").html();
+    
+    ret={};
+    ret["stockId"]        = $("#stockId").html()
+    ret["title"]          = $("#title").val();
+    ret["noCommande"]     = "";
+    ret["etsyUrl"]        = $("#etsyUrlId").val();
+    ret["fourni"]         = $("#fournisseur" ).val();
+    ret["description"]    = $("#description").val();
+    ret["cm_length"]      = $("#cm_length").val();
+    ret["cm_width"]       = $("#cm_width").val();
+    ret["cm_height"]      = $("#cm_height").val();
+    ret["cm_diamTop"]     = $("#cm_diamTop").val();
+    ret["cm_diamMiddle"]  = $("#cm_diamMiddle").val();
+    ret["cm_diamBottom"]  = $("#cm_diamBottom").val();
+    ret["quantity"]       = $("#quantity").val();
+    ret["quality"]        = "";
+    ret["langue"]         = $("#langue").val();
+    ret["imageId"]        = $("#selectedImageId").val();
+    ret["sku"]             = $("#sku").val();
+    
+    cm_diamTop
+    cm_diamTop
+
+
+    //ret["langue2"]         = $("#langue2").val();
+
+    let addColor = $("#addColor").is(':checked');
+    if (addColor)
+      ret["color"]          = $("#color").val();
+    else
+      ret["color"]          = "";
+  
+    showProgress("La fiche commande temporaire est en cours d'édition...");
+    google.script.run.withSuccessHandler(displayCommandeDocument).com_createFiche(ret);
+}
+
+function displayCommandeDocument(dataIn)
+{
+    hideAllAlerts();
+    let data = JSON.parse(dataIn);
+    if (data["err"]=="ok")
+    {
+      $("#docCommandeUrl").html("<a href='"+data["docCommandeUrl"] + "' target='_blank'>Visualiser la commande</a>")
+      $("#docCommandeMsg").html("<h5>"+data["msg"][0]+"</h5>") 
+    }
+    else
+      showError(data["msg"]);
+}
+*/
+
+
+function saveStockItem() {
+	let stockId = $("#stockId").html();
+
+	if (stockId == null || stockId == "") {
+		showError("Aucun élément de stock identifié, fermez et recommencez..");
+		return false;
+	}
+
+	ret = {};
+	ret.stockId             = $("#stockId").html();
+	ret.newProduct          = $("#newProduct").val();
+	ret.title               = $("#title").val();
+	ret.etsyUrl             = $("#etsyUrlId").val();
+	ret.fournisseur         = $("#fournisseur").val();
+	ret.description         = $("#description").val();
+
+	ret.unitWeightKg        = $("#weight").val();
+	ret.unitBuyPriceMAD     = $("#unitBuyPriceMAD").val();
+	ret.cm_length           = $("#cm_length").val();
+	ret.cm_width            = $("#cm_width").val();
+	ret.cm_height           = $("#cm_height").val();
+	ret.cm_diamTop          = $("#cm_diamTop").val();
+	ret.cm_diamMiddle       = $("#cm_diamMiddle").val();
+	ret.cm_diamBottom       = $("#cm_diamBottom").val();
+	ret.quantity            = $("#quantity").val();
+	ret.langue              = $("#langue").val();
+	ret.imageId             = $("#selectedImageId").val();
+	ret.sku                 = $("#sku").val();
+	ret.urlEtsy             = $("#urlEtsy").val();
+
+
+	showProgress("Données en cours de sauvegarde...");
+	google.script.run.withSuccessHandler(closeMe).stock_sauvegarderArticle(ret);
+}
+
+function closeMe(data) {
+	hideAllAlerts();
+	if (data.err == "ok") {
+		if (data.msg != null && data.msg != "")
+			showInfo("<h2>" + data.msg + "</h2>");
+		else
+			showInfo("<h2>Données sauvegardées...");
+	} else
+		showError("<h2>Une erreur est survenue: " + data.msg + "</h2>");
+}
+
+
+function selectImage(imgs) {
+	var expandImg = document.getElementById("imagePourCommande");
+	expandImg.src = imgs.src;
+
+	let splitted = imgs.src.split("id=");
+	$("#selectedImageId").val(splitted[1]);
+
+	expandImg.parentElement.style.display = "block";
+}
+
+</script>

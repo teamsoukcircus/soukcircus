@@ -1,0 +1,655 @@
+ <script>
+
+
+      window.addEventListener('load', preventFormSubmit);
+      document.getElementById("assigneeScopeId").value = 'All';
+
+      /**======================================================================================
+       *                        function getDataForTheMonth()
+       ======================================================================================*/
+      function getDataForTheMonth()
+      {
+          showProgress("");
+          google.script.run.withSuccessHandler(displayDataOfTheYear).main_getAllDataForCurrentYear();
+      }
+
+      /**======================================================================================
+       *                          function displayDataOfTheYear(dataIn)
+       ======================================================================================*/
+      function displayDataOfTheYear(dataIn)
+      {
+          hideAllAlerts();
+          let yearlyData  = dataIn["monthly"];
+          let shipSupp    = dataIn["shipSupp"];
+          for(let i=0;i<yearlyData.length;i++)
+          {
+            let chiffresDuMois = yearlyData[i]["numbers"];
+            let graphDuMois   = yearlyData[i]["figures"];
+            let shipSuppMois  = shipSupp[i];
+
+            $("#mois"+i).html("<h3>"+chiffresDuMois[0]+"</h3>");
+            $("#om"+i).html(chiffresDuMois[1]);
+            $("#mb"+i).html(chiffresDuMois[2]);
+            $("#vc"+i).html(chiffresDuMois[3]);
+            $("#ship"+i).html(shipSuppMois);
+            $("#sc"+i).html(chiffresDuMois[4]);
+            $("#ss"+i).html(chiffresDuMois[5]);
+            $("#sd"+i).html(chiffresDuMois[6]);
+
+            displayDataOfTheMonth(graphDuMois,"monthChart"+i);s
+          }
+
+          for(let i=lastMonth+1;i<12;i++)
+          {
+              $("#mois"+i).hide();
+              $("#chiffres"+i).hide();
+              $("#graph"+i).hide();
+          }
+      }
+
+      /**======================================================================================
+       *                              function displayDataOfTheMonth(monthlyData,context)
+       ======================================================================================*/ 
+      function displayDataOfTheMonth(monthlyData,context)
+      {
+          let theData = JSON.parse(monthlyData);
+          let theLabels = theData["labels"];
+          let theDataFinMois = theData["series"][1]["data"];
+
+          hideAllAlerts();
+          //const ctx = document.getElementById('monthChart').getContext("2d");
+          const monthChart = new Chart(context, {
+              type: 'line',
+              label: '',
+              data: {
+                  labels: theLabels,
+                  datasets: 
+                  [
+                    {
+                      label: 'Objectif du mois',
+                      data: theData["series"][0]["data"],
+                      backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+                      borderColor: ['rgba(3, 186, 2, 1)'],
+                      tension: 0.4,
+                      pointRadius: 0
+                    },
+                    {
+                      label: 'Projection fin de mois',
+                      data: theData["series"][1]["data"],
+                      backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+                      borderColor: ['rgba(3, 121, 252, 1)'],
+                      tension: 0.4,
+                      pointRadius: 0
+                    },
+                    {
+                      label: 'A date du jour',
+                      data: theData["series"][2]["data"],
+                      backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+                      borderColor: ['rgba(231, 6, 8, 1)'],
+                      tension: 0.4,
+                      pointRadius: 4
+                    },  
+                    {
+                      label: 'Minimum bonus',
+                      data: theData["series"][3]["data"],
+                      backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+                      borderColor: ['rgba(255, 176, 2, 1)'],
+                      tension: 0.4,
+                      pointRadius: 0
+                    }
+                  ]
+              },
+              options: {
+                  scales: {
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+      }
+
+
+      /**
+       * 
+       * ======================================================================================
+       * 
+      function isGranted(zone)
+      {
+          if (zone=="globalViewId_3" || zone=="globalViewId_1" || zone=="globalViewId_2" ||  
+              zone=="salaires" || zone=="benefices" || zone=="pilotage" || zone=="saisirTaches" || zone == "globalView")
+          {
+            let collab = document.getElementById("activeEmailId").innerHTML;
+           
+            if (collab == "said182008@gmail.com" || collab.indexOf("said") != -1 || collab.indexOf("Said") != -1 )
+                return false;
+
+            if (collab == "gianfranco.oldani@gmail.com" || collab.indexOf("gianfranco") != -1 || collab.indexOf("Gianfranco") != -1 )
+                return false;
+           
+            return false;
+          }
+
+          if (zone=="reducedViewId" ) 
+          {
+            let collab = document.getElementById("activeEmailId").innerHTML;
+
+            if (collab == "said182008@gmail.com" || collab.indexOf("said") != -1 || collab.indexOf("Said") != -1 )
+                return true;
+              else
+                return false;
+
+
+            if (collab == "gianfranco.oldani@gmail.com" || collab.indexOf("gianfranco") != -1 || collab.indexOf("Gianfranco") != -1 )
+                return true;
+            else
+                return false;
+          }
+      }
+
+      /*
+      let mySoukWindow;
+      let theChildUrl;
+      function openMe(url)
+      {
+        mySoukWindow=window.open(url);
+
+        setInterval(mySoukFunction,2000);
+        
+      }
+
+      function mySoukFunction()
+      {
+          google.script.run.withSuccessHandler(closeChild).getChildStatus("childClose");
+          //mySoukWindow.close();
+      }
+
+      function closeChild(data)
+      {
+          if (data=="close")
+            mySoukWindow.close();
+      }
+      */
+
+      function salairesTableFetch()
+      {
+        hideAllAlerts();
+        if ( isGranted("salaires") )
+        {
+          if ( document.getElementById("salairesTableId").style.display=="block")
+          {
+            document.getElementById("salairesTableId").style.display="none";
+          }
+          else
+          {
+            showProgress("");
+            document.getElementById("salairesTableId").style.display="none";
+            google.script.run.withSuccessHandler(salairesButtonHandler).getSalairesTable();
+          }
+        }
+        else{
+          document.getElementById("tableViewSalairesId").style.display="none";
+          
+        }
+      }
+
+      function salairesButtonHandler(data) {
+            var td = document.getElementById('salairesTableId');
+            td.innerHTML = data;
+
+            hideAllAlerts()
+            document.getElementById("salairesTableId").style.display="block";
+      }
+
+      function tachesTableFetch(assignee,force)
+      {
+        let actualAssignee = document.getElementById("assigneeScopeId").value;
+
+        hideAllAlerts();
+        document.getElementById("assigneeScopeId").value = assignee;
+
+        if ( !force && document.getElementById("tachesTableId").style.display=="block")
+        {
+          if ( assignee == actualAssignee )
+          {
+            document.getElementById("tachesTableId").style.display="none";
+            return true;
+          }
+        }
+
+        showProgress("");
+        document.getElementById("tachesTableId").style.display="none";
+        
+        //Request data to server for this new scope
+        //==========================================
+        let scope = {};
+        scope.assignee = assignee;
+        document.getElementById("assigneeScopeId").value = assignee;
+
+        google.script.run.withSuccessHandler(tachesButtonHandler).getWebTasksTableData(scope);
+
+      }
+
+      //Fills the tasks table zone with incoming data already in html format
+      //====================================================================
+      function tachesButtonHandler(data) 
+      {
+            var div = document.getElementById('tachesTableId');
+            div.innerHTML = data;
+
+            hideAllAlerts();
+            document.getElementById("tachesTableId").style.display="block";
+      }
+      
+
+
+
+      /*===================================================*/
+        // Prevent forms from submitting.
+      function preventFormSubmit() 
+      {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+      }
+      
+      
+
+      function handleFormSubmit(formObject) 
+      {
+        if ( validateForm() )
+        {
+          showProgress("");
+          google.script.run.withSuccessHandler(updateTasksList).processTaskForm(formObject);
+        }
+      }
+
+      function updateTasksList() 
+      {
+        tachesTableFetch(document.getElementById("assigneeScopeId").value, true);
+      }
+
+      
+      function setupTask(taskValues)
+      {
+            hideAllAlerts()
+
+            let taskData = JSON.parse(taskValues);
+          
+            document.getElementById("showTid").innerHTML = "Edition de la tâche no: " + taskData.Task.TaskNo ;
+            document.getElementById("taskId").value=taskData.Task.TaskNo;
+            document.getElementById("titleId").value=taskData.Task.Title;
+            document.getElementById("descriptionId").value=taskData.Task.Description;
+
+            document.getElementById("bestFinId").value= taskData.Task.FinEspere; 
+            document.getElementById("deadlineId").value= taskData.Task.FinPire;
+            document.getElementById("percentId").value= taskData.Task.Percent;
+            
+            let dropdownStatuses = document.getElementById("taskStatuses");
+            if (dropdownStatuses && dropdownStatuses.options.length==0) 
+            {
+                for (var i=0; i < taskData.listStatuses.length;i++)
+                {    
+                    var optn = document.createElement("OPTION");
+                    optn.text = taskData.listStatuses[i];
+                    optn.value = taskData.listStatuses[i];
+                    dropdownStatuses.options.add(optn); 
+                }
+            }
+            dropdownStatuses.value=taskData.Task.Status;
+
+            let urgences = taskData.listUrgency;
+            let dropdownUrgency = document.getElementById("taskUrgency");
+            if (dropdownUrgency && dropdownUrgency.options.length==0) 
+            {
+                //$("#taskUrgency").empty();
+                for (var i=0; i < taskData.listUrgency.length;i++)
+                {    
+                    var optn = document.createElement("OPTION");
+                    optn.text = taskData.listUrgency[i];
+                    optn.value = taskData.listUrgency[i];;
+                    dropdownUrgency.options.add(optn); 
+                }
+            }
+            dropdownUrgency.value = taskData.Task.Urgency;
+
+
+            let attrib = [""];
+            for (let i=0;i<taskData.listAssignee.length;i++)
+              attrib.push(taskData.listAssignee[i]);
+
+            let attribDropDown  = document.getElementById("taskAttrib");
+            let updatedByDrop   = document.getElementById("taskupdBy");
+      
+            if (attribDropDown && attribDropDown.options.length==0 ) 
+            {
+                for (let i=0; i < attrib.length;i++)
+                {    
+                    let optn1 = document.createElement("OPTION");
+                    optn1.text = attrib[i];
+                    optn1.value = attrib[i];
+                    attribDropDown.options.add(optn1); 
+
+                    optn3 = document.createElement("OPTION");
+                    optn3.text = attrib[i];
+                    optn3.value = attrib[i];
+                    updatedByDrop.options.add(optn3); 
+                }
+            }
+
+            //Categories
+            let categoryDropDown = document.getElementById("categories");
+
+            if (categoryDropDown && categoryDropDown.options.length==0 ) 
+            {
+                for (let i=0; i < taskData.listCategories.length;i++)
+                {    
+                    let optn = document.createElement("OPTION");
+                    optn.text = taskData.listCategories[i];
+                    optn.value = taskData.listCategories[i];
+                    categoryDropDown.options.add(optn); 
+
+                }
+            }        
+          return true;
+      }      
+
+
+      function populateTaskForm(taskId)
+      {
+          window.scrollTo(0, 0);
+          showProgress("");
+          google.script.run.withSuccessHandler(setupTask).getTaskDetails(taskId);
+      }
+
+
+
+      /*======================= ACTION = DELETE TASK ==========================*/
+        function removeTaskRow(taskId)
+        { 
+            try 
+            {  
+                let table = document.getElementById('soukTableTasksId'); 
+                var rowCount = table.rows.length;  
+                for (var i = 0; i < rowCount; i++) 
+                {  
+                    
+                    var row = table.rows[i];  
+                    var id = row.cells[0].innerHTML; 
+                    //alert(i + "," + id + ", " + taskId + ", " + row.cells[0].innerHTML + ", " + row.cells[1].innerHTML + ", " + row.cells[2].innerHTML);
+                    if (id == taskId) 
+                    {  
+                        //alert("found"+id);
+                        table.deleteRow(i);    
+                        break;
+                    }  
+                }
+            } catch (e) {  
+                soukSimpleAlert("Exception",e.message);  
+            }  
+        } 
+
+      function doDeleteTask()
+      {
+          let taskId = document.getElementById("task2Delete").value;
+          let rowNum = document.getElementById("task2DeleteRowNum").value ; 
+
+          document.getElementById("task2Delete").value='';
+          document.getElementById("task2DeleteRowNum").value='';
+
+          removeTaskRow(taskId) 
+
+          janelaPopUp.fecha("soukAlert");
+
+          google.script.run.withSuccessHandler(updateTasksList).processDeleteTask(taskId);
+          
+      }
+
+      function cancelDeleteTask()
+      {
+          let taskId = document.getElementById("task2Delete").value;
+          document.getElementById("task2Delete").value='';
+          document.getElementById("task2DeleteRowNum").value='';
+          janelaPopUp.fecha("soukAlert");
+      }
+
+      function confirmDelete(taskId,rowNum) 
+      {
+        document.getElementById("task2Delete").value=taskId;
+        document.getElementById("task2DeleteRowNum").value=rowNum;
+        soukSimpleConfirmOkCancel("Information","Merci de confirmer l'effacement de la tâche...",cancelDeleteTask,doDeleteTask);
+      }
+
+      function deleteTask(taskId,rowNum)
+      {
+        confirmDelete(taskId,rowNum);
+      }
+
+      /* ================================================================================*/
+
+      function validateForm() 
+      {
+          let x = document.forms["myForm"]["updatedBy"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci de préciser votre identité dans le champs Modif par...");
+            return false;
+          }
+
+          x = document.forms["myForm"]["attribue"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci d'attribuer cette tâche...");
+            return false;
+          }
+
+          x = document.forms["myForm"]["urgency"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci de préciser un niveau d'urgence...");
+            return false;
+          }
+
+          x = document.forms["myForm"]["status"];
+          if ( x.value == ""  )
+          {
+            soukSimpleAlert("Information","Merci de préciser un status d'avancement...");
+            return false;
+          }
+          return true;
+        }
+
+        function showLogiqueSalaires()
+        {
+            if ( document.getElementById("logiqueSalaires").style.display=="none")
+              document.getElementById("logiqueSalaires").style.display="block";
+            else
+              document.getElementById("logiqueSalaires").style.display="none";
+        }
+
+        function showLogiqueTaches()
+        {
+            if ( document.getElementById("logiqueTaches").style.display=="none")
+              document.getElementById("logiqueTaches").style.display="block";
+            else
+              document.getElementById("logiqueTaches").style.display="none";
+        }
+
+        function showDetailsFrais()
+        {
+            //google.script.run.withSuccessHandler(displayAssignments).menuShowModifFraisSupplementaireModalDialog();
+
+            if ( document.getElementById("detailsFrais").style.display=="none")
+              document.getElementById("detailsFrais").style.display="block";
+            else
+              document.getElementById("detailsFrais").style.display="none";
+        }
+
+        
+        //========================== ASSIGNMENTS FOR NEXT/CURRENT TASKS ===================================
+        function requestAssignments()
+        {
+          //assign_TasksToCollaborators()
+          hideAllAlerts();
+          google.script.run.withSuccessHandler(displayAssignments).assign_NextTasksToCollaborators();
+        }
+
+        function displayAssignments(assignmentsData)
+        {
+            hideAllAlerts();
+            let zone = document.getElementById("tachesAssignmentsId");
+            let assignments = assignmentsData.assign;
+
+            if ( assignments.length > 0)
+            {
+              let html = "<hr class='dashed'/><br><h2>Assignements possibles</h2><br><table id='soukTable' width='100%'>"
+              for(let i = 0;i< assignments.length ;i++)
+              {
+                  html += "<tr><td>"+assignments[i].id + "</td><td>" + assignments[i].collab + "</td><td>" +  assignments[i].title  + "</td></tr>";
+              }
+              html += "</table>";
+
+              zone.innerHTML=html;
+            }
+            else if (assignmentsData.message != null )
+              zone.innerHTML = "<h2>"+assignmentsData.message + "</h2>"
+            else
+              zone.innerHTML = "<h2>Aucun assignment possible pour l'instant</h2>"
+        }
+
+        //=========================== SCHEDULING GLOBAL ==================================
+        function requestScheduling()
+        {
+          //assign_TasksToCollaborators()
+          document.getElementById("msgRunning").style.display="block";
+          google.script.run.withSuccessHandler(displayScheduling).assign_getScheduleTasks();
+        }
+
+        function displayScheduling(schedulingStringified)
+        {
+            hideAllAlerts();
+            let schedulingData = JSON.parse(schedulingStringified);
+
+            let zone = document.getElementById("schedulingAssignmentsId");
+            let html ="<hr class='dashed'/><br><h2>Assignements, vue globale</h2><br><br>";
+
+            for(assignment in scheduling)
+            {
+              html += "<table id='soukTable' width='100%'><th>" + assignment + "</th><th>&nbsp;</th><th>&nbsp;</th>"
+              let tasks = scheduling[assignment].assign;
+              
+              for( let i=0;i<tasks.length;i++)
+              {
+                    html += "<tr><td>"+tasks[i].id + "</td><td>" +  tasks[i].title  + "</td></tr>";
+              }
+              html += "</table><br>";
+            }
+
+            zone.innerHTML=html;
+        }
+
+        //================================= SHIPPING ===============================================
+
+        function shippingRefresh(force)
+        {
+          hideAllAlerts();
+          if ( !force && $('#shippingTableId_1').css('display') == 'block')
+          {
+              $('#msgRunning').hide();
+              $('#shippingTableId_1').hide();
+              $('#shippingTableId_2').hide();
+              return true;
+          }
+
+          showProgress("");
+          $('#shippingTableId_1').hide();
+          $('#shippingTableId_2').hide();
+          
+          //Request data to server for this new scope
+          //==========================================
+          if(force==true)
+            google.script.run.withSuccessHandler(shippingHandler).shipping_compareEtsyEtEnvoisReelForSoukLightForceRefersh();
+          else
+            google.script.run.withSuccessHandler(shippingHandler).shipping_compareEtsyEtEnvoisReelForSoukLight();
+          
+        }
+
+        function shippingHandler(data)
+        {
+            hideAllAlerts();
+
+            let status = data["status"];
+            if (status == "ok")
+            {
+              $('#shippingTableId_1').show();  
+              
+              $('#sentTitleId').html("COMMANDES ENVOYEES");
+              $('#sentTotalId').html("Total frais supplémentaires:&nbsp;" + data['totalFraisSup'] + "&nbsp;&euro;");
+              $('#sentTotalMonthId').html("Total frais supplémentaires mois courant:&nbsp;" + data['totalFraisSupCurrMonth'] + "&nbsp;&euro;");
+              
+              //THIS FUNCTION GENERATE THE DATA TABLE FROM THE DATA ARRAY
+              $('#shippingTableId_1').DataTable({
+                data: data["sent"],
+                //CHANGE THE TABLE HEADINGS BELOW TO MATCH WITH YOUR SELECTED DATA RANGE
+                columns: [
+                  {"title":"No Cmd"},
+                  {"title":"Date d'envoi"},
+                  {"title":"Coût facturé"},
+                  {"title":"Coût réel"},
+                  {"title":"Supplémentaire"},
+                  {"title":"Objet"}
+                ]
+              });
+
+              $('#notSentTitelId').html("COMMANDES EN ATTENTE");
+
+              $('#shippingTableId_2').show();
+              $('#shippingTableId_2').DataTable({
+                data: data["notSent"],
+                //CHANGE THE TABLE HEADINGS BELOW TO MATCH WITH YOUR SELECTED DATA RANGE
+                columns: [
+                 {"title":"No Cmd"},
+                  {"title":"Date commande"},
+                  {"title":"Coût facturé"},
+                  {"title":"Coût réel"},
+                  {"title":"Supplémentaire"},
+                  {"title":"Objet"} 
+                ]
+              });
+            }
+            else
+            { 
+                if ( data["message"] != null && data["message"] != "")
+                {
+                  showProgress(data["message"]);
+                }
+
+                if (status == "rebuild")
+                {
+                    google.script.run.withSuccessHandler(shippingHandler).shipping_compareEtsyEtEnvoisReelForSoukLightForceRefersh();
+                } 
+            }
+        }
+
+        
+
+        /*==================== FLUX FINANCE ===================*/
+        function loadFluxFinance()
+        {
+          
+        }
+        /*================================ SHOW/HIDE ================*/
+
+        function toogleBlock(blockId)
+        {
+            let id = '#'+blockId;
+
+            if ( $(id).style.display="none" )
+              $(id).show();
+            else
+              $(id).hide();
+        }
+    </script>
