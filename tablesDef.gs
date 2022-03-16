@@ -50,7 +50,8 @@ const TABLES_DEFINITIONS =
     Table       : "Liste des comptes",
     Header      : ["Détenteur",	"Email",	"Role",	"Date création",	"Date mise à jour",	"Crédits",	"Débits",	"Bilan"],
     Fields      : {COMPTES_LIST_DETENTEUR:1,COMPTES_LIST_EMAIL:2, COMPTES_LIST_ROLE:3,COMPTES_LIST_DATECRE:4,
-                   COMPTES_LIST_DATEUPD:5,COMPTES_LIST_CREDITS:6, COMPTES_LIST_DEBITS:7, COMPTES_LIST_BILAN:8},
+                   COMPTES_LIST_DATEUPD:5,COMPTES_LIST_CREDITS:6, COMPTES_LIST_DEBITS:7, COMPTES_LIST_BILAN:8,
+                   COMPTES_LIST_CCY:9, COMPTES_LIST_TYPE:10},
     NCols       : 8,
     keyColumn   : 2
   },
@@ -62,6 +63,47 @@ const TABLES_DEFINITIONS =
     Fields      : {COMPTES_MVMT_MOIS_M: 1, COMPTES_MVMT_MOIS_ID:2,COMPTES_MVMT_MOIS_DATE:3, COMPTES_MVMT_MOIS_EFFECTUANT:4, COMPTES_MVMT_MOIS_DEBITE:5,COMPTES_MVMT_MOIS_CREDITE:6,COMPTES_MVMT_MOIS_MT:7, COMPTES_MVMT_MOIS_CCY:8, COMPTES_MVMT_MOIS_DESC:9, COMPTES_MVMT_MOIS_RAISON:10},
     NCols       : 10,
     keyColumn   : 2
+  },
+  
+  "SoukHR_Workers": 
+  {
+    SpreadSheet : "1-_WNNb2k0KaFlqQbajr0j9aRO8PkkTHS_zMiOG-b8_w",
+    Table       : "Workers",
+    Header      : ["Worker",	"CreDate",	"Status",	"FirstName","LastName",	"Adresse", "Emploi", "ProfEmail",	
+                   "PersonalEmail",	"SalaryAccount",	"AnnualSalary",	"MaxBonusPercentage",	"Notifications","Ccy"],
+    Display     : ["Identifiant",	"Création",	"Statut",	"Prénom","Nom",	"Adresse", "Emploi", "Email prof.",	
+                   "Email perso.",	"Compte salaire",	"Salaire annuel",	"% max en bonus",	"Notifications","Monnaie"],
+    Fields      : {WorkerID:1, CreDate:2,Status:3,FirstName:4,LastName:5,Adresse:6,Emploi:7,ProfEmail:8,
+                   PersonalEmail:9,SalaryAccountId:10,AnnualSalary:11,MaxBonusPercentage:12,Notifications:13, Ccy:14},
+    NCols       : 14,
+    keyColumn   : 1
+  },
+  "SoukHR_Salary": 
+  {
+    SpreadSheet : "1-_WNNb2k0KaFlqQbajr0j9aRO8PkkTHS_zMiOG-b8_w",
+    Table       : "Salary",
+    Header      : ["SalaryId",	"WorkerId",	"PaymentDate",	"PayedAmount_EUR",	"Bonus_EUR", "EURMAD_Rate"],
+    Fields      : {SalaryId:1, WorkerId:2,PaymentDate:3,PayedAmount_EUR:4,Bonus_EUR:5,EURMAD_Rate:6},
+    NCols       : 6,
+    keyColumn   : 1
+  },
+  "SoukHR_Settings": 
+  {
+    SpreadSheet : "1-_WNNb2k0KaFlqQbajr0j9aRO8PkkTHS_zMiOG-b8_w",
+    Table       : "Settings",
+    Header      : ["MaxBonusPercentage",	"WStatuses"],
+    Fields      : {MaxBonusPercentage:1, WStatuses:2},
+    NCols       : 2,
+    keyColumn   : -1
+  },
+  "SoukGeneric_Table1": 
+  {
+    SpreadSheet : "1HluEnwNJBkowzC3kS8WAb8EcUNPgT-dKJ7tQifPRMn0",
+    Table       : "Table1",
+    Header      : ["Id",	"field1", "field2"],
+    Fields      : {GENERIC_ID:1, GENERIC_FIELD1:2,GENERIC_FIELD2:3},
+    NCols       : 3,
+    keyColumn   : 1
   }
   /* Next 
   "<NAME>": 

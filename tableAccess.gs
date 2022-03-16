@@ -18,6 +18,7 @@ function TableAccessDef(par)
   var accessType = par.accessType
   var dataSheet = SpreadsheetApp.openById(tableDef.SpreadSheet).getSheetByName(tableDef.Table);
   var dataTable = accessType==TABLE_ACCESS_TYPE.REPEATED? dataSheet.getRange(1,1,dataSheet.getLastRow(),tableDef.NCols).getValues(): null;
+  let lastRow   = SpreadsheetApp.openById(tableDef.SpreadSheet).getSheetByName(tableDef.Table).getLastRow();
   /**
      * run some code
      */
@@ -36,12 +37,21 @@ function TableAccessDef(par)
     return tableDef.Header;
   }
 
+   function getDisplay()
+  {
+    return tableDef.Display;
+  } 
+
+  function getRowId(row)
+  {
+    return getField(row, tableDef.keyColumn);
+  }
+
   /**
    * return object {row: rowNumber, data : rowdata}
    */
   function getRow(key) 
   {
-    let lastRow = dataSheet.getLastRow();
     if (lastRow > 1 )
     {
       let range = dataSheet.getRange(2,tableDef.keyColumn,lastRow-1,1);
@@ -67,7 +77,6 @@ function TableAccessDef(par)
 
   function getNextRow(ofThisRow)
   {
-    let lastRow = dataSheet.getLastRow();
     if (ofThisRow < lastRow )
     {
       return {"row": ofThisRow+1,
@@ -90,17 +99,62 @@ function TableAccessDef(par)
       return row.data[field-1];
   }
 
+  function getNLines()
+  {
+      return dataTable.length;
+  }
+
+  function appendRow(row)
+  {
+      dataSheet.appendRow(row);
+      lastRow   = SpreadsheetApp.openById(tableDef.SpreadSheet).getSheetByName(tableDef.Table).getLastRow();
+  }
+
+  function updateRow(rowData)
+  {
+      let row = getRow(rowData[0]) ;
+      log_RessourceTaskForm(JSON.stringify(row))
+      log_RessourceTaskForm(JSON.stringify(rowData));
+      dataSheet.getRange(row["row"],1,1,rowData.length).setValues([rowData]);
+  }
+
+  function updateField(key,field,value)
+  {
+      let row = getRow(key) ;
+      dataSheet.getRange(row["row"],field,1,1).setValue(value);
+  }
+
+  function deleteRow(key)
+  {
+    let row = getRow(key) ;
+    dataSheet.deleteRow(row["row"]);
+  }
+
+  function getColumn(field)
+  {
+      return dataSheet.getRange(2,field,lastRow-1,1).getValues();
+  }
+
+
 
   return Object.freeze({
     objectName: objectName,
     getSheet: getSheet,
     getHeader:getHeader,
+    getDisplay: getDisplay,
     getData: getData,
     getRow: getRow,
+    getColumn:getColumn,
     getRowByNum: getRowByNum,
     getFirstRow: getFirstRow,
     getNextRow: getNextRow,
-    getField: getField
+    getField: getField,
+    getNLines:getNLines,
+    appendRow: appendRow,
+    updateRow: updateRow,
+    updateField: updateField,
+    deleteRow: deleteRow,
+    getRowId:getRowId
   });
 };
 

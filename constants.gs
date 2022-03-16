@@ -1,4 +1,4 @@
-
+//GITACESSTOKE: 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
 
 const SINGLE_CHARS=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 /**
@@ -26,6 +26,7 @@ const ENUM_DATE_FORMAT ={
   MDLONG: "MM/dd/YY",
   LONG_HHMM: "YYYY/MM/dd HH::mm",
   LONG_HHMMSS: "YYYY/MM/dd HH::mm::ss",
+  MEDIUMDDMMYYYY : "dd/MM/YYYY",
 }
 /**
  * 
@@ -118,7 +119,6 @@ const DISCUSSION_THREADS        ="Discussions"
 const RESSOURCES_TASKFORMS_SHEET="tasksForms";
 const CCYRATES_SHEET            = "rates";
 const WORKERS_SHEET             ="workers";
-
 const SHIPPINGRAW_SHEET         = "EnvoisPoste";
 const FLUXFINANCIERS_SHEET      = "Flux";
 

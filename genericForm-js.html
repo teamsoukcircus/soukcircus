@@ -1,0 +1,188 @@
+<script>
+
+    $( document ).ready(function() 
+        {
+            if ( $("#recordId").html() != "")
+            {
+              google.script.run.withSuccessHandler(displayRow).generic_readRow($("#recordId").html() );
+            }
+            else
+            {
+                showList();
+            }
+          });
+
+
+    function showList()
+    {
+        showProgress("");
+        $("#recordFormId").hide();
+        google.script.run.withSuccessHandler(displayList).generic_readRecords();
+    }
+
+    let dataTable=null;
+    function displayList(allData)
+    {
+        hideAllAlerts();
+        if ( allData["err"]=="ok")
+        {
+          /*
+          if ( !$.fn.dataTable.isDataTable("#listRecordsId") ) 
+            $('#listRecordsId').DataTable( {} ).destroy();
+          */
+
+          if ( dataTable != null)
+            dataTable.destroy();
+
+          dataTable=$('#listRecordsId').DataTable(   
+          {
+            "pageLength": 25,
+            data: allData["data"],
+            columns:[
+              {"title":"Id"},
+              {"title":"Field1"},
+              {"title":"Field2"},
+              {"title":"Voir"}
+            ]
+          });
+            
+            $('#listRecordsId').show();
+        }
+        else
+          showError(allData["msg"]);
+    }
+
+
+    function displayRow(data)
+    {
+        hideAllAlerts();
+
+        if(data["err"]=="ok")
+        {
+          $("#recordFormId").show();
+          let rowData = data["data"];
+
+          $("#recordId").html(rowData[0])
+          $("#recordKeyId").val(rowData[0]);
+          $("#fieldId1").val(rowData[1]);
+          $("#fieldId2").val(rowData[2]);
+
+          /*
+          let langueDropDown = document.getElementById("langue");
+          for(let li=0;li<retData["data"]["langue"].length;li++)
+          {
+            let aLang = retData["data"]["langue"][li];
+            let optn = document.createElement("OPTION");
+            optn.text = aLang["French"];
+            optn.value = aLang["alpha2"];
+            langueDropDown.options.add(optn); 
+          }
+          $("#langue").val("fr");
+          */
+        }
+        else
+        {
+          showError(data["msg"]);
+          return false;
+        }
+    }
+
+    //================================================= NEW ================================================
+    function newRecord()
+    {
+        $("#recordFormId").show();
+    }
+
+    //================================================= UPDATE ================================================
+    function updateRow()
+    {
+        janelaPopUp.fecha("soukAlert");
+        showProgress("Mise à jour en cours...");
+        let data=[];
+        data.push($("#recordKeyId").val());
+        data.push($("#fieldId1").val());
+        data.push($("#fieldId2").val());
+        google.script.run.withSuccessHandler(confirmBDUpdate).generic_updateRow(data);
+    }
+
+    function cancelUpdate()
+    {
+        janelaPopUp.fecha("soukAlert");
+    }
+
+    function confirmBDUpdate(data)
+    {
+        if ( data["err"]=="ok")
+          showInfo("Mise à jour exécutée avec succès...");
+        else
+          showError(data["msg"]);
+    }
+
+    function confirmUpdate() 
+    {
+      soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer la mise à jour de cet enregistrement...",cancelUpdate,updateRow);
+    }
+
+
+    //================================================= CREATE ================================================
+    function createRow()
+    {
+        janelaPopUp.fecha("soukAlert");
+        showProgress("Création en cours...");
+        let data=[];
+        data.push($("#fieldId1").val());
+        data.push($("#fieldId2").val());
+        google.script.run.withSuccessHandler(confirmBDCreation).generic_createRow(data);
+    }
+
+    function cancelCreate()
+    {
+        janelaPopUp.fecha("soukAlert");
+    }
+
+    function confirmBDCreation(data)
+    {
+        if ( data["err"]=="ok")
+        {
+          $("#recordFormId").hide();
+          showInfo("Création exécutée avec succès...");
+        }
+        else
+          showError(data["msg"]);
+    }
+
+    function confirmCreate() 
+    {
+      soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer la création de ce nouvel enregistrement...",cancelCreate,createRow);
+    }
+
+    
+    //================================================= DELETE ================================================
+    function cancelDelete()
+    {
+        janelaPopUp.fecha("soukAlert");
+    }
+
+    function deleteRow()
+    {
+        janelaPopUp.fecha("soukAlert");
+        showProgress("Effacement en cours...")
+        google.script.run.withSuccessHandler(confirmBDDeletion).generic_deleteRow($("#recordId").html());
+    }
+
+    function confirmBDDeletion(data)
+    {
+        if ( data["err"]=="ok")
+          showInfo("Effacement exécuté avec succès...");
+        else
+          showError(data["msg"]);
+    }
+
+    function confirmDelete() 
+    {
+      soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer l'effacement de cet enregistrement...",cancelDelete,deleteRow);
+    }
+
+
+
+    </script>

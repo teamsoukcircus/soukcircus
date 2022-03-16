@@ -9,7 +9,7 @@ function lock_acquire()
   catch (e) 
   {
       errors_logErrorAndEmail('Could not obtain lock after 15 seconds.');
-      throw new Error("Syytem busy, merci d'essayer dans quelques instants...")
+      throw new Error("System occupé, merci d'essayer dans quelques instants...")
   }
 
   return lock;

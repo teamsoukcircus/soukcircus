@@ -1,3 +1,10 @@
+const ANNUAL_TRANSACTIONS_EXTERNALSS_ID     = "1TsS_unGQucuV6aDvYM1d7kminz5DFnpWq-4W82QH-5Q";
+const ANNUAL_TRANSACTIONS_EXTERNAL_SHEET    = "SoukTransactions";
+
+function db_getAnnualTransactionSheet()
+{
+  return utils_getTable(ANNUAL_TRANSACTIONS_EXTERNALSS_ID,ANNUAL_TRANSACTIONS_EXTERNAL_SHEET);
+}
 
 const SELLINGDATE_INTRANSACTIONDATA_SHEET   =1;
 const RECEIPTID_INTRANSACTIONDATA_SHEET     =2;
@@ -110,7 +117,7 @@ const SHIPSESS_ITEMWEIGHT       = 28;
 function test_createShippingSession()
 {
   let answers=
-  {"answers":[{"totalTaxes":67.4,"customerComment":"111","receiptId":"2330046289","email":"decker.rose@gmail.com","postOfficeShipping":"","transactions":[{"price":"52","listingId":"1127269780","validated":false,"quantity":"2","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","transId":"2819339095","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","prepareOnly":true,"produitEmballe":true,"variation":"Height : 60 Centimeters"}],"totalDiscount":20.8,"comment":"","phone":"","totPrice":"104","totalWeight":"","totalShipping":"0","tax":"","address":"Rose Elizabeth\nWeimarstraat 313\n2562hj DEN HAAG\nThe Netherlands","shipFacture":33},{"transactions":[{"title":"Banc marocain en bois brut et tressage naturel 22, 28, 35 et 43 pouces, sur-mesure possible, fabrication artisanale","price":"68","validated":false,"quantity":"1","prepareOnly":true,"listingId":"1121810608","transId":"2850560877","produitEmballe":false,"etsyUrl":"https://www.etsy.com/listing/1121810608/moroccan-bench-in-raw-wood-and-natural","variation":"Length : 55 cm"}],"totalWeight":"","comment":"","shipFacture":0,"totalDiscount":10.2,"address":"Yentl van Hees\nNieuwstraat 10A\nAppartement\n1441CM PURMEREND\nThe Netherlands","customerComment":"2222","postOfficeShipping":"","tax":"","totalShipping":"0","totalTaxes":12.14,"receiptId":"2353219751","phone":"","email":"yentlvanhees@live.nl","totPrice":"68"},{"tax":"","postOfficeShipping":"","totalTaxes":4.28,"shipFacture":28,"receiptId":"2360691962","totPrice":"43","email":"lindseygarner8@yahoo.com","totalWeight":"","phone":"","address":"Lindsey  Garner\n183 Buena Vista Ave\nHAWTHORNE, NJ 07506\nUnited States","customerComment":"","comment":"","totalDiscount":6.45,"transactions":[{"listingId":"970552053","etsyUrl":"https://www.etsy.com/listing/970552053/large-storage-basket-or-laundry-basket","prepareOnly":true,"quantity":"1","price":"43","transId":"2857302904","produitEmballe":false,"validated":false,"variation":"","title":"Grand panier de rangement ou panier à linge - fabrication artisanale en fibres naturelles style bohème"}],"totalShipping":"0"},{"tax":"","totalTaxes":0,"shipFacture":160,"totalDiscount":41.25,"email":"natalie.whynot@gmail.com","phone":"","customerComment":"","totPrice":"275","totalShipping":"0","receiptId":"2361712624","address":"NATALIE ELLARD\n9001 RUSSET DRIVE\nCOLDSTREAM BC V1B 2B7\nCanada","totalWeight":"","comment":"","postOfficeShipping":"","transactions":[{"listingId":"1102058557","quantity":"2","price":"75","validated":false,"etsyUrl":"https://www.etsy.com/listing/1102058557/bar-stool-in-wood-and-white-cotton-65","prepareOnly":true,"title":"Tabouret de bar en bois brut et coton tissé, fait main en matières naturelles, style bohème chic","variation":"Height : 75 Centimeters","produitEmballe":false,"transId":"2861914797"},{"price":"125","variation":"Width : 110 Centimeters","prepareOnly":true,"validated":false,"produitEmballe":false,"etsyUrl":"https://www.etsy.com/listing/1124571844/moroccan-bench-in-raw-wood-and-black","quantity":"1","listingId":"1124571844","transId":"2861914795","title":"Banc marocain en bois brut et tressage noir 21, 27, 35 ou 110 pouces, sur-mesure possible, fabrication artisanale"}]},{"customerComment":"","comment":"","postOfficeShipping":"","email":"knickerbockerartstudios@gmail.com","receiptId":"2371705001","totalShipping":"0","tax":"","transactions":[{"title":"Banc marocain en bois brut et tressage beige 22, 28, 35 et 43 pouces sur-mesure possible, fabrication artisanale","listingId":"1123754532","produitEmballe":false,"quantity":"1","price":"75","validated":false,"variation":"Width : 70 Centimeters","transId":"2875699229","etsyUrl":"https://www.etsy.com/listing/1123754532/moroccan-bench-in-raw-wood-and-beige","prepareOnly":true}],"totalDiscount":0,"address":"Bailey Cain\n10646 NE Brazee St\nPORTLAND, OR 97220\nUnited States","totPrice":"75","shipFacture":20,"phone":"","totalTaxes":0,"totalWeight":""},{"totalTaxes":14.64,"phone":"","totPrice":"53","totalShipping":"0","transactions":[{"produitEmballe":false,"variation":"Height : 60 Centimeters","validated":false,"title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","transId":"2878284882","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","listingId":"1127269780","price":"53","prepareOnly":true,"quantity":"1"}],"customerComment":"","tax":"","address":"Sabine Schlesinger\nKröpeliner Str.\n7A\n18239 SATOW\nGermany","totalDiscount":7.95,"receiptId":"2375539727","comment":"","postOfficeShipping":"","email":"biene.schlesi@gmx.de","totalWeight":"","shipFacture":32},{"totalTaxes":9.41,"totalWeight":"","email":"monique.lyons13@gmail.com","totPrice":"54","tax":"","shipFacture":52,"receiptId":"2376011271","address":"Monique Lyons\n4202 Napier Avenue\nBRONX, NY 10470\nUnited States","totalShipping":"0","totalDiscount":0,"postOfficeShipping":"","comment":"","transactions":[{"listingId":"1127269780","variation":"Height : 60 Centimeters","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","quantity":"1","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","transId":"2881336565","prepareOnly":true,"validated":false,"produitEmballe":false,"price":"54"}],"phone":"","customerComment":""},{"totPrice":"75","totalShipping":"0","email":"rq8mg2twkk@privaterelay.appleid.com","totalWeight":"","shipFacture":26,"tax":"","postOfficeShipping":"","receiptId":"2379180986","address":"Julie Bonnaud\n33 rue du commerce\n17240 SAINT FORT SUR GIRONDE\nFrance","totalDiscount":11.25,"comment":"","customerComment":"","phone":"","totalTaxes":17.95,"transactions":[{"variation":"Height : 70 Centimeters","prepareOnly":true,"quantity":"1","produitEmballe":false,"price":"75","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","transId":"2881750286","validated":false,"listingId":"1127269780","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket"}]},{"totalDiscount":8.25,"receiptId":"2378983620","transactions":[{"produitEmballe":false,"listingId":"1127269780","variation":"Height : 60 Centimeters","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","prepareOnly":true,"quantity":"1","validated":false,"title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","price":"55","transId":"2884078231"}],"totalTaxes":6.17,"comment":"","totPrice":"55","email":"kamreeclark@gmail.com","postOfficeShipping":"","totalShipping":"0","phone":"","tax":"","customerComment":"3333","address":"kamree clark\n3056 VZ County Road 2144\nWILLS POINT, TX 75169\nUnited States","shipFacture":52,"totalWeight":""},{"customerComment":"","transactions":[{"title":"Banc en bois de citronnier et corde tressée, 6 pieds, 39 et 47 pouces, fait main en matières naturelles, style bohème chic","quantity":"2","produitEmballe":false,"etsyUrl":"https://www.etsy.com/listing/1088176984/bench-made-of-lemon-wood-and-braided","price":"144","prepareOnly":true,"variation":"Length : 120 cm","transId":"2884336372","listingId":"1088176984","validated":false}],"address":"Janne Lukaszczyk\nDorpsstraat 68\n4634 ts WOENSDRECHT\nThe Netherlands","tax":"","totalTaxes":0,"totalDiscount":43.2,"totPrice":"288","phone":"","receiptId":"2381111460","shipFacture":55,"postOfficeShipping":"","email":"curiosafinds@gmail.com","comment":"","totalWeight":"","totalShipping":"0"},{"transactions":[{"listingId":"1127269780","validated":false,"transId":"2893139297","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","prepareOnly":true,"price":"54","variation":"Height : 60 Centimeters","quantity":"1","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","produitEmballe":false},{"produitEmballe":false,"validated":false,"prepareOnly":true,"listingId":"1127269780","quantity":"1","transId":"2893139295","variation":"Height : 70 Centimeters","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","price":"74","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème"}],"phone":"","comment":"","tax":"","totalWeight":"","receiptId":"2385808350","postOfficeShipping":"","address":"GUIENNE Florence\n96 boulevard Emile Zola\n59170 CROIX\nFrance","totalShipping":"0","totalDiscount":19.2,"customerComment":"","totalTaxes":31.76,"shipFacture":50,"totPrice":"128","email":"florence.guienn@gmail.com"},{"transactions":[{"validated":false,"title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","variation":"Height : 70 Centimeters","quantity":"1","price":"74","transId":"2892204659","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","listingId":"1127269780","prepareOnly":true,"produitEmballe":false}],"totalTaxes":11.6,"tax":"","shipFacture":52,"totalWeight":"","totalShipping":"0","email":"aebrewer12@gmail.com","address":"Antje Brewer\n34012 32nd Ave SW\nFEDERAL WAY, WA 98023\nUnited States","customerComment":"","receiptId":"2384043463","totPrice":"74","phone":"","totalDiscount":11.1,"comment":"","postOfficeShipping":""},{"receiptId":"2386974438","postOfficeShipping":"","address":"Kevin OBrien\n335 Cove View Road\nWELLFLEET, MA 02667\nUnited States","totPrice":"134","totalShipping":"0","comment":"","customerComment":"","phone":"","shipFacture":20,"email":"schabobrien@gmail.com","totalTaxes":8.38,"totalDiscount":0,"transactions":[{"title":"Banc marocain en bois brut et tressage naturel 22, 28, 35 et 43 pouces, sur-mesure possible, fabrication artisanale","validated":false,"transId":"2894680381","variation":"Length : 120 cm","price":"134","listingId":"1121810608","quantity":"1","prepareOnly":true,"produitEmballe":false,"etsyUrl":"https://www.etsy.com/listing/1121810608/moroccan-bench-in-raw-wood-and-natural"}],"totalWeight":"","tax":""},{"totalShipping":"0","shipFacture":26,"receiptId":"2386635338","tax":"","email":"maudeux.gaetan@laposte.net","phone":"","totalDiscount":8.1,"comment":"","customerComment":"4444","totalWeight":"","totPrice":"54","address":"Gaëtan Maudeux\n11 rue villebois Mareuil\n78500 SARTROUVILLE\nFrance","postOfficeShipping":"","transactions":[{"listingId":"1127269780","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","quantity":"1","price":"54","variation":"Height : 60 Centimeters","produitEmballe":false,"transId":"2891799808","validated":false,"prepareOnly":true,"etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket"}],"totalTaxes":14.38},{"totalTaxes":18.03,"customerComment":"","totalDiscount":11.1,"transactions":[{"price":"74","variation":"Height : 70 Centimeters","validated":false,"listingId":"1127269780","produitEmballe":false,"prepareOnly":true,"etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","quantity":"1","transId":"2894052607"}],"comment":"","totPrice":"74","email":"leonie.laubacher@gmail.com","totalWeight":"","phone":"","shipFacture":32,"totalShipping":"0","postOfficeShipping":"","tax":"","receiptId":"2386486028","address":"Leonie Laubacher\nAnsprengerstraße 2\n80803 MÜNCHEN\nGermany"},{"totalTaxes":25.08,"transactions":[{"prepareOnly":true,"listingId":"937653998","transId":"2895349579","price":"132","quantity":"1","etsyUrl":"https://www.etsy.com/listing/937653998/large-pendant-in-raffia-macrame-in","validated":false,"title":"Grand pendentif en raphia, macramé en fibre naturelle crochetée et tressée, style ethnique - bohème tropical","variation":"","produitEmballe":false}],"receiptId":"2387478742","shipFacture":0,"totPrice":"132","postOfficeShipping":"","totalWeight":"","totalShipping":"0","comment":"","customerComment":"5555","totalDiscount":0,"tax":"","email":"ramonkraak@web.de","phone":"","address":"Hidajete Canaj\nLutherstr.31\n28217 BREMEN\nGermany"},{"phone":"","address":"Jessica Cavin\n5208 Countryside Ln\nBLUE SPRINGS, MO 64015\nUnited States","totalTaxes":0,"shipFacture":18,"totalDiscount":0,"customerComment":"","totalShipping":"0","tax":"","comment":"","postOfficeShipping":"","transactions":[{"price":"24","produitEmballe":false,"etsyUrl":"https://www.etsy.com/listing/739015255/wicker-bassinet-for-doll-toy-in-natural","transId":"2895098135","title":"Couffin en osier pour poupée, jouet en matière naturelle, fait main, style campagne, bohème chic","validated":false,"listingId":"739015255","prepareOnly":true,"quantity":"1","variation":""}],"receiptId":"2387286512","totPrice":"24","totalWeight":"","email":"jkitching7@gmail.com"},{"postOfficeShipping":"","comment":"","transactions":[{"title":"Grand pendentif en raphia, macramé en fibre naturelle crochetée et tressée, style ethnique - bohème tropical","price":"129","prepareOnly":true,"etsyUrl":"https://www.etsy.com/listing/937653998/large-pendant-in-raffia-macrame-in","validated":false,"quantity":"1","listingId":"937653998","variation":"","produitEmballe":false,"transId":"2894972666"}],"customerComment":"","totalShipping":"0","receiptId":"2387832703","totPrice":"129","tax":"","address":"Alison Malone\n1223 7th St\nHERMOSA BEACH, CA 90254-4947\nUnited States","totalWeight":"","totalTaxes":10.42,"shipFacture":44,"phone":"","totalDiscount":19.35,"email":"ali@malonemail.com"},{"email":"leslie.c.perez93@gmail.com","receiptId":"2388864644","customerComment":"","totalDiscount":12,"totalShipping":"0","phone":"","postOfficeShipping":"","tax":"","address":"Leslie Perez\n3205 E Midsummer Privado\nUnit 6\nONTARIO, CA 91762\nUnited States","totalWeight":"","totalTaxes":5.27,"transactions":[{"etsyUrl":"https://www.etsy.com/listing/946037221/bench-in-raw-wood-and-woven-cotton","quantity":"1","title":"Banc en bois brut et coton tissé, fait main en matières naturelles, style bohème chic","price":"80","variation":"Length : 70 cm","prepareOnly":true,"validated":false,"transId":"2894814436","produitEmballe":false,"listingId":"946037221"}],"comment":"","shipFacture":55,"totPrice":"80"},{"totalDiscount":11.7,"postOfficeShipping":"","transactions":[{"variation":"Height : 70 Centimeters","produitEmballe":false,"prepareOnly":true,"quantity":"1","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","transId":"2894090910","validated":false,"price":"78","listingId":"1127269780"}],"shipFacture":52,"email":"carhorns@aol.com","tax":"","address":"Carol Einhorn\n225 Eastern Parkway\nApt. 4C\nBROOKLYN, NY 11238\nUnited States","phone":"","receiptId":"2387168003","totPrice":"78","customerComment":"","totalTaxes":10.5,"totalShipping":"0","totalWeight":"","comment":""},{"customerComment":"","postOfficeShipping":"","tax":"","comment":"","totalWeight":"","address":"Siena Stone\n1033 Page St\nSAN FRANCISCO, CA 94117\nUnited States","shipFacture":52,"totalDiscount":0,"phone":"","receiptId":"2390277998","totalShipping":"0","transactions":[{"variation":"Height : 70 Centimeters","validated":false,"quantity":"1","listingId":"1127269780","price":"78","etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","produitEmballe":false,"prepareOnly":true,"title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","transId":"2899116563"}],"totalTaxes":6.73,"totPrice":"78","email":"stone.siena@gmail.com"},{"address":"Tina Pfab\nGraben 15\n99423 WEIMAR\nGermany","comment":"quzwertiuqzwetriuqzwetriquwzetriquwzetrqiuwzet","email":"tinx@arcor.de","receiptId":"2391531556","totalTaxes":14.02,"phone":"","postOfficeShipping":"","customerComment":"6666","shipFacture":0,"totPrice":"82","totalWeight":"","totalDiscount":8.2,"totalShipping":"0","transactions":[{"transId":"2898466688","prepareOnly":true,"title":"Malle de rangement palmier 32 pouces, panier bohème","etsyUrl":"https://www.etsy.com/listing/1126767813/palm-storage-trunk-32-inches-bohemian","validated":false,"produitEmballe":false,"price":"82","quantity":"1","listingId":"1126767813","variation":"Length : 80 cm"}],"tax":""}],"nAnswers":22};
+  {"nAnswers":1,"answers":[{"transactions":[{"title":"Grand panier à linge ou panier de rangement - fabrication artisanale en fibres naturelles style bohème","validated":true,"etsyUrl":"https://www.etsy.com/listing/1127269780/large-laundry-basket-or-storage-basket","variation":"Height : 70 Centimeters","quantity":"1","price":"75","produitEmballe":false,"prepareOnly":false,"listingId":"1127269780","transId":"2881750286"}],"phone":"","shipFacture":26,"totalTaxes":17.95,"address":"Julie Bonnaud\n33 rue du commerce\n17240 SAINT FORT SUR GIRONDE\nFrance","receiptId":"2379180986","totPrice":"75","comment":"commentaire interne test IT","totalWeight":"0","customerComment":"","email":"rq8mg2twkk@privaterelay.appleid.com","postOfficeShipping":"CPXXMA","totalShipping":"0","totalDiscount":11.25}]};
 
   db_updateShippingSession(answers);
 
@@ -152,11 +159,11 @@ function db_computeIOSSCode(countryCode, totalShippedOrderprice)
 function db_updateShippingSession(answers)
 {
   let lock = lock_acquire();
-
+  
   //log_RessourceTaskForm(JSON.stringify(answers));
   try
   {
-      let transactionsShipped=0;
+      let transactionsShipped=[];
 
       //Array de poids à mettre à jour dans le stock
       //let stockWeight=[];
@@ -245,7 +252,7 @@ function db_updateShippingSession(answers)
             if ( mustBeShipped )
             {
                 status = SHIPPING_STATUS.SHIPPED;
-                transactionsShipped++;
+                transactionsShipped.push(transId);
             }
             else if (prepareOnly)
                 status = SHIPPING_STATUS.PREPARED;
@@ -312,7 +319,13 @@ function db_updateShippingSession(answers)
  *                                    db_validateShippingSession()
  * 
  ==================================================================================================================*/
-function db_validateShippingSession()
+ function test_alidateShippingSession()
+ {
+   let transIds = [2878284882];
+   db_validateShippingSession(transIds);
+ }
+
+function db_validateShippingSession(transactionIdsArray)
 {
   try
   {
@@ -328,7 +341,7 @@ function db_validateShippingSession()
     let folderName      = "Etiquettes_"+splitted[0]+dateTime;
     var targetFolder    = shippingFolder.createFolder(folderName);
 
-    let numberOFCreatedForms = db_createShippingForms(targetFolder.getId(),targetFolder.getUrl());
+    let numberOFCreatedForms = db_createShippingForms(transactionIdsArray,targetFolder.getId(),targetFolder.getUrl());
     if ( numberOFCreatedForms > 0)
     {
       let ret={};
@@ -361,18 +374,18 @@ function db_validateShippingSession()
  *                            db_createShippingForms(folderId)                         
  *  															
  ===================================================================================================*/
-function db_createShippingForms(folderId, folderUrl) 
+function db_createShippingForms(transactionIdsArray,folderId, folderUrl) 
 {
   var lock = lock_acquire();
-  let ShippingList = utils_getTable(ID_FICHIER_SHIPPINGSESSION_IN_SHIPPING,SHIPPING_LIST_SHEET);
   let numberOfCreatedForms=0;
 
   try
   {
       let customerTableAccess = tbl_tableAccess(TABLES_DEFINITIONS.CUSTOMER,TABLE_ACCESS_TYPE.REPEATED);
+
       let groups = db_groupShippingTransactionsPerCustomer();
 
-      for (let i = 0; i < groups.length; i++) 
+      for (let i = 0; i < groups.length && numberOfCreatedForms < transactionIdsArray.length ; i++) 
       {
         let aGroup        = groups[i];
         let aShipping     = {};
@@ -396,7 +409,6 @@ function db_createShippingForms(folderId, folderUrl)
             let quantity            = utils_parseInt(theDataRow[SHIPSESS_QUANTITY - 1]);
             let price               = utils_parseFloat(theDataRow[SHIPSESS_ITEMPRICE_EUR - 1]);
             let variations          = theDataRow[SHIPSESS_VARIATIONS-1];
-            let itemWeight          = theDataRow[SHIPSESS_ITEMWEIGHT-1]; 
 
             iossCode                = theDataRow[SHIPSESS_IOSSCODE-1];//sur toute la commande
             totalTaxes              = utils_parseFloat(theDataRow[SHIPSESS_TOTALORDERTAXES-1]); //Total sur toute la commande
@@ -423,7 +435,8 @@ function db_createShippingForms(folderId, folderUrl)
               aShipping["shipmentFacture"]  = shipmentFacture;
             }
 
-            itemsDetails.push([transactionId, productDescription, quantity, totalPriceForItem, ccy,variations])
+             if ( transactionIdsArray.indexOf(transactionId) >= 0 )
+              itemsDetails.push([transactionId, productDescription, quantity, totalPriceForItem, ccy,variations])
         }
 
         if (itemsDetails.length > 0) 
@@ -436,7 +449,6 @@ function db_createShippingForms(folderId, folderUrl)
 
           let grandTotal = totalPrice + shipmentFacture - totalDiscount +  totalTaxes;
            aShipping["grandTotal"]    = grandTotal;
-
 
           ship_createDocShippingForm(aShipping, folderId);
           numberOfCreatedForms++;
@@ -545,7 +557,7 @@ function db_getShippedShippingTransactionsIds()
  */
 function db_getStatusesEtsyTransaction()
 {
-  var sheet = utils_getSheet(ANNUAL_TRANSACTIONS_SHEET);
+  var sheet = db_getAnnualTransactionSheet();
   let lastRow = sheet.getLastRow();
   let data=[];
   var nonShippedData = [];
@@ -766,10 +778,19 @@ function db_rebuildPreparedShippingOrder(etsyShippedTransIds)
  * 
  * 
  */
-function db_getPendingShippingOrders()
+
+function db_testSaid()
+{
+  let retVal = {};
+  retVal["err"] = "nok";
+  retVal["msg"] = "On y arrivera...;o))"; 
+  return JSON.stringify(retVal);
+}
+
+function db_getWaitingShipping()
 {
   let lock = lock_acquire();
-
+  
   try
   {
       let customerTableAccess = tbl_tableAccess(TABLES_DEFINITIONS.CUSTOMER,TABLE_ACCESS_TYPE.REPEATED);
@@ -789,7 +810,6 @@ function db_getPendingShippingOrders()
 
       orders["orders"]  = retData["orders"];
       let preparedIds   = retData["preparedIds"];
-
 
       //MAintenant on prend les transqction non preparée et non shippée ETSY
       //Pour faire un check on reprend celle shipped dans Session ID (seulement les Transaction Ids)
@@ -817,7 +837,6 @@ function db_getPendingShippingOrders()
           anOrder["totPrice"]         = utils_parseFloat(map["price"]) * utils_parseInt(map["quantity"] );
           anOrder["totalWeight"]      = map["itemWeight"];
         }
-
 
         let lastItemIndex=0;
         let lastReceipt = anOrder["receiptId"] ;
@@ -887,7 +906,6 @@ function db_getPendingShippingOrders()
       }
 
       
-
       //Retourner l'ensemble
       orders["length"] = orders["orders"].length;
 
@@ -924,7 +942,7 @@ function db_updateShippingStatus()
   for(let i=0;i<shippingSession.length;i++)
     shippingSessionIds[i] = shippingSession[i][SHIPSESS_TRANSID-1];
 
-  var sheet = utils_getSheet(ANNUAL_TRANSACTIONS_SHEET);
+  var sheet = db_getAnnualTransactionSheet();
   let lastRow = sheet.getLastRow();
   let data=[];
   var nonShippedData = [];

@@ -95,9 +95,13 @@
         removeAllOrders();
 
         $("#listeDesEnvois").hide();
-        google.script.run.withSuccessHandler(setupOrders).db_getPendingShippingOrders();
+        //google.script.run.withSuccessHandler(setupOrders).db_getPendingShippingOrders();
+
+        google.script.run.withSuccessHandler(setupOrders).db_getWaitingShipping();
+        
         return true;
     }
+
 
     //===========================================================================================================
     function totalPrices(show,totalMad,totalEUR, totalFacture)
@@ -227,6 +231,8 @@
           showError(dataIn["msg"]);
           return false;
         }
+
+        hideAllAlerts();
 
         let pendingOrders = dataIn["data"];
         let nOrders       = pendingOrders["length"];
@@ -522,15 +528,7 @@
             tableSection = soukjs_createTable(tableId,header, headClass,"", tableItemsRows,"90%","w3-table w3-striped w3-centered",true) ;
               
             aSection.appendChild(tableSection);
-
-            //Une séparation
-            //==============
-            /*let hr = document.createElement('hr');
-            hr.setAttribute("class","dashed");
-            aSection.appendChild(hr);*/
         }
-
-        hideAllAlerts();
     }
 
 
@@ -702,10 +700,10 @@
       if ( retVal["err"] == "ok")
       {
         let transactionsShipped = retVal["transactionsShipped"];
-        if ( transactionsShipped > 0 )
+        if ( transactionsShipped.length > 0 )
         {
-          showProgress("Edition des étiquettes en cours...");
-          google.script.run.withSuccessHandler(closeMe).db_validateShippingSession();    
+          showProgress("Edition de " + transactionsShipped.length + " étiquettes en cours...");
+          google.script.run.withSuccessHandler(closeMe).db_validateShippingSession(transactionsShipped);    
         }
         else
         {

@@ -1,0 +1,64 @@
+<script>
+  function requestAllCustomers()
+    {
+      hideAllAlerts()
+      if ( $('#customersTableId').css('display') == 'block' )
+      {
+          $('#customersTableId').hide()
+          return true;
+      }
+
+      showProgress("");
+      $('#customersTableId').hide()
+      
+      //Request data to server for this new scope
+      //==========================================
+      
+      google.script.run.withSuccessHandler(customersHandler).cust_getAllCustomers();
+      return true;
+    }
+
+    function customersHandler(dataIn)
+    {
+        data = JSON.parse(dataIn);
+        if (data["err"] == "nok")
+        {
+          showError(data["msg"]);
+          return false;
+        }
+
+        let allCustomers = data["data"];
+
+        hideAllAlerts();
+        //Buyer Id	Name	Email	Phone	Language	Last order date	Total ordered	Country code	Country name	Address																		
+        $('#customersTableId').DataTable(   
+                    {
+                      "pageLength": 100,
+                      data: allCustomers,
+                      columns: [
+                        {"title":"Id"},
+                        {"title":"Nom"},
+                        {"title":"Email"},
+                        {"title":"Téléphone"},
+                        {"title":"Langue"},
+                        {"title":"Dernière commade"},
+                        {"title":"Montant total"},
+                        {"title":"Code ays"},
+                        {"title":"Pays"},
+                        {"title":"Adresse"}
+                      ]
+                    });
+          
+          $('#customersTableId').show();
+
+    }
+
+    function closeMe(data)
+    {
+
+      if ( data != "ok" )
+      { 
+        showError("<h2>Une erreur est survenue: " + data + "</h2>");
+      }
+    }
+</script>

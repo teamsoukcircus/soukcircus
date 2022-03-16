@@ -18,21 +18,14 @@ function orders_getAllPendingTransactionsForSoukLight()
     {
       row = aGroup[j];
 
-      /*if (j>0)
-      {
-        retVal.push(["", "","", "", row[TITLE_INTRANSACTIONDATA_SHEET-1],row[QUANTITY_INTRANSACTIONDATA_SHEET-1],row[PRICE_INTRANSACTIONDATA_SHEET-1]]);
-      }
-      else*/
-      {
-        retVal.push([row[RECEIPTID_INTRANSACTIONDATA_SHEET-1],
-                    utils_formatDateForPicker(row[SELLINGDATE_INTRANSACTIONDATA_SHEET-1]),                    
-                    row[EMAIL_INTRANSACTIONDATA_SHEET-1],
-                    row[CUSTOMER_INTRANSACTIONDATA_SHEET-1],
-                    row[TITLE_INTRANSACTIONDATA_SHEET-1],
-                    row[QUANTITY_INTRANSACTIONDATA_SHEET-1],
-                    utils_parseInt(row[PRICE_INTRANSACTIONDATA_SHEET-1]),
-                    row[STATUS_INTRANSACTIONDATA_SHEET-1]]);
-      }
+      retVal.push([row[RECEIPTID_INTRANSACTIONDATA_SHEET-1],
+                  utils_formatDateForPicker(row[SELLINGDATE_INTRANSACTIONDATA_SHEET-1]),                    
+                  row[EMAIL_INTRANSACTIONDATA_SHEET-1],
+                  row[CUSTOMER_INTRANSACTIONDATA_SHEET-1],
+                  row[TITLE_INTRANSACTIONDATA_SHEET-1],
+                  row[QUANTITY_INTRANSACTIONDATA_SHEET-1],
+                  utils_parseInt(row[PRICE_INTRANSACTIONDATA_SHEET-1]),
+                  row[STATUS_INTRANSACTIONDATA_SHEET-1]]);
     } 
   }
 

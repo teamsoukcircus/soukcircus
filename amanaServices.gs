@@ -108,12 +108,13 @@ function amana_computePrices(allOrders)
   ret={};
   try
   { 
+    let access = tbl_tableAccess(TABLES_DEFINITIONS.CUSTOMER,TABLE_ACCESS_TYPE.REPEATED);
     let notFound=[]
     let totalFacture = 0;
     let totalPrice=0;
     for (let i=0;i< allOrders.length;i++)
     {
-      let countryCode = cust_getCountryCode(allOrders[i][AMANA_EMAIL]);
+      let countryCode = cust_getCountryCode(access,allOrders[i][AMANA_EMAIL]);
       let weight = utils_parseFloat(allOrders[i][AMANA_WEIGHT]);
       let tarif = amana_getTarif(countryCode,weight);
 

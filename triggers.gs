@@ -136,7 +136,7 @@ function trigger_AnnualOrdersRequest(manual=false)
           {
             /*============ mailing ======= */
             let date = getLocalTime();
-            let infoToMail = "<html><br>Données mises à jour le: " + date + ", avec de nouvelle(s) commande(s)<br> ";
+            let infoToMail = "<html><br>Données mises à jour le: " + date + ", avec " + allNewOrders.length + " nouvelle(s) commande(s)<br> ";
 
             infoToMail += '<a href="https://docs.google.com/spreadsheets/d/14R6wJO2t38yXUfHGRXjIm06NgQvHt-J8pLknq021Fb0/edit?usp=sharing">'+
                                   "Tableau de bord</a><br></html>";

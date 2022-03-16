@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("popup-css"); ?>
+    <?!= include("souk-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+
+
+  </head>
+  <body>
+      <div id="recordId" style="display:none"><?= recordIdValue ?></div>
+      <div id="headerId" style="display:none"></div>
+
+      <section  class="navbar">
+            <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+            <a  href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+            <a id="newRecordButId" type="button" class="button button3" onclick="newRecord()">Nouveau salarié</a>
+            <a id="createButId" type="button" class="button button3" onclick="confirmCreate()">Créer</a>
+            <a id="saveButId" type="button" class="button button3" onclick="confirmUpdate()">Sauvegarder</a>   
+            <a id="cancelButId" type="button" class="button button3" onclick="cancelAction()">Annuler</a>        
+            <a id="deleteButId" type="button"   class="button button3" onclick="confirmDelete()">Effacer</a>
+            <a id="showListButId" type="button"   class="button button3" onclick="showList()">Lister les salariés</a>
+            <a id="prepareSalairesButId" type="button"   class="button button3" onclick="prepareFichesSalaires()">Préparation des salaires</a>
+            <select name = "mois" id="mois"> 
+            <option value="00"></option>    
+            <option value="01">Janvier</option>  
+            <option value="02">Février</option>   
+            <option value="03">Mars</option>  
+            <option value="04">Avril</option>   
+            <option value="05">Mai</option>  
+            <option value="06">Juin</option>   
+            <option value="07">Juillet</option>  
+            <option value="08">Aout</option>   
+            <option value="09">Septembre</option>  
+            <option value="10">Octobre</option>   
+            <option value="11">Novembre</option>  
+            <option value="12">Décembre</option>
+            </select>
+
+            <!-- 
+                <a id="imprimeSalairesButId" type="button"   class="button button3" onclick="imprimerFichesSalaires()">Imprimer les fiches salaires</a>
+              -->
+            
+            <div style="width:20%;text-align:right;color:white;display:inline;"><h1 style="color:white;padding-left:400px">Salaires</h1></div>
+      </section>
+      
+      <section id="msgRunning" class="soukRunning" style="display:none">
+      </section>
+      <section id="msgError" class="soukError" style="display:none">
+      </section>
+      <section id="msgMessage" class="soukMessage" style="display:none">
+      </section>
+
+  
+<!-- WorkerID	CreDate	Status	FirstName	LastName	ProfEmail	PersonalEmail	SalaryAccountId	AnnualSalary	MaxBonusPercentage	Notifications -->
+<div id="printSalariesId" class="formContainer" >
+
+    <div class="formRow">
+      <table style="margin-left:auto;margin-right:auto">
+        <tr><td><a id="imprimeSalairesStandardButId" type="button"   class="button button3" onclick="imprimerFichesSalaires(0)" style="width:100%;margin-jeft:-10%">
+                    Imprimer les salaires standard basés sur le salaire annuel officiel</a></td></tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>Salaire calculés automatiquement en fonction des revenus et données salariés</td></tr>
+        <tr>
+          <td>
+            <table id="salariesForcastId" style="width:100%;margin-left:auto;margin-right:auto">
+            </table>
+          </td>
+        </tr>
+        <tr><td><a id="imprimeSalairesButId" type="button"   class="button button3" onclick="imprimerFichesSalaires(1)" style="width:100%;margin-jeft:-10%">
+                    Imprimer les fiches salaires avec ces salaires</a></td></tr>
+      </table>
+    </div>  
+</div>
+    
+<div id="printOneSalaryId" class="formContainer">
+ 
+    <div class="formRow">
+      <table style="margin-left:auto;margin-right:auto">
+        <tr><td colspan=5>Vous pouvez aussi spécifier le salaire et bonus par salarié</td></tr>
+        <tr><th>Salarié</th><th>Salaire</th><th>Bonus</th><th>Monnaie</th><th></th></tr>
+        <tr>
+            <td>
+                <select name = "SalarieId" id="SalarieId" style="width:100%"> </select>
+            </td>
+            <td><input type="number" id="SalaryAmountId" name="SalaryAmountId" style="width:100%"></td>
+            <td><input type="number" id="BonusAmountId" name="BonusAmountId" style="width:100%"></td>
+            <td><select name = "SalaryCcyId" id="SalaryCcyId" style="width:100%"> 
+                  <option value=""></option>    
+                  <option value="EUR">EUR</option>  
+                  <option value="MAD">MAD</option>   
+                  </select>
+            </td>
+            <td>
+              <a id="printOneSalaryButId" type="button"   class="button button3" onclick="imprimerUnSalaire()" style="width:100%">Imprimer ce salaire</a>
+            </td>
+        </tr>
+      </table>
+    </div>
+          
+</div>
+
+    <div id="recordFormId" class="formContainer" style="width:50%;margin-left:auto;margin-right:auto">
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="WorkerId">Identifiant</label></div>
+          <div class="formCol-35" ><input type="text" id="WorkerId" name="WorkerId" readonly></div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="CreDateId">Date de création</label></div>
+          <div class="formCol-35"><input type="text" id="CreDateId" name="CreDate" readonly></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="StatusId">Status</label></div>
+          <div class="formCol-35"><select id="StatusId" name="Status" ></select></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="FirstNameId">Prénom</label></div>
+          <div class="formCol-35"><input type="text" id="FirstNameId" name="firstNameId"></div>
+          <div class="formCol-35"><label class="labelRight"for="LastNameId">Nom</label></div>
+          <div class="formCol-35"><input type="text" id="LastNameId" name="LastNameId"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="AdresseId">Adresse</label></div>
+          <div class="formCol-55"><input type="text" id="AdresseId" name="AdresseId"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="EmploiId">Emploi</label></div>
+          <div class="formCol-55"><input type="text" id="EmploiId" name="EmploiId"></div>
+        </div>
+        
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="ProfEmailId">Email professionel</label></div>
+          <div class="formCol-35"><input type="text" id="ProfEmailId" name="ProfEmail"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="PersonalEmailId">Email privé</label></div>
+          <div class="formCol-35"><input type="text" id="PersonalEmailId" name="PersonalEmail"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="SalaryAccountId">Identifiant compte Salaire</label></div>
+          <div class="formCol-35"><input type="text" id="SalaryAccountId" name="SalaryAccount"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="AnnualSalaryId">Salaire annuel</label></div>
+          <div class="formCol-35"><input type="text" id="AnnualSalaryId" name="AnnualSalary"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="MaxBonusPercentageId">Pourcentage maximum du salaire payable en bonus</label></div>
+          <div class="formCol-35"><input type="text" id="MaxBonusPercentageId" name="MaxBonusPercentage"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="NotificationsId">Reçoit les notifications</label></div>
+          <div class="formCol-05"><input type="checkbox" id="NotificationsId" name="Notifications"></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="CcyId">Monnaie</label></div>
+          <div class="formCol-35"><input type="text" id="CcyId" name="CcyId"></div>
+        </div>
+        <!--
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="fieldId2">Label</label></div>
+          <div class="formCol-35"><select id="fieldId2" name="fieldName2" ></select></div>
+        </div>
+        -->
+    </div>
+
+    <table id="listRecordsId" style="width:80%;margin-left:auto;margin-right:auto">
+      
+    </table>
+
+  </body>
+  
+    <?!= include("utils-js"); ?>
+    <?!= include("popup-js"); ?>
+    <?!= include("souk-js"); ?>
+    <?!= include("hrWorkers-js"); ?>
+</html>

@@ -27,15 +27,14 @@ const CLIENT_SECRET="mtbfyp2e20";
 const CODE_VERIFYER="ARzxEupyjZAL-5cDjIY2pBRgIobHs7TTHtbqx9S6qps";
 const CODE_CHALLENGE = "GNOI7H4EuLwKz8dSOS2e5gMJrap7Or2Ar8Q6Mv1M7d8";
 const CODE_CHALLENGE_METHOD = "S256";
-
 const ETSY_SERVICENAME = "etsy";
 const AUTHORIZ_BASEURL="https://www.etsy.com/oauth/connect";
 const TOKEN_URL="https://api.etsy.com/v3/public/oauth/token";
+/* =========================== ETSY ============================= */
 
-
-/**
- * 
- */
+/**=======================================================================================================================
+ *                    function etsy_getService(scopes=null) 
+ =======================================================================================================================*/
 function etsy_getService(scopes=null) {
   // Create a new service with the given name. The name will be used when
   // persisting the authorized token, so ensure it is unique within the
@@ -169,12 +168,6 @@ const FORMATTEDADDRESS_INDATA_SHEET = 15;
 const TOTALDISCOUNT_INDATA_SHEET = 16;
 const TOTALTAXES_INDATA_SHEET = 17;
 
-function test_getLastMonthToQuery()
-{
-  Logger.log(utils_getCurrentMonth());
-  Logger.log(getLastMonthToQuery(2022));
-  Logger.log(getLastMonthToQuery(2021));
-}
 
 function getLastMonthToQuery(year)
 {
@@ -473,6 +466,255 @@ function etsy_getAllOrdersForYear(year, targetTable)
 
 
 
+
+/**
+ *          function etsy_refreshAllOrdersForYear()
+ */
+
+function run_refreshAllOrdersForYear() 
+{
+    etsy_refreshAllOrdersForYear(2022, DATA_SHEET);
+}
+
+
+function etsy_refreshAllOrdersForYear(year, targetTable) 
+{
+  let BulkDataRows=[];
+  let NextRowFlush=2;
+
+  //======================
+  //Load exchange rates
+  //=====================
+  let ccyRates = ccy_loadRates() ;
+
+  //=======================================
+  // Retrieve data
+  //=======================================
+  let dataSheet = utils_getSheet(targetTable);
+
+  // GET DATA     
+  dataSheet.clear();
+  dataSheet.appendRow(HEADER_ORDERS);
+  
+  let EtsyService = etsy_getService();
+  let orders = [];
+
+  //Set last month to avoid inutile calls to the Etsy api
+  let lastMonth2Query = getLastMonthToQuery(year);
+
+  for (let month = 1 ; month <= lastMonth2Query ; month++)
+  {
+      const nDaysInMonth = utils_getDaysInMonth(month,year);
+      const minC  = toTimestamp(year,month,1,0,0,0);
+      const maxC  = toTimestamp(year,month,nDaysInMonth,23,59,59);
+
+      let ordersOffset    = 0; 
+      let remainingOrders =0;
+      do
+      {
+        try
+        {
+          let theRequest = 
+          `https://openapi.etsy.com/v3/application/shops/${SHOP_ID}/receipts?&min_created=${minC}&max_created=${maxC}&limit=${EtsyRequestSliceSize}&was_paid=true&offset=${ordersOffset}`;
+
+
+          let response = UrlFetchApp.fetch(theRequest, {
+            headers: 
+            {
+              'x-api-key': CLIENT_ID,
+              'Authorization': 'Bearer ' + EtsyService.getAccessToken()
+            }
+          });
+
+          let theOrders = JSON.parse(response.getContentText());
+
+          if ( theOrders.results.length  > 0 )
+          {
+            orders=[];
+
+            for (let ic =0 ; ic < theOrders.results.length;ic++) 
+            {   
+                let etsyOrder = theOrders.results[ic];
+                
+                //====================================================
+                //Retrieve the receipt and transactions for this order
+                //====================================================
+                let theReceiptId = etsyOrder.receipt_id;
+                {
+                    //=========================================
+                    //This is a new order, lets take care of it
+                    //=========================================
+                    let transactionsForThisOrder=[];
+
+                    if ( etsyOrder.transactions != null)
+                    {
+                        let orderTransactions = etsyOrder.transactions;
+
+                        for(let jj=0;jj<orderTransactions.length;jj++)
+                        {
+                          if ( orderTransactions[jj] != null )
+                          {        
+                            let trans = orderTransactions[jj];
+                            let oneTrans = {
+                              "transId":        trans.transaction_id,
+                              "receiptId":      trans.receipt_id,
+                              "listingId":      trans.listing_id,
+                              "productId":      trans.product_id,
+                              "title":          trans.title,
+                              "buyer_user_id":  trans.buyer_user_id,
+                              "quantity" :      trans.quantity,
+                              "price":          trans.price,
+                              "shipping":       trans.shipping_cost,
+                              "variations":     trans.variations
+                            };
+
+                            //Push a new gtransaction for this order
+                            //=======================================
+                            transactionsForThisOrder.push(oneTrans);
+
+                          }
+                        }
+                    }
+
+                    //In order to not get an error message for too fast rquest to ETSY API
+                    utils_wait(GETSOLD_DELAY);
+
+                    const  reqReceipt = `https://openapi.etsy.com/v3/application/shops/${SHOP_ID}/receipts/${theReceiptId}/payments`;
+                    let responseReceipt = UrlFetchApp.fetch(reqReceipt, {
+                      headers: {
+                              'x-api-key': CLIENT_ID,
+                              'Authorization': 'Bearer ' + EtsyService.getAccessToken()
+                      }
+                    });
+
+                    const theReceipt = JSON.parse(responseReceipt);
+
+                    for (let j = 0 ; j < theReceipt.count;j++)
+                    {
+                      let theReceiptResult = theReceipt.results[j];
+                      //Take care of currency exchanges
+                      let exRate = ccyRates[theReceiptResult.amount_gross.currency_code];
+
+                      theReceiptResult.amount_gross.amount *= exRate;
+                      theReceiptResult.amount_gross.currency_code="EUR";
+                      theReceiptResult.amount_net.amount *= exRate;
+                      theReceiptResult.amount_net.currency_code="EUR";
+
+                      //Format user address
+                      let customerAddress = etsyOrder.first_line + ", " + 
+                                    etsyOrder.second_line + ", " + 
+                                    etsyOrder.city + ", " +
+                                    etsyOrder.zip;
+
+                      let oneOrder = 
+                      {
+                        "t_created" :       theReceiptResult.create_timestamp,
+                        "customerName" :    etsyOrder.name,
+                        "customerCountry" : etsyOrder.country_iso,
+                        "customerEmail" :   etsyOrder.buyer_email,                   
+                        "gross":            theReceiptResult.amount_gross,
+                        "net"  :            theReceiptResult.amount_net,
+                        "shipping":         etsyOrder.total_shipping_cost,
+                        "discount":         etsyOrder.discount_amt,
+                        "totalTax":         etsyOrder.total_tax_cost,
+                        "receiptId":        etsyOrder.receipt_id,
+                        "transactions":     utils_encodeObject(transactionsForThisOrder),
+                        "buyer_id" :        etsyOrder.buyer_user_id,
+                        "is_shipped":       etsyOrder.is_shipped,
+                        "t_shipped":        theReceiptResult.shipped_timestamp,
+                        "address":          customerAddress,
+                        "formatted_address": etsyOrder.formatted_address      
+                      }
+
+                      orders.push(oneOrder)
+                    }
+                }
+            }
+
+            BulkDataRows = [];
+            for (let j = 0 ; j < orders.length;j++)
+            {
+                let anOrder = orders[j];
+
+                let aDate = new Date(anOrder.t_created * 1000);
+                let dateCreated = (aDate.getMonth()+1)+"/"+(aDate.getDate())+"/"+(aDate.getFullYear()-2000);
+
+                let aRow = [];
+                aRow.push(dateCreated);
+                aRow.push(anOrder.customerName);
+                aRow.push(anOrder.customerCountry);
+                aRow.push(anOrder.customerEmail);
+
+                aRow.push(anOrder.gross.amount/anOrder.gross.divisor);
+
+                let netAmount = anOrder.net.amount/anOrder.net.divisor
+                aRow.push(netAmount);
+
+                let shippingCost = anOrder.shipping.amount/anOrder.shipping.divisor;
+                aRow.push(shippingCost);
+
+                let netEncaisse = netAmount - shippingCost;
+                aRow.push(netEncaisse);
+                aRow.push(anOrder.receiptId);
+                aRow.push(anOrder.transactions);
+                aRow.push(anOrder.buyer_id);
+                aRow.push(anOrder.is_shipped);
+
+                let dateShipped=""
+                if ( anOrder.t_shipped != null )
+                {
+                  aDate = new Date(anOrder.t_shipped * 1000);
+                  dateShipped = (aDate.getMonth()+1)+"/"+(aDate.getDate())+"/"+(aDate.getFullYear()-2000);
+                }
+                aRow.push(dateShipped);
+
+                aRow.push(anOrder.address);
+                aRow.push(anOrder.formatted_address);
+
+                let discountAmt = anOrder.discount.amount/anOrder.discount.divisor;
+                aRow.push(discountAmt);
+
+                let totalTax = anOrder.totalTax.amount/anOrder.totalTax.divisor;
+                aRow.push(totalTax);
+
+                BulkDataRows.push(aRow);
+            } 
+
+            //Look if orders need to be flushed.,
+            if ( BulkDataRows.length > 0)
+            {
+              let nOrders= BulkDataRows.length;
+
+              dataSheet.getRange(NextRowFlush,1,nOrders,HEADER_ORDERS.length).setValues(BulkDataRows) ;
+
+              NextRowFlush += nOrders;
+            }
+
+            ordersOffset    +=  theOrders.results.length;
+          }
+          else
+            break;
+        }
+        catch(err) 
+        {
+          setDataNotAvailable();
+          errors_logErrorExceptionAndEmail(err);
+        } 
+      }while(1);
+
+  }
+
+  SpreadsheetApp.flush();
+
+  if ( targetTable == DATA_SHEET )
+  {
+    //Close the session with various setups
+    let allDataRange = dataSheet.getRange(2,1,dataSheet.getLastRow()-1,HEADER_ORDERS.length);
+    allDataRange.sort({column: DATE_INDATA_SHEET, ascending: true});
+
+  }
+}
+
 /**
  * 
  */
@@ -705,161 +947,6 @@ function getListingsByListingIds()
 }
 
 
-function test_updateMostSoldTable()
-{
-    return;
-
-    statOnListingsIds();
-    updateMostSoldTable(false,ROWS_FORMOST_SOLD);
-    updateMostFavoredTable(false,ROWS_FORMOST_FAVORED);
-    updateSoldByMonthsInMonthSheets();
-}
-
-function updateMostSoldTable(sortListings,nrows)
-{
-  return;
-
-  if ( sortListings )
-      utils_sort(HISTPRODUIT_SHEET,cellHistoCounts,false); 
-  
-  let ss = "plusVendu1";
-  let range = utils_getNamedCellRangeInSheet(MAIN_SHEET,ss); 
-  let targetCol = range.getColumn()+1;
-  let startRow = range.getRow();
-  let textCol = utils_getColumnNrByName(HISTPRODUIT_SHEET, "title")+1 ;
-  let urlCol = utils_getColumnNrByName(HISTPRODUIT_SHEET, "url")+1 ;
-
-  for (let rowNum=2;rowNum <= nrows+1;rowNum++)
-  {      
-      let text =  utils_getRangeByCoord(rowNum,textCol,HISTPRODUIT_SHEET).getValue();
-      let url  =  utils_getRangeByCoord(rowNum,urlCol,HISTPRODUIT_SHEET).getValue();
-
-      utils_insertHyperLinkInCellByCoord(startRow++,targetCol,MAIN_SHEET,text,url) 
-  }
-}
-
-function test_updateMostFavoredTable(sortListings,nrows)
-{
-  updateMostFavoredTable(false,ROWS_FORMOST_FAVORED);
-}
-function updateMostFavoredTable(sortListings,nrows)
-{
-  return;
-
-  if ( sortListings )
-      utils_sort(LISTINGS_SHEETHISTO,cellListingsNumFavoris,false); 
-  
-  let ss = "mostFavored1";
-  let range = utils_getNamedCellRangeInSheet(MAIN_SHEET, ss); 
-  let targetCol = range.getColumn()+1;
-  let startRow = range.getRow();
-  let textCol = utils_getColumnNrByName(LISTINGS_SHEET, "title")+1 ;
-  let urlCol = utils_getColumnNrByName(LISTINGS_SHEET, "url")+1 ;
-
-  for (let rowNum=2;rowNum <= nrows+1;rowNum++)
-  {      
-      let text =  utils_getRangeByCoord(rowNum,textCol,LISTINGS_SHEET).getValue();
-      let url  =  utils_getRangeByCoord(rowNum,urlCol,LISTINGS_SHEET).getValue();
-
-      utils_insertHyperLinkInCellByCoord(startRow++,targetCol,MAIN_SHEET,text,url) 
-  }
-
-}
-
-
-function updateSoldByMonthsInMonthSheets() 
-{
-  return;
-  
-    let listingsSheet = utils_getSheet(LISTINGS_SHEET);
-    let transactions = utils_GetNamedRangeValuesInSheet(LISTINGS_SHEET,cellDataTransactions);
-   
-    let datas = utils_getNamedRangesByArray(DATA_SHEET,[DATA_SHEET+"!"+cellDataDateCreated, DATA_SHEET+"!"+cellDataTransactions]) ;
-
-    let dataPerMonth=[[],[],[],[],[],[],[],[],[],[],[],[]];
-    let dates = datas[0].getValues().filter(String);
-    let transaction= datas[1].getValues().filter(String);
-
-    //!!!!! Start at 1 to skip the header
-    for (let row = 1 ; row< dates.length;row++)
-    {
-        let date = new Date(dates[row]);
-
-        dataPerMonth[date.getMonth()].push(transaction[row]);
-    }
-
-
-    allListings=[[],[],[],[],[],[],[],[],[],[],[],[]];
-    for (let il = 0 ; il < 11;il++)
-    {
-      let dataForMonth = dataPerMonth[il];
-
-      for (let tri=0;tri < dataForMonth.length;tri++)
-      {
-        let trans = utils_decodeObject(dataForMonth[tri]);
-        for (let ntr=0;ntr<trans.length;ntr++)
-        {
-          allListings[il].push(trans[ntr].listingId);
-        }
-      }
-    }
-
-    //Update for each month.  plusVenduMois01
-
-    let listIdInListingsSheet = 
-    utils_getNamedRangesByArray(LISTINGS_SHEET,[LISTINGS_SHEET+"!"+cellListingsListIds,
-                                                LISTINGS_SHEET+"!"+cellListingsTitles,
-                                                LISTINGS_SHEET + "!" + cellListingsUrls]);
-
-    let listingIds = utils_rangeInArray(listIdInListingsSheet[0].getValues().filter(String))[0];
-    let titles = listIdInListingsSheet[1].getValues().filter(String);;
-    let urls = listIdInListingsSheet[2].getValues().filter(String);;
-
-    for (let month = 0 ; month < 11; month++)
-    {
-        let ss = "plusVenduMois"+ (month+1);
-        let range = utils_getNamedCellRangeInSheet(SHEET_MONTH_NAMES[month],ss); 
-        if (range == null )
-          break;
-        
-        let totalPos = range.getRow();
-        let startRow = totalPos+1;
-        let startCol = range.getColumn()
-
-        utils_resetBidimensionalRange(SHEET_MONTH_NAMES[month],startRow,startCol,DATA_VERTSPAN_SOLDINMONTH,DATA_HORIZSPAN_SOLDINMONTH);
-        
-        let histo = histoOnArray(allListings[month]);
-        let totalMonth=0;
-        let preparedArray=[];
-        for ( j=0; j< histo.length;j++)
-        {
-            let listingId   = parseInt(histo[j][0]);
-            let listingCount = histo[j][1];
-            let index = listingIds.indexOf(listingId);
-            if (index >= 0)
-            {
-              let url = urls[index][0];
-              let title = titles[index][0];
-              let aRow = [listingCount,title,url];
-              preparedArray.push(aRow);
-              totalMonth += listingCount;
-            }
-        }
-
-        if ( totalMonth > 0 )
-        {
-          utils_setValueByCoord(totalPos,startCol,SHEET_MONTH_NAMES[month],totalMonth);
-          for ( j=0; j< preparedArray.length;j++)
-          {
-              aRow = preparedArray[j];
-              utils_setValueByCoord(startRow,startCol,SHEET_MONTH_NAMES[month],aRow[0]);
-              utils_setValueByCoord(startRow,startCol+1,SHEET_MONTH_NAMES[month],aRow[0]/totalMonth);
-              utils_insertHyperLinkInCellByCoord(startRow,startCol+2,SHEET_MONTH_NAMES[month],aRow[1],aRow[2]) ;
-              startRow++;
-          }
-        }
-    }
-}
 
 
 function getStockAndFavoredFromListings(fromDate)

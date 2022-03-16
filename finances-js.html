@@ -58,13 +58,13 @@
       {
         //Mouvements par compte
         $("#divMouvmentsParCompteId").empty();
-        google.script.run.withSuccessHandler(handleCeditDebitParCompte).fin_getMouvments(type);
+        google.script.run.withSuccessHandler(handleCeditDebitParCompte).fin_getMouvments(type,[]);
       }
       else
       {
         //Tous les comptes ensembles
         $("#divMouvmentsGlobalId").empty();
-        google.script.run.withSuccessHandler(handleCeditDebitGlobal).fin_getMouvments(type);
+        google.script.run.withSuccessHandler(handleCeditDebitGlobal).fin_getMouvments(type,[]);
       }
     }
 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <!-- INCLUDE CSS STYLE SHEETS HERE --> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+
+    <?!= include("popup-css"); ?>
+    <?!= include("souk-css"); ?>
+
+    <!-- INCLUDE JAVASCRIPP FILES  HERE --> 
+     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+
+
+  </head>
+  <body>
+      <div id="recordId" style="display:none"><?= recordIdValue ?></div>
+      
+
+      <section  class="navbar">
+            <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
+            <a  href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+            <a id="newRecordButId" type="button" class="button button3" onclick="newRecord()">Nouvel enregistrement</a>
+            <a id="createButId" type="button" class="button button3" onclick="confirmCreate()">Créer</a>
+            <a id="saveButId" type="button" class="button button3" onclick="confirmUpdate()">Sauvegarder</a>        
+            <a id="deleteButId" type="button"   class="button button3" onclick="confirmDelete()">Effacer</a>
+            <a id="showListButId" type="button"   class="button button3" onclick="showList()">Lister les enregistrement</a>
+             &nbsp;&nbsp;<select style="width:150px;" id="langue" name="langue"  ></select>
+             <!-- <select style="width:150px;" id="langue2" name="langue2"  ></select> -->
+            <div style="width:20%;text-align:right;color:white;display:inline;"><h1 style="color:white;padding-left:400px">Generic</h1></div>
+      </section>
+      
+      <section id="msgRunning" class="soukRunning" style="display:none">
+      </section>
+      <section id="msgError" class="soukError" style="display:none">
+      </section>
+      <section id="msgMessage" class="soukMessage" style="display:none">
+      </section>
+
+  
+
+    <div id="recordFormId" class="formContainer">
+      <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="recordKeyId">Identifiant</label></div>
+          <div class="formCol-35" ><input type="text" id="recordKeyId" name="recordKeyId" readonly></div>
+        </div>
+
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="fieldId1">Label_1</label></div>
+          <div class="formCol-35"><input type="text" id="fieldId1" name="fieldName1" ></div>
+        </div>
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="fieldId2">Label_2</label></div>
+          <div class="formCol-35"><input type="number" id="fieldId2" name="fieldName2" ></div>
+        </div>
+        <!--
+        <div class="formRow">
+          <div class="formCol-35"><label class="labelTop"for="fieldId2">Label</label></div>
+          <div class="formCol-35"><select id="fieldId2" name="fieldName2" ></select></div>
+        </div>
+        -->
+    </div>
+
+    <table id="listRecordsId">
+      
+    </table>
+
+  </body>
+  
+    <?!= include("utils-js"); ?>
+    <?!= include("popup-js"); ?>
+    <?!= include("souk-js"); ?>
+    <?!= include("genericForm-js"); ?>
+</html>

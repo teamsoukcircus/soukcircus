@@ -339,6 +339,8 @@ function  test_utils_FormatDate()
 
 
    Logger.log(utils_DateForGantts(new Date()));
+
+  Logger.log(utils_LocalGMTTimeFormatThisDate(new Date(),ENUM_DATE_FORMAT.MEDIUMDDMMYYYY));
 }
 
 function  utils_DateForGantts(date)
@@ -366,6 +368,11 @@ function  utils_FormatDate(year,month,day,format)
     return Utilities.formatDate(new Date(year,Math.min(month,11),Math.max(day,1)),"GMT", format);
 }
 
+function test_utils_LocalGMTTimeFormatThisDate()
+{
+      Logger.log(new Date(getLocalTime()).getMonth());
+      Logger.log(utils_LocalGMTTimeFormatThisDate(new Date(),ENUM_DATE_FORMAT.LONG));
+}
 function  utils_LocalGMTTimeFormatThisDate(date,format)
 {
   return Utilities.formatDate(date,"GMT", format);
@@ -384,6 +391,10 @@ function  utils_getMonthName(locales,month)
 }
 
 
+function utils_officialDatFormat(date)
+{
+  return utils_LocalGMTTimeFormatThisDate(date,ENUM_DATE_FORMAT.MEDIUMDDMMYYYY)
+}
 
 /**
  * @param {month} numeric month for which you look the day of

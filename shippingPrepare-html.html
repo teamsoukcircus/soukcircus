@@ -28,7 +28,6 @@
   </head>
 
   <body onload="initPage();">
-      <div hidden> <input id="shippingActionId"><?= shippingAction ?></input></div>
       <div hidden> <input type="number" id="nOrdersId"></input></div>
       <div hidden> <input type="number" id="filteringId"></input></div>
       <div hidden> <input type="text" id="changedElements"></input></div>
@@ -40,14 +39,17 @@
 
               <!-- <a  id="selectionId" href="#" onclick="selectAllTransactions();"><i class="fa fa-fw  fa-check-square"></i> Tout sélectionner</a>  -->
 
-              <a  type="button" class="button button3" id="calculerPrixId" href="#" 
-                          onclick="computeShippingPrices();"><i class="fa fa-fw fa-calculator"></i>Evaluer le prix</a> 
               <!-- <a href="#" onclick="handleGenerer(this)"><i class="fa fa-fw fa-cogs"></i>Générer</a>  -->
 
               <a   type="button" class="button button3" id="validerSessionId" href="#" 
                           onclick="confirmValidation()"><i class="fa fa-fw fa-thumbs-o-up"></i>Valider</a> 
 
-              <a type="button" class="button button3" href="#" onclick="handleListeEnvois(this)"><i class="fa fa-fw fa-plane"></i>Commandes envoyées</a> 
+              <a type="button" class="button button3"  href= <?= actionOrders ?> target="_top"><i class="fa fa-fw fa-file-text "></i>Commandes clients</a> 
+
+              <a type="button" class="button button3" href="#" onclick="handleListeEnvois(this)"><i class="fa fa-fw fa-plane"></i>Commandes envoyées (vue Etsy)</a> 
+
+              <a type="button" class="button button3"  href= <?= actionCustomers ?> target="_blank"><i class="fa fa-user" aria-hidden="true"></i>Clients</a> 
+
             <div style="width:20%;text-align:right;color:white;display:inline;">
                 <h1>Shipping</h1>
             </div>
@@ -81,7 +83,10 @@
         <div class="formCol-20">
           <a   type="button" class="button button3" id="validerSessionId" href="#" 
                         onclick="handlePreparedOnly()"><i class="fa fa-filter" aria-hidden="true"></i>Préparés uniquement</a> 
-
+        </div>
+        <div class="formCol-20">
+          <a  type="button" class="button button3" id="calculerPrixId" href="#" 
+                          onclick="computeShippingPrices();"><i class="fa fa-fw fa-calculator"></i>Evaluer le prix</a> 
         </div>
       </div>
     </div>

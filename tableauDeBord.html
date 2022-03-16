@@ -8,8 +8,6 @@
    <!-- INCLUDE CSS STYLE SHEETS HERE --> 
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
 
     <?!= include("souk-css"); ?>
 
@@ -24,15 +22,13 @@
       .chartBox{
         width:500px;
         height:500px;
+        margin-top:50px;
       } 
     </style>
   </head>
   <body  onload="getDataForTheMonth()" bgcolor="#FFFFFE" color="#000000" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0">
 
     <!--  HIDDEN INDICATORS ======= -->
-    <div  id="assigneeScopeId" name="assigneeScopeName" hidden></div>
-    <input  id="task2Delete"  hidden></input>
-    <input  id="task2DeleteRowNum"  hidden></input>
     <div  id="activeEmailId" hidden><?= activeEmail ?></div>
     
     <!-- NAVIGATION BAR ============================================ -->
@@ -41,6 +37,8 @@
         <a href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
         
         <a type="button" class="button button3"  href= <?= actionFinances ?> target="_blank"><i class="fa fa-fw fa-eur "></i>Finances</a> 
+
+        <a type="button" class="button button3"  href= <?= actionHR ?> target="_blank"><i class="fa fa-user" aria-hidden="true"></i>HR</a> 
 
         <a type="button" class="button button3"  id="saisirTachesId" href="https://www.appsheet.com/start/65ee093f-bbb8-4d21-95a1-9be5b5ba3917" 
             target="_blank"><i class="fa fa-fw fa-plus"></i>Tâches</a> 
@@ -58,6 +56,14 @@
       </table>
 
       <table  style="margin-left: auto;margin-right: auto;margin-top:50px;">
+        <tr><td colsapn="2" style="text-align:left"><h3>Prévisionnel fin de mois</h3></td></tr>
+        <tr><td style="text-align:left"><h3>Céline</h3></td><td id ="SalCeline" style="text-align:left"></td></tr>
+        <tr><td style="text-align:left"><h3>Simon</h3></td><td id ="SalSimon" style="text-align:left"></td></tr>
+        <tr><td style="text-align:left"><h3>Said</h3></td><td id ="SalSaid" style="text-align:left"></td></tr>
+        <tr><td style="text-align:left"><h3>Trésorerie</h3></td><td id ="Tresorerie" style="text-align:left"></td></tr>
+      </table>
+
+      <table  style="margin-left: auto;margin-right: auto;margin-top:50px;">
        <tr>
         <td>
             <!-- JAN / FEV 7 MAR -->
@@ -67,6 +73,7 @@
                   <td id="mois1" style="text-align:left"></td>
                   <td id="mois2" style="text-align:left"></td>
                 </tr>
+              
                 <tr>
                   <td id="chiffres0">
                       <table >
@@ -83,20 +90,16 @@
                             <td id="vc0"></td>
                         </tr>
                         <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact0"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv0"></td>
+                        </tr>
+                        <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship0"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Céline</td>
-                            <td id="sc0"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Simon</td>
-                            <td id="ss0"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Said</td>
-                            <td id="sd0"></td>
                         </tr>
                     </table>
                   </td>
@@ -115,20 +118,16 @@
                             <td id="vc1" ></td>
                         </tr>
                         <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact1"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv1"></td>
+                        </tr>
+                        <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship1"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Céline</td>
-                            <td id="sc1" ></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Simon</td>
-                            <td id="ss1" ></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Said</td>
-                            <td id="sd1" ></td>
                         </tr>
                     </table>
                   </td>
@@ -147,20 +146,16 @@
                             <td id="vc2" ></td>
                         </tr>
                         <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact2"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv2"></td>
+                        </tr>
+                        <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship2"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Céline</td>
-                            <td id="sc2" ></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Simon</td>
-                            <td id="ss2" ></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left">Salaire Said</td>
-                            <td id="sd2" ></td>
                         </tr>
                     </table>
                   </td>
@@ -208,21 +203,17 @@
                           <td id="vc3" ></td>
                       </tr>
                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact3"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv3"></td>
+                        </tr>
+                      <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship3">0</td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc3" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss3" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd3" ></td>
-                      </tr>
                   </table>
                 </td>
                 <td id="chiffres4">
@@ -240,21 +231,17 @@
                           <td id="vc4" ></td>
                       </tr>
                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact4"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv4"></td>
+                        </tr>
+                      <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship4">0</td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc4" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss4" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd4" ></td>
-                      </tr>
                   </table>
                 </td>
                 <td id="chiffres5">
@@ -272,21 +259,17 @@
                           <td id="vc5" ></td>
                       </tr>
                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact5"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv5"></td>
+                        </tr>
+                      <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship5"></td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc5" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss5" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd5" ></td>
-                      </tr>
                   </table>
                 </td>
               </tr>
@@ -332,22 +315,18 @@
                           <td style="text-align:left">Ventes et Credits Etsy</td>
                           <td id="vc6" ></td>
                       </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact6"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv6"></td>
+                        </tr>
                        <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship6"></td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc6" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss6" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd6" ></td>
-                      </tr>
                   </table>
                 </td>
                 <td id="chiffres7">
@@ -364,22 +343,18 @@
                           <td>Ventes et Credits Etsy</td>
                           <td id="vc7" ></td>
                       </tr>
+                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact7"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv7"></td>
+                        </tr>
                       <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship7"></td>
                         </tr>
-                      <tr>
-                          <td>Salaire Céline</td>
-                          <td id="sc7" ></td>
-                      </tr>
-                      <tr>
-                          <td>Salaire Simon</td>
-                          <td id="ss7" ></td>
-                      </tr>
-                      <tr>
-                          <td>Salaire Said</td>
-                          <td id="sd7" ></td>
-                      </tr>
                   </table>
                 </td>
                 <td id="chiffres8">
@@ -397,21 +372,17 @@
                           <td id="vc8" ></td>
                       </tr>
                        <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact8"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv8"></td>
+                        </tr>
+                       <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship8"></td>
                         </tr>
-                      <tr>
-                          <td>Salaire Céline</td>
-                          <td id="sc8" ></td>
-                      </tr>
-                      <tr>
-                          <td>Salaire Simon</td>
-                          <td id="ss8" ></td>
-                      </tr>
-                      <tr>
-                          <td>Salaire Said</td>
-                          <td id="sd8" ></td>
-                      </tr>
                   </table>
                 </td>
               </tr>
@@ -458,21 +429,17 @@
                           <td id="vc9" ></td>
                       </tr>
                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact9"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv9"></td>
+                        </tr>
+                      <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship9"></td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc9" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss9" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd9" ></td>
-                      </tr>
                   </table>
                 </td>
                 <td id="chiffres10">
@@ -489,22 +456,18 @@
                           <td style="text-align:left">Ventes et Credits Etsy</td>
                           <td id="v10" ></td>
                       </tr>
+                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact10"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv10"></td>
+                        </tr>
                       <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship10"></td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc10" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss10" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd10" ></td>
-                      </tr>
                   </table>
                 </td>
                 <td id="chiffres11">
@@ -521,22 +484,18 @@
                           <td style="text-align:left">Ventes et Credits Etsy</td>
                           <td id="vc11" ></td>
                       </tr>
+                       <tr>
+                            <td style="text-align:left">Shipping facturé</td>
+                            <td id="shipFact11"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">Shipping envois</td>
+                            <td id="shipEnv11"></td>
+                        </tr>
                       <tr>
                             <td style="text-align:left">Shipping supp</td>
                             <td id="ship11"></td>
                         </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Céline</td>
-                          <td id="sc11" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Simon</td>
-                          <td id="ss11" ></td>
-                      </tr>
-                      <tr>
-                          <td style="text-align:left">Salaire Said</td>
-                          <td id="sd11" ></td>
-                      </tr>
                   </table>
                 </td>
               </tr>
@@ -570,7 +529,7 @@
 
     
   </body>
-  <?!= include("SoukWebAppMain-js"); ?>
+  <?!= include("tableauDeBord-js"); ?>
     <?!= include("souk-js"); ?>
     <?!= include("popup-js"); ?>
 </html>

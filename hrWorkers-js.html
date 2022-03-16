@@ -1,0 +1,456 @@
+<script>
+
+    $( document ).ready(function() 
+        { 
+            $('#salariesForcastId').hide();
+            $('#printSalariesId').hide();
+            $('#printOneSalaryId').hide();
+
+            document.getElementById("mois").selectedIndex=0;
+            if ( $("#recordId").html() != "")
+            {
+              google.script.run.withSuccessHandler(displayRow).hrWorkers_readRow($("#recordId").html() );
+            }
+            else
+            {
+                showList();
+            }
+          });
+
+    function prepareInterface()
+    {
+        $("#newRecordButId").show();   
+        $("#showListButId").show(); 
+ 
+        $("#saveButId").hide();  
+        $("#deleteButId").hide();   
+        $("#cancelButId").hide();   
+        $("#createButId").hide();
+        $('#salariesForcastId').hide();
+        $('#printSalariesId').hide();
+        $('#printOneSalaryId').hide();
+    }
+
+    function showList()
+    {
+        prepareInterface();
+        showProgress("");
+        $("#recordFormId").hide();
+        google.script.run.withSuccessHandler(displayList).hrWorkers_readRecords();
+    }
+
+    let dataTable=null;
+    function displayList(dataIn)
+    {
+        let allData = JSON.parse(dataIn);
+        hideAllAlerts();
+
+        if ( allData["err"]=="ok")
+        {
+
+          if ( dataTable != null)
+            dataTable.destroy();
+
+          let header = allData["header"];
+          $("#headerId").html(JSON.stringify(header));
+
+          let display = allData["display"];
+          let columns = [];
+          for(let i = 0;i<display.length;i++)
+          {
+            columns.push({"title":display[i]})
+          }
+          columns.push({"title":"Voir"})
+          dataTable=$('#listRecordsId').DataTable(   
+          {
+             "searching": false,
+             "paging": false,
+             "info": false,
+            "pageLength": 25,
+            data: allData["data"],
+            columns: columns
+          });
+            
+          dataTable.columns( [0,1,2,12,13] ).visible( false );
+          $('#listRecordsId').show();
+
+          //==============================================
+          //En profiter pour remplir une liste de salariés
+          //==============================================
+          let SalariesDropDown = document.getElementById("SalarieId");
+          let optn = document.createElement("OPTION");
+          optn.text = "";
+          optn.value = -1;
+          SalariesDropDown.options.add(optn); 
+
+          for(let li=0;li<allData["data"].length;li++)
+          {
+            let workerId = allData["data"][li][0];
+            let workerName = allData["data"][li][3] + " " + allData["data"][li][4];
+            let optn1 = document.createElement("OPTION");
+            optn1.text = workerName;
+            optn1.value = workerId;
+            SalariesDropDown.options.add(optn1); 
+          }
+          
+
+        }
+        else
+          showError(allData["msg"]);
+    }
+
+    function prepareDisplayRow(inOut)
+    {
+        $("#newRecordButId").hide();
+        $("#createButId").hide();
+
+        $("#showListButId").show(); 
+        $("#saveButId").show();  
+        $("#deleteButId").show();   
+        $("#cancelButId").show();   
+    }
+
+    function displayRow(dataIn)
+    {
+        prepareDisplayRow(true);
+
+        hideAllAlerts();
+        data = JSON.parse(dataIn);
+
+        if(data["err"]=="ok")
+        {
+          let header = data["header"];
+          
+          $("#recordFormId").show();
+
+          let rowData = data["data"];
+          
+          let StatusDropDown = document.getElementById("StatusId");
+          for(let li=0;li<data["Status"].length;li++)
+          {
+            let aStatus = data["Status"][li][0];
+            let optn = document.createElement("OPTION");
+            optn.text = aStatus;
+            optn.value = aStatus;
+            StatusDropDown.options.add(optn); 
+          }
+          
+          //WorkerID	CreDate	Status	FirstName	LastName	ProfEmail	PersonalEmail	SalaryAccountId	AnnualSalary	MaxBonusPercentage	Notifications
+          $("#recordId").html(rowData[0])
+          for (let i=0;i<header.length;i++)
+            $("#"+header[i]+"Id").val(rowData[i]);
+          
+          $( "#NotificationsId" ).prop( "checked", rowData[10] );
+          
+          //$("#StatusId").val(rowData[1]);
+        }
+        else
+        {
+          showError(data["msg"]);
+          return false;
+        }
+    }
+
+
+    //================================================= UPDATE ================================================
+    function updateRow()
+    {
+        let data=[];
+        data.push($("#WorkerId").val())
+        data.push($("#CreDateId").val())
+        data.push($("#StatusId").val())
+        data.push($("#FirstNameId").val())
+        data.push($("#LastNameId").val())
+        data.push($("#AdresseId").val())
+        data.push($("#EmploiId").val())
+        data.push($("#ProfEmailId").val())
+        data.push($("#PersonalEmailId").val())
+        data.push($("#SalaryAccountId").val())
+        data.push($("#AnnualSalaryId").val())
+        data.push($("#MaxBonusPercentageId").val())
+        data.push($("#NotificationsId").is(':checked'));
+        
+        janelaPopUp.fecha("soukAlert");
+        showProgress("Mise à jour en cours...");
+      
+        google.script.run.withSuccessHandler(confirmBDUpdate).hrWorkers_updateRow(data);
+    }
+
+    function cancelUpdate()
+    {
+        janelaPopUp.fecha("soukAlert");
+    }
+
+    function confirmBDUpdate(data)
+    {
+        if ( data["err"]=="ok")
+          showInfo("Mise à jour exécutée avec succès...");
+        else
+          showError(data["msg"]);
+    }
+
+    function confirmUpdate() 
+    {
+      soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer la mise à jour de cet enregistrement...",cancelUpdate,updateRow);
+    }
+
+
+    //================================================= CREATE ================================================
+    function prepareNewRecord(inOut)
+    {
+      if (inOut)
+      {
+        $("#newRecordButId").hide();  
+        $("#saveButId").hide();  
+        $("#deleteButId").hide();  
+        $("#showListButId").hide(); 
+
+        $("#cancelButId").show();   
+        $("#createButId").show(); 
+      }
+      else
+      {
+        $("#newRecordButId").show();  
+        $("#saveButId").show();  
+        $("#deleteButId").show();  
+        $("#showListButId").show(); 
+
+        $("#cancelButId").hide();   
+        $("#createButId").hide(); 
+      }
+    }
+
+
+    function newRecord()
+    {
+      prepareNewRecord(true);
+      showProgress("Préparation en cours...");
+      google.script.run.withSuccessHandler(getNewRecord).hrWorkers_newRowRequest();
+    }
+
+    function getNewRecord(dataIn)
+    {
+        hideAllAlerts();
+        data = JSON.parse(dataIn);
+
+        if(data["err"]=="ok")
+        {
+          let header = data["header"];
+          
+          $("#recordFormId").show();
+
+          let rowData = data["data"];
+          
+          let StatusDropDown = document.getElementById("StatusId");
+          for(let li=0;li<data["Status"].length;li++)
+          {
+            let aStatus = data["Status"][li][0];
+            let optn = document.createElement("OPTION");
+            optn.text = aStatus;
+            optn.value = aStatus;
+            StatusDropDown.options.add(optn); 
+          }
+        }
+        else
+        {
+          showError(data["msg"]);
+          return false;
+        }
+    }
+
+    function createRow()
+    {
+        let data=[];
+        data.push($("#WorkerId").val())
+        data.push($("#CreDateId").val())
+        data.push($("#StatusId").val())
+        data.push($("#FirstNameId").val())
+        data.push($("#LastNameId").val())
+        data.push($("#AdresseId").val())
+        data.push($("#EmploiId").val())
+        data.push($("#ProfEmailId").val())
+        data.push($("#PersonalEmailId").val())
+        data.push($("#SalaryAccountId").val())
+        data.push($("#AnnualSalaryId").val())
+        data.push($("#MaxBonusPercentageId").val())
+        data.push($("#NotificationsId").is(':checked'));
+
+        janelaPopUp.fecha("soukAlert");
+        showProgress("Création en cours...");
+        google.script.run.withSuccessHandler(confirmBDCreation).hrWorkers_createRow(data);
+    }
+
+    function cancelCreate()
+    {
+        janelaPopUp.fecha("soukAlert");
+    }
+
+    function confirmBDCreation(data)
+    {
+        if ( data["err"]=="ok")
+        {
+          $("#recordFormId").hide();
+          prepareNewRecord(false);
+          showInfo("Création exécutée avec succès...");
+        }
+        else
+          showError(data["msg"]);
+    }
+
+    function confirmCreate() 
+    {
+      soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer la création de ce nouvel enregistrement...",cancelCreate,createRow);
+    }
+
+    
+    //================================================= DELETE ================================================
+    function cancelDelete()
+    {
+        janelaPopUp.fecha("soukAlert");
+    }
+
+    function deleteRow()
+    {
+        janelaPopUp.fecha("soukAlert");
+        showProgress("Effacement en cours...")
+        google.script.run.withSuccessHandler(confirmBDDeletion).hrWorkers_deleteRow($("#recordId").html());
+    }
+
+    function confirmBDDeletion(data)
+    {
+        if ( data["err"]=="ok")
+          showInfo("Effacement exécuté avec succès...");
+        else
+          showError(data["msg"]);
+    }
+
+    function confirmDelete() 
+    {
+      soukSimpleConfirmOkCancel("Confirmation","Merci de confirmer l'effacement de cet enregistrement...",cancelDelete,deleteRow);
+    }
+
+
+    function cancelAction()
+    {
+        showList();
+    }
+
+    function prepareFichesSalaires()
+    {
+      let mois = parseInt($("#mois").val());
+      if (mois==0)
+      {
+        showInfo("Choisissez le mois salarial...");
+        return false;
+      }
+
+      showProgress("Calcul des salaires prévisionnels en cours...");
+      google.script.run.withSuccessHandler(finPrepareFichesSalaires).hrWorkers_forecastSalariesForMonth(mois-1);
+
+    }
+
+    function finPrepareFichesSalaires(dataIn)
+    {
+      hideAllAlerts();
+      let allData = JSON.parse(dataIn);
+      if(allData["err"]=="ok")
+      {
+          $('#salariesForcastId').DataTable(   
+          {
+            "pageLength": 3,
+            "searching": false,
+             "paging": false,
+             "info": false,
+            data: allData["data"],
+            columns: [
+              {"title": "Salarié"},
+              {"title": "Salaire (eur)"},
+              {"title": "Bonus (eur)"}
+            ]
+          });
+            
+          $('#salariesForcastId').show();
+          $('#printSalariesId').show();
+          $('#printOneSalaryId').show();
+      }
+      else
+        showError(data["msg"]);
+    }
+
+    //Imprime les fiches avec les salaires prévisionnels
+    //0 = salaires standards
+    //1 = salaires calculés
+    function imprimerFichesSalaires(type)
+    {
+      let mois = parseInt($("#mois").val());
+      if (mois==0)
+      {
+        showInfo("Choisissez le mois salarial...");
+        return false;
+      }
+
+      showProgress("");
+      let dataOut={};
+      dataOut["mois"] = mois-1;
+      dataOut["type"] = type;
+
+      google.script.run.withSuccessHandler(finFichesSalaires).hrWorkers_SalaryBills(dataOut);
+    }
+
+    function finFichesSalaires()
+    {
+      hideAllAlerts();
+      showInfo("Les fiches salaires ont été créées...")
+    }
+
+    //=================================== Impression d'un salaire pour un salarié donné
+    function imprimerUnSalaire()
+    {
+      let mois = parseInt($("#mois").val());
+      if (mois==0)
+      {
+        showInfo("Choisissez le mois salarial...");
+        return false;
+      }
+      
+      let salarieId = parseInt($("#SalarieId").val());
+      if (salarieId==-1)
+      {
+        showInfo("Choisissez un salarié...");
+        return false;
+      }
+
+      let salaire = parseInt($("#SalaryAmountId").val());
+      if (salaire==0)
+      {
+        showInfo("Spécifiez un salaire...");
+        return false;
+      }
+
+      let bonus = parseInt($("#BonusAmountId").val());
+      
+      let ccy = parseInt($("#SalaryCcyId").val());
+      if (ccy=="")
+      {
+        showInfo("Spécifiez une monnaie...");
+        return false;
+      }
+
+      let dataOut={};
+      dataOut["mois"]       = mois-1;
+      dataOut["salarieId"]  = salarieId;
+      dataOut["salaire"]    = salaire;
+      dataOut["bonus"]      = bonus;
+      dataOut["ccy"]        = ccy;
+
+      alert(dataOut["mois"] + ", " + dataOut["salarieId"] + ", " + dataOut["salaire"] + ", " + dataOut["bonus"] + ", " + dataOut["ccy"] )
+      showProgress("Fiche en cours d'impression...");
+      google.script.run.withSuccessHandler(finFichesUnSalaires).hrWorkers_SalarySingleBills(dataOut);
+    }
+
+    function finFichesUnSalaires()
+    {
+      hideAllAlerts();
+      showInfo("La fiches salaire a été imprimée...")
+    }
+    </script>

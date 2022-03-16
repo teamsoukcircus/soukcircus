@@ -241,5 +241,14 @@ function cust_getAddress(access,customerEmail)
 }
 
 
+function cust_getAllCustomers()
+{
+    let access = tbl_tableAccess(TABLES_DEFINITIONS.CUSTOMER,TABLE_ACCESS_TYPE.SINGLE);
+    retVal = {};
+    retVal["err"]="ok";
+    retVal["data"] = access.getData();
+    return JSON.stringify(retVal);
+}
+
 
 //====================================== TEST FUNCTIONS ===========================================

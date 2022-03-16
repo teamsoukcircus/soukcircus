@@ -22,40 +22,22 @@
     
     <style>
       .chartBox{
-        width:800px;
-        height:800px;
-        margin-top:50px;
+        width:500px;
+        height:500px;
       } 
     </style>
   </head>
-  <body  onload="initInterface()" bgcolor="#FFFFFE" color="#000000" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0">
+  <body  bgcolor="#FFFFFE" color="#000000" leftmargin="0" marginwidth="0" topmargin="100" marginheight="0" offset="0">
 
-    <div  id="activeEmailId" hidden><?= activeEmail ?></div>
-
-    <!-- NAVIGATION BAR ============================================-->
+    <!--  HIDDEN INDICATORS ======= -->
+    
+    <!-- NAVIGATION BAR ============================================ -->
       <section  class="navbar">
-        
-        <a href="https://www.appsheet.com/start/84d6f8f1-a7b8-4d65-b423-f9473f09e188" target="_top">
         <img src='https://drive.google.com/uc?export=view&id=1WduUSy5AGr6v3uqRdXHoEQO-qeCfnebA' width="20%" height="20%">
-        </a>
-        <div>
-          <!-- <a type="button" class="button button3"  href= <?= actionOrders ?> target="_top"><i class="fa fa-fw fa-file-text "></i>Comm. clients</a> -->
-          <a type="button" class="button button3"  href= <?= actionShipSession ?> target="_blank"><i class="fa fa-fw fa-plane"></i>Shipping</a>     
-        </div>
-        <div>
-          <!-- <a type="button" class="button button3" href= <?= actionCommandesSouk ?> target="_blank"><i class="fa fa-fw fa-file-text "></i>Comm. fournisseurs</a> -->
-          <a type="button" class="button button3"  href= <?= actionStock ?> target="_blank"><i class="fa fa-fw fa-book "></i>Stock</a>
-        </div>
-        <div id="tableauBordId" style="display:none">
-          <a type="button" class="button button3"  href= <?= actionTableauDeBord ?> target="_blank"><i class="fa fa-fw fa-book "></i><?= TableauDeBordTitle ?></a> 
-        </div>
-        <div id="calendrierId">
-          <a type="button" class="button button3"  href= <?= actionCalendrier ?> target="_blank"><i class="fa fa-calendar"></i>Calendrier</a> 
-        </div>
+        <a href= <?= utils_getHomeUrl(); ?> target='_top'><i class="fa fa-fw fa-home"></i>Home</a> 
+        <a type="button" class="button button3" href= <?= actionWorkers ?> target="_blank"><i class="fa fa-fw fa-file-text "></i>Salariés</a>
       </section >
-  
-
-
+        
       <section id="msgRunning" class="soukRunning" style="display:none">
       </section>
       <section id="msgError" class="soukError" style="display:none">
@@ -63,19 +45,9 @@
       <section id="msgMessage" class="soukMessage" style="display:none">
       </section>
 
-        
+    
   </body>
-    <?!= include("parallax-js"); ?>
+    <?!= include("humanResources-js"); ?>
     <?!= include("souk-js"); ?>
     <?!= include("popup-js"); ?>
-
-<script>
-    function initInterface()
-    {
-        if ($("#activeEmailId").html() != "said182008@gmail.com")
-        {
-            $("#tableauBordId").show();
-        }
-    }
-</script>
 </html>
